@@ -28,15 +28,3 @@ class DropDownMenu(object):
 
 	def searchOption(self, string):
 		"""returns the list of options that could autocomplete the passed string"""
-
-
-# 	User
-# userName
-# password
-# isRoot
-# saveUser()
-# auth()
-# DropDownMenu 
-# getOptions()
-# addOption(option)
-# searchOption(string)
