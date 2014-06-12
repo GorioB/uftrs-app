@@ -1,7 +1,6 @@
 import sqlite3
 import datetime
 conn = sqlite3.connect("db.sqlite3")
-defaultLength=40
 class DataField:
 	def __init__(self,dataType=None,content=None):
 		self.dataType=dataType
@@ -92,6 +91,42 @@ class DataEntry:
 		conn.commit()
 		return 0
 
+def populateModel(model,fields,values):
+	m = model("test")#testvalue. Replace with actual models
+	for i in range(0,len(fields)):
+		vars(m)[fields[i][1]]=DataField(fields[i][2],values[i])
+	m.pk = int(m.pk.content)
+	return m
+
+
+
+
+def getEntry(pk,model):
+	m = model("test")#testvalue. Replace with actual models
+	c = conn.cursor()
+	query = "SELECT * FROM "+m.identifier+" WHERE pk=?;"
+	c.execute(query,(pk,))
+	vals = c.fetchone()
+	query = "PRAGMA table_info("+m.identifier+");"
+	c.execute(query)
+	columns = c.fetchall()
+	if vals:
+		return populateModel(model,columns,vals)
+	else:
+		return None
+
+def listEntries(model):
+	m = model("test")#testvalue. Replace with actual models
+	c = conn.cursor()
+	query = "SELECT * FROM "+m.identifier+";"
+	c.execute(query)
+	results = c.fetchall()
+	query = "PRAGMA table_info("+m.identifier+");"
+	c.execute(query)
+	columns=c.fetchall()
+	objectList = [populateModel(model,columns,i) for i in results]
+	return objectList
 
 if __name__=="__main__":
-	d = DataEntry("test",status=DataField("TEXT","PIE"))
+	#d = DataEntry("test",status=DataField("TEXT","PIE"))
+	e= listEntries(DataEntry)
