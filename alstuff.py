@@ -91,13 +91,47 @@ class DropDownMenu(object):
 	"""docstring for DropDownMenu"""
 	def __init__(self, identifier):
 		self.identifier = identifier
-		
+		conn = sqlite3.connect(DB_NAME)
+		cursor = conn.cursor()
+		cursor.execute("CREATE TABLE IF NOT EXISTS dropdown(identifier TEXT, option TEXT, PRIMARY KEY (identifier, option))")
+		conn.commit()
+		conn.close()
+
 	def getOptions(self):
-		"""returns the list of options"""
+		"""Returns the list of options (list of strings)"""
+		conn = sqlite3.connect(DB_NAME)
+		cursor = conn.cursor()
+		cursor.execute("SELECT option FROM dropdown WHERE identifier=?", (self.identifier,))
+		options = cursor.fetchall()
+		conn.close()
+		return [i[0] for i in options]
 
 	def addOption(self, option):
-		"""add an option to the list of options"""
+		"""Adds an option to the list of options"""
+		if self._optionExists(option):
+			return
+		else:
+			conn = sqlite3.connect(DB_NAME)
+			cursor = conn.cursor()
+			cursor.execute("INSERT INTO dropdown VALUES (?, ?)", (self.identifier, option))
+			conn.commit()
+			conn.close()
 
 	def searchOption(self, string):
-		"""returns the list of options that could autocomplete the passed string"""
+		"""Returns the list of options that could autocomplete the passed string"""
+		options = self.getOptions()
+		possibleOptions = []
+		for option in options:
+			if option.startswith(string):
+				possibleOptions.append(option)
+		return possibleOptions
+
+	def _optionExists(self, option):
+		"""Returns true if the option exists"""
+		conn = sqlite3.connect(DB_NAME)
+		cursor = conn.cursor()
+		cursor.execute("SELECT * FROM dropdown WHERE identifier=? AND option=?", (self.identifier, option))
+		user = cursor.fetchone()
+		conn.close()
+		return user!=None
 
