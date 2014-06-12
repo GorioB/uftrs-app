@@ -1,38 +1,40 @@
 import sqlite3
 import datetime
-conn = sqlite3.connect("db.sqlite3")
-defaultLength=40
+DB_NAME = "db.sqlite3"
 class DataField:
 	def __init__(self,dataType=None,content=None):
 		self.dataType=dataType
 		self.content=content
 
+	def __str__(self):
+		return self.dataType+": "+self.content
+
 class DataEntry:
-	def __init__(self,identifier,status=None,needsRoot=None,pk=0,timestamp=None,notes=None,remarks=None):
+	def __init__(self,identifier,pk=0,timestamp=None,**kwargs):
 		self.identifier = identifier
-		if status:
-			self.status = status
-		else:
-			self.status = DataField("text","")
-		if needsRoot:
-			self.needsRoot = needsRoot
-		else:
-			self.needsRoot = DataField("text","False")
 		self.pk = pk
 		if timestamp:
-			self.timestamp=timestamp
+			self.timestamp=DataField("TEXT",timestamp)
 		else:
-			self.timestamp = DataField("text","None")
-		if notes:
-			self.notes=notes
-		else:
-			self.notes=DataField("text","None")
-		if remarks:
-			self.remarks = remarks
-		else:
-			self.remarks=DataField("text","None")
+			self.timestamp=DataField("TEXT","None")
+		for key,value in kwargs.items():
+			setattr(self,key,DataField("TEXT",value))
 
+		self.setIntegerFields("timestamp")
+
+	def updateFields(self,keyValuePair):
+		for i in keyValuePair:
+			setattr(self,i,DataField(keyValuePair[i][0],keyValuePair[i][1]))
+	
+	def setIntegerFields(self,*args):
+		for i in args:
+			self.updateFields({i:["INTEGER",vars(self)[i].content]})
+
+	def setRealFields(self,*args):
+		for i in args:
+			self.updateFields({i:["REAL",vars(self)[i].content]})
 	def createTable(self):
+		conn = sqlite3.connect(DB_NAME)
 		fields = [[i,vars(self)[i]] for i in vars(self) if i!="identifier" and i!='pk']
 		createQuery = "CREATE TABLE IF NOT EXISTS "+self.identifier+"(\n\tpk INTEGER PRIMARY KEY"
 		fieldsList=[]
@@ -44,18 +46,24 @@ class DataEntry:
 			c = conn.cursor()
 			c.execute(createQuery)
 			conn.commit()
+			conn.close()
 			return 0
 		except Exception,e:
 			print e
+			conn.close()
 			return 1
 
 	def checkIfExists(self,pk):
+		conn = sqlite3.connect(DB_NAME)
 		query = "SELECT COUNT(1) FROM "+self.identifier+" WHERE pk = "+str(pk)
 		c = conn.cursor()
 		c.execute(query)
-		return c.fetchone()[0]
+		rVal = c.fetchone()[0]
+		conn.close()
+		return rVal
 
 	def save(self):
+		conn = sqlite3.connect(DB_NAME)
 		c = conn.cursor()
 		if self.createTable():
 			return 1
@@ -72,6 +80,7 @@ class DataEntry:
 					self.pk = int(c.fetchone()[0])
 				except Exception, e:
 					print e
+					conn.close()
 					return 1
 			else:
 				query = "INSERT INTO "+self.identifier+" (pk,"+",".join([i[0] for i in fields])+") VALUES (?,"+",".join(["?" for i in fields])+");"
@@ -80,18 +89,62 @@ class DataEntry:
 					c.execute(query,vals)
 				except Exception,e:
 					print e
+					conn.close()
 					return 1
 		conn.commit()
+		conn.close()
 		return 0
 
 	def delete(self):
+		conn = sqlite3.connect(DB_NAME)
 		self.status = DataField("text","DELETED: "+str(datetime.datetime.now()))
 		query = "UPDATE "+self.identifier+" SET status=? WHERE pk="+str(self.pk)
 		c = conn.cursor()
 		c.execute(query,(self.status.content,))
 		conn.commit()
+		conn.close()
 		return 0
 
+	def __str__(self):
+		 return self.identifier+" Entry. pk = "+str(self.pk)
+
+def populateModel(model,fields,values):
+	m = model()#testvalue. Replace with actual models
+	for i in range(0,len(fields)):
+		vars(m)[fields[i][1]]=DataField(fields[i][2],values[i])
+	m.pk = int(m.pk.content)
+	return m
+
+def getEntry(pk,model):
+	conn = sqlite3.connect(DB_NAME)
+	m = model()#testvalue. Replace with actual models
+	c = conn.cursor()
+	query = "SELECT * FROM "+m.identifier+" WHERE pk=?;"
+	c.execute(query,(pk,))
+	vals = c.fetchone()
+	query = "PRAGMA table_info("+m.identifier+");"
+	c.execute(query)
+	columns = c.fetchall()
+	conn.close()
+	if vals:
+		return populateModel(model,columns,vals)
+	else:
+		return None
+
+def listEntries(model):
+	conn = sqlite3.connect(DB_NAME)
+	m = model()#testvalue. Replace with actual models
+	c = conn.cursor()
+	query = "SELECT * FROM "+m.identifier+";"
+	c.execute(query)
+	results = c.fetchall()
+	query = "PRAGMA table_info("+m.identifier+");"
+	c.execute(query)
+	columns=c.fetchall()
+	objectList = [populateModel(model,columns,i) for i in results]
+	conn.close()
+	return objectList
 
 if __name__=="__main__":
-	d = DataEntry("test",status=DataField("TEXT","PIE"))
+	#d = DataEntry("test",status=DataField("TEXT","PIE"))
+	e= listEntries(DataEntry)
