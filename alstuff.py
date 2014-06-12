@@ -8,7 +8,12 @@ class User(object):
 	def __init__(self, username, password):
 		self.username = username
 		self.password = password
-
+		# create user table if it doesn't exist
+		conn = sqlite3.connect(DB_NAME)
+		cursor = conn.cursor()
+		cursor.execute("CREATE TABLE IF NOT EXISTS users(username TEXT PRIMARY KEY, passwordHash TEXT, isRoot INTEGER)")
+		conn.commit()
+		conn.close()
 
 	def saveUser(self, isRoot=0):
 		"""Saves/updates the user into the database. Optional: pass a 0 or 1 to specify isRoot value (0 by default)"""
@@ -16,7 +21,6 @@ class User(object):
 		cursor = conn.cursor()
 		if isRoot!=0: isRoot=1
 
-		cursor.execute("CREATE TABLE IF NOT EXISTS users(username TEXT PRIMARY KEY, passwordHash TEXT, isRoot INTEGER)")
 		if self.userExists(self.username):
 			cursor.execute("UPDATE users SET username=?, passwordHash=?, isRoot=? WHERE username=?", 
 				(self.username, self.passwordHash, isRoot, self.username))
