@@ -20,23 +20,15 @@ class DataEntry:
 		for key,value in kwargs.items():
 			setattr(self,key,DataField("TEXT",value))
 
-		self._setIntegerFields("timestamp")
+		self._setFieldTypes("INTEGER","timestamp")
 
 	def addField(self,dataType,**kwargs):
 		for key,value in kwargs.items():
 			setattr(self,key,DataField(dataType,value))
 
-	def _updateFields(self,keyValuePair):
-		for i in keyValuePair:
-			setattr(self,i,DataField(keyValuePair[i][0],keyValuePair[i][1]))
-	
-	def _setIntegerFields(self,*args):
+	def _setFieldTypes(self,fieldType,*args):
 		for i in args:
-			self.updateFields({i:["INTEGER",vars(self)[i].content]})
-
-	def _setRealFields(self,*args):
-		for i in args:
-			self.updateFields({i:["REAL",vars(self)[i].content]})
+			setattr(self,i,DataField(fieldType,vars(self)[i].content))
 
 	def _createTable(self):
 		conn = sqlite3.connect(DB_NAME)
