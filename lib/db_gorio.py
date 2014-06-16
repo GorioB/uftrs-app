@@ -20,20 +20,17 @@ class DataEntry:
 		for key,value in kwargs.items():
 			setattr(self,key,DataField("TEXT",value))
 
-		self.setIntegerFields("timestamp")
+		self._setFieldTypes("INTEGER","timestamp")
 
-	def updateFields(self,keyValuePair):
-		for i in keyValuePair:
-			setattr(self,i,DataField(keyValuePair[i][0],keyValuePair[i][1]))
-	
-	def setIntegerFields(self,*args):
-		for i in args:
-			self.updateFields({i:["INTEGER",vars(self)[i].content]})
+	def addField(self,dataType,**kwargs):
+		for key,value in kwargs.items():
+			setattr(self,key,DataField(dataType,value))
 
-	def setRealFields(self,*args):
+	def _setFieldTypes(self,fieldType,*args):
 		for i in args:
-			self.updateFields({i:["REAL",vars(self)[i].content]})
-	def createTable(self):
+			setattr(self,i,DataField(fieldType,vars(self)[i].content))
+
+	def _createTable(self):
 		conn = sqlite3.connect(DB_NAME)
 		fields = [[i,vars(self)[i]] for i in vars(self) if i!="identifier" and i!='pk']
 		createQuery = "CREATE TABLE IF NOT EXISTS "+self.identifier+"(\n\tpk INTEGER PRIMARY KEY"
@@ -53,7 +50,7 @@ class DataEntry:
 			conn.close()
 			return 1
 
-	def checkIfExists(self,pk):
+	def _checkIfExists(self,pk):
 		conn = sqlite3.connect(DB_NAME)
 		query = "SELECT COUNT(1) FROM "+self.identifier+" WHERE pk = "+str(pk)
 		c = conn.cursor()
@@ -65,11 +62,18 @@ class DataEntry:
 	def save(self):
 		conn = sqlite3.connect(DB_NAME)
 		c = conn.cursor()
-		if self.createTable():
+		if self._createTable():
 			return 1
 		fields = [[i,vars(self)[i]] for i in vars(self) if i!='identifier' and i!='pk']
-		if self.checkIfExists(self.pk):
-			return 1
+		if self._checkIfExists(self.pk):
+			query = "UPDATE "+self.identifier+" SET "+",".join([i[0]+"=?" for i in fields])+" WHERE pk="+str(self.pk)
+			vals = [i[1].content for i in fields]
+			try:
+				c.execute(query,vals)
+			except Exception, e:
+				print e
+				conn.close()
+				return 1
 		else:
 			if not self.pk:
 				query = "INSERT INTO "+self.identifier+" ("+",".join([i[0] for i in fields])+") VALUES ("+",".join(["?" for i in fields])+");"
@@ -108,7 +112,7 @@ class DataEntry:
 	def __str__(self):
 		 return self.identifier+" Entry. pk = "+str(self.pk)
 
-def populateModel(model,fields,values):
+def _populateModel(model,fields,values):
 	m = model()#testvalue. Replace with actual models
 	for i in range(0,len(fields)):
 		vars(m)[fields[i][1]]=DataField(fields[i][2],values[i])
@@ -127,7 +131,7 @@ def getEntry(pk,model):
 	columns = c.fetchall()
 	conn.close()
 	if vals:
-		return populateModel(model,columns,vals)
+		return _populateModel(model,columns,vals)
 	else:
 		return None
 
@@ -141,7 +145,7 @@ def listEntries(model):
 	query = "PRAGMA table_info("+m.identifier+");"
 	c.execute(query)
 	columns=c.fetchall()
-	objectList = [populateModel(model,columns,i) for i in results]
+	objectList = [_populateModel(model,columns,i) for i in results]
 	conn.close()
 	return objectList
 

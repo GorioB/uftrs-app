@@ -15,8 +15,8 @@ class CashReceipt(DataEntry):
 
 		realFields=["amount"]
 
-		[self.setIntegerFields(i) for i in integerFields]
-		[self.setRealFields(i) for i in realFields]
+		[self._setFieldTypes("INTEGER",i) for i in integerFields]
+		[self._setFieldTypes("REAL",i) for i in realFields]
 
 if __name__=="__main__":
 	d = CashReceipt(payor="gorio",pk=1)
