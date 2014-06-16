@@ -37,9 +37,9 @@ class App(object):
 		if db2.User(username, oldpassword).auth():
 			changedUser = db2.User(username, newpassword)
 			if changedUser.checkIfRoot():
-				changedUser.saveUser()
-			else:
 				changedUser.saveUser(1)
+			else:
+				changedUser.saveUser(0)
 		else:
 			return -1
 
