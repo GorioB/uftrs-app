@@ -117,6 +117,14 @@ class DropDownMenu(object):
 			conn.commit()
 			conn.close()
 
+	def removeOption(self, option):
+		"""Removes an option from the list of options"""
+		conn = sqlite3.connect(DB_NAME)
+		cursor = conn.cursor()
+		cursor.execute("DELETE FROM dropdown WHERE identifier=? AND option=?", (self.identifier, option))
+		conn.commit()
+		conn.close()
+
 	def searchOption(self, string):
 		"""Returns the list of options that could autocomplete the passed string"""
 		options = self.getOptions()
