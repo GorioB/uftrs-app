@@ -23,7 +23,10 @@ class DataEntry:
 		else:
 			self.status=DataField("TEXT","")
 		for key,value in kwargs.items():
-			setattr(self,key,DataField("TEXT",value))
+			if value:
+				setattr(self,key,DataField("TEXT",value))
+			else:
+				setattr(self,key,DataField("TEXT",""))
 
 		self._setFieldTypes("INTEGER","timestamp")
 

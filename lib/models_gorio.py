@@ -61,7 +61,7 @@ class OME(DataEntry):
 class COCPNote(DataEntry):
 	def __init__(self,timestamp=None,pk=0,dateOfTransaction=None,event=None,
 		flowDirection=None,purpose=None,nature=None,amount=None,liquidatingPerson=None,
-		docNo=None,notes=None,remarks=None):
+		docNo=None,notes=None,remarks=None,noteNumber=None):
 		DataEntry.__init__(self,identifier="cocpnote",
 			pk=pk,
 			timestamp=timestamp,
@@ -74,17 +74,18 @@ class COCPNote(DataEntry):
 			liquidatingPerson=liquidatingPerson,
 			docNo=docNo,
 			notes=notes,
-			remarks=remarks)
+			remarks=remarks,
+			noteNumber=noteNumber)
 
 		integerFields=["dateOfTransaction"]
 		realFields=['amount']
 		[self._setFieldTypes("INTEGER",i) for i in integerFields]
 		[self._setFieldTypes("REAL",i) for i in realFields]
 
-class LTIOONote(DataEntry):
+class OONote(DataEntry):
 	def __init__(self,timestamp=None,pk=0,dateOfTransaction=None,purpose=None,
-		nature=None,amount=None,liquidatingPerson=None,docNo=None,notes=None,remarks=None):
-		DataEntry.__init__(self,identifier="ltioonote",
+		nature=None,noteNumber=None,amount=None,liquidatingPerson=None,docNo=None,notes=None,remarks=None):
+		DataEntry.__init__(self,identifier="oonote",
 			pk=pk,
 			timestamp=timestamp,
 			dateOfTransaction=dateOfTransaction,
@@ -94,12 +95,38 @@ class LTIOONote(DataEntry):
 			liquidatingPerson=liquidatingPerson,
 			docNo=docNo,
 			notes=notes,
-			remarks=remarks)
+			remarks=remarks,
+			noteNumber=noteNumber)
 
 		integerFields=["dateOfTransaction"]
 		realFields=["amount"]
 		[self._setFieldTypes("INTEGER",i) for i in integerFields]
 		[self._setFieldTypes("REAL",i) for i in realFields]
+
+class LTINote(DataEntry):
+	def __init__(self,timestamp=None,pk=0,dateOfTransaction=None,purpose=None,
+		nature=None,noteNumber=None,amount=None,liquidatingPerson=None,docNo=None,notes=None,remarks=None):
+		DataEntry.__init__(self,identifier="ltinote",
+			pk=pk,
+			timestamp=timestamp,
+			dateOfTransaction=dateOfTransaction,
+			purpose=purpose,
+			nature=nature,
+			amount=amount,
+			liquidatingPerson=liquidatingPerson,
+			docNo=docNo,
+			notes=notes,
+			remarks=remarks,
+			noteNumber=noteNumber)
+
+		integerFields=["dateOfTransaction"]
+		realFields=["amount"]
+		[self._setFieldTypes("INTEGER",i) for i in integerFields]
+		[self._setFieldTypes("REAL",i) for i in realFields]
+
+class ODNote(DataEntry):
+	def __init__(self,timestamp=None,description=None,remarks=None,pk=0,noteNumber=None):
+		DataEntry.__init__(self,identifier="odnote",timestamp=timestamp,description=description,remarks=remarks,pk=pk,noteNumber=noteNumber)
 
 class AppProperty(DataEntry):
 	def __init__(self,pk=0,label=None,value=None,timestamp=None):
@@ -116,7 +143,8 @@ class CashFlow(DataEntry):
 		MODELS_DICT = {'cashreceipt':CashReceipt,
 		'cashdisbursment':CashDisbursment,'oal':OAL,
 		'ome':OME,'cocpnote':COCPNote,
-		'ltionote':LTIOONote,'property':AppProperty}
+		'ltinote':LTINote,'property':AppProperty,'odnote':ODNote,
+		'oonote':OONote,'cocpnote':COCPNote}
 		if self.source:
 			source = self.source.content.split(":")
 			return getEntry(source[1],MODELS_DICT[source[0]])		
