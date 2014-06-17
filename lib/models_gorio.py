@@ -105,6 +105,10 @@ class LTIOONote(DataEntry):
 		realFields=["amount"]
 		[self._setFieldTypes("INTEGER",i) for i in integerFields]
 		[self._setFieldTypes("REAL",i) for i in realFields]
+
+class AppProperty(DataEntry):
+	def __init__(self,pk=0,label=None,value=None,timestamp=None):
+		DataEntry.__init__(self,identifier="dataentry",pk=pk,label=label,value=value,timestamp=timestamp)
 		
 if __name__=="__main__":
 	d = CashReceipt(payor="gorio",pk=1)
