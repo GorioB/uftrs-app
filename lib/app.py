@@ -63,3 +63,42 @@ class App(object):
 	def removeOption(identifier, option):
 		"""Removes an option from the list of options"""
 		db2.DropDownMenu(identifier).removeOption(option)
+
+	#DB API FUNCTIONS
+	#NEW
+	def newCashReceipt(self,**kwargs):
+		pass
+	def newCashDisbursment(self,**kwargs):
+		pass
+	def newOAL(self,**kwargs):
+		pass
+	def newOME(self,**kwargs):
+		pass
+	def newNote(self,**kwargs):
+		pass
+	#EDIT
+	def editCashReceipt(self,**kwargs):
+		pass
+	def editCashDisbursment(self,**kwargs):
+		pass
+	def editOAL(self,**kwargs):
+		pass
+	def editOME(self,**kwargs):
+		pass
+	def editNote(self,**kwargs):
+		pass
+	def editCashflow(self,**kwargs):
+		pass
+	#LIST
+	def listCashReceipts(self,**kwargs):
+		pass
+	def listCashDisbursments(self,**kwargs):
+		pass
+	def listOALs(self,**kwargs):
+		pass
+	def listOMEs(self,**kwargs):
+		pass
+	def listNotes(self,**kwargs):
+		pass
+	def listCashflows(self,**kwargs):
+		pass
