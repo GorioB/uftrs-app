@@ -10,13 +10,17 @@ class DataField:
 		return self.dataType+": "+self.content
 
 class DataEntry:
-	def __init__(self,identifier,pk=0,timestamp=None,**kwargs):
+	def __init__(self,identifier,pk=0,timestamp=None,status=None,**kwargs):
 		self.identifier = identifier
 		self.pk = pk
 		if timestamp:
 			self.timestamp=DataField("TEXT",timestamp)
 		else:
 			self.timestamp=DataField("TEXT","None")
+		if status:
+			self.status = DataField("TEXT",status)
+		else:
+			self.status=DataField("TEXT","")
 		for key,value in kwargs.items():
 			setattr(self,key,DataField("TEXT",value))
 
@@ -99,9 +103,12 @@ class DataEntry:
 		conn.close()
 		return 0
 
-	def delete(self):
+	def delete(self,edit=0):
 		conn = sqlite3.connect(DB_NAME)
-		self.status = DataField("text","DELETED: "+str(datetime.datetime.now()))
+		if not edit:
+			self.status = DataField("TEXT","DELETED: "+str(datetime.datetime.now()))
+		else:
+			self.status = DataField("TEXT","EDITED: "+str(datetime.datetime.now()))
 		query = "UPDATE "+self.identifier+" SET status=? WHERE pk="+str(self.pk)
 		c = conn.cursor()
 		c.execute(query,(self.status.content,))

@@ -18,5 +18,93 @@ class CashReceipt(DataEntry):
 		[self._setFieldTypes("INTEGER",i) for i in integerFields]
 		[self._setFieldTypes("REAL",i) for i in realFields]
 
+class Disbursment(DataEntry):
+	def __init__(self,timestamp=None,dateOfTransaction=None,category=None,
+		event=None,purpose=None,nature=None,amount=None,liquidatingPerson=None,
+		docNo=None,notes=None,remarks=None,pk=0):
+		DataEntry.__init__(self,identifier="disbursment",pk=pk,timestamp=timestamp,
+			dateOfTransaction=dateOfTransaction,category=category,
+			event=event,purpose=purpose,nature=nature,amount=amount,liquidatingPerson=liquidatingPerson,
+			docNo=docNo,notes=notes,remarks=remarks)
+
+		integerFields=["dateOfTransaction"]
+		realFields=["amount"]
+		[self._setFieldTypes("INTEGER",i) for i in integerFields]
+		[self._setFieldTypes("REAL",i) for i in realFields]
+
+class OAL(DataEntry):
+	def __init__(self,timestamp=None,OALType=None,category=None,details=None,pk=0):
+		DataEntry.__init__(self,identifier="oal",timestamp=timestamp,OALType=OALType,category=category,details=details,pk=pk)
+
+class OME(DataEntry):
+	def __init__(self,timestamp=None,dateOfTransaction=None,purpose=None,nature=None,
+		amount=None,liquidatingPerson=None,receiptNumber=None,notes=None,remarks=None,pk=0):
+		DataEntry.__init__(self,identifier="ome",
+			timestamp=timestamp,
+			dateOfTransaction=dateOfTransaction,
+			purpose=purpose,
+			nature=nature,
+			amount=amount,
+			liquidatingPerson=liquidatingPerson,
+			receiptNumber=receiptNumber,
+			notes=notes,
+			remarks=remarks,
+			pk=pk)
+
+		integerFields=["dateOfTransaction"]
+		realFields=["amount"]
+		[self._setFieldTypes("INTEGER",i) for i in integerFields]
+		[self._setFieldTypes("REAL",i) for i in realFields]
+
+class CashFlow(DataEntry):
+	def __init__(self,source=None,note=None,pk=0):
+		DataEntry.__init__(self,identifier="cashflow",
+			pk=pk,
+			source=source,
+			note=note)
+
+class COCPNote(DataEntry):
+	def __init__(self,timestamp=None,pk=0,dateOfTransaction=None,event=None,
+		flowDirection=None,purpose=None,nature=None,amount=None,liquidatingPerson=None,
+		docNo=None,notes=None,remarks=None):
+		DataEntry.__init__(self,identifier="cocpnote",
+			pk=pk,
+			timestamp=timestamp,
+			dateOfTransaction=dateOfTransaction,
+			event=event,
+			flowDirection=flowDirection,
+			purpose=purpose,
+			nature=nature,
+			amount=amount,
+			liquidatingPerson=liquidatingPerson,
+			docNo=docNo,
+			notes=notes,
+			remarks=remarks)
+
+		integerFields=["dateOfTransaction"]
+		realFields=['amount']
+		[self._setFieldTypes("INTEGER",i) for i in integerFields]
+		[self._setFieldTypes("REAL",i) for i in realFields]
+
+class LTIOONote(DataEntry):
+	def __init__(self,timestamp=None,pk=0,dateOfTransaction=None,purpose=None,
+		nature=None,amount=None,liquidatingPerson=None,docNo=None,notes=None,remarks=None):
+		DataEntry.__init__(self,identifier="ltioonote",
+			pk=pk
+			timestamp=timestamp,
+			dateOfTransaction=dateOfTransaction,
+			purpose=purpose,
+			nature=nature,
+			amount=amount,
+			liquidatingPerson=liquidatingPerson,
+			docNo=docNo,
+			notes=notes,
+			remarks=remarks)
+
+		integerFields=["dateOfTransaction"]
+		realFields=["amount"]
+		[self._setFieldTypes("INTEGER",i) for i in integerFields]
+		[self._setFieldTypes("REAL",i) for i in realFields]
+		
 if __name__=="__main__":
 	d = CashReceipt(payor="gorio",pk=1)
