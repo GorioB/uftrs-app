@@ -21,7 +21,7 @@ import db2
 
 class App(object):
 	"""Main app class that exposes methods for the GUI module to access"""
-	def __init__(self, arg):
+	def __init__(self):
 		self._activeUser = db2.User("dummy", "dummy")
 
 	def createUser(self, username, password, isRoot):
@@ -48,18 +48,18 @@ class App(object):
 		self._activeUser = db2.User(username, password)
 		return self._activeUser.auth()
 
-	def listOptions(identifier):
+	def listOptions(self, identifier):
 		"""Returns a list of options (list of strings) for the given identifier e.g. 'payors'"""
 		return db2.DropDownMenu(identifier).getOptions()
 
-	def searchOption(identifier, option):
+	def searchOption(self, identifier, option):
 		"""Returns a list of options (list of strings) that can complete the passed option"""
 		return db2.DropDownMenu(identifier).searchOption(option)
 
-	def addOption(identifier, option):
+	def addOption(self, identifier, option):
 		"""Adds an option to the list of options"""
 		db2.DropDownMenu(identifier).addOption(option)
 
-	def removeOption(identifier, option):
+	def removeOption(self, identifier, option):
 		"""Removes an option from the list of options"""
 		db2.DropDownMenu(identifier).removeOption(option)
