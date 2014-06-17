@@ -18,7 +18,8 @@
 # 	removeOption(identifier, option)
 
 import db2
-
+from models_gorio import *
+import timeFuncs
 class App(object):
 	"""Main app class that exposes methods for the GUI module to access"""
 	def __init__(self):
@@ -66,10 +67,26 @@ class App(object):
 
 	#DB API FUNCTIONS
 	#NEW
-	def newCashReceipt(self,**kwargs):
-		pass
-	def newCashDisbursment(self,**kwargs):
-		pass
+	def newCashReceipt(self,dateOfTransaction,category,nature,
+		amount,payor,receiptNumber,notes):
+		c = CashReceipt(dateOfTransaction=dateOfTransaction,
+			category=category,nature=nature,
+			amount=amount,payor=payor,receiptNumber=receiptNumber,notes=notes,
+			timestamp=timeFuncs.getEpochTime())
+		if c.save(): return 1
+		cf = CashFlow(source=c.identifier+":"+str(c.pk))
+		cf.save(): return 1
+		return 0
+
+	def newCashDisbursment(self,dateOfTransaction,category,event,purpose,nature,
+		amount,liquidatingPerson,docNo,notes):
+		cd = CashDisbursment(dateOfTransaction=dateOfTransaction,category=category,
+			event=event,purpose=purpose,nature=nature,amount=amount,liquidatingPerson=liquidatingPerson,
+			docNo=docNo,notes=notes,timestamp=timefuncs.getEpochTime())
+
+		if cd.save():return 1
+		return 0
+
 	def newOAL(self,**kwargs):
 		pass
 	def newOME(self,**kwargs):

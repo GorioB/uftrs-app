@@ -1,7 +1,7 @@
 import sqlite3
 import hashlib
 
-DB_NAME = "dbName"
+DB_NAME = "db.sqlite3"
 
 class User(object):
 	"""docstring for User. Database table name is users"""

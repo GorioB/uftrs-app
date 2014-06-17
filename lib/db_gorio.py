@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+import inspect
 DB_NAME = "db.sqlite3"
 class DataField:
 	def __init__(self,dataType=None,content=None):
@@ -106,9 +107,9 @@ class DataEntry:
 	def delete(self,edit=0):
 		conn = sqlite3.connect(DB_NAME)
 		if not edit:
-			self.status = DataField("TEXT","DELETED: "+str(datetime.datetime.now()))
+			self.status = DataField("TEXT","DELETED")
 		else:
-			self.status = DataField("TEXT","EDITED: "+str(datetime.datetime.now()))
+			self.status = DataField("TEXT","EDITED")
 		query = "UPDATE "+self.identifier+" SET status=? WHERE pk="+str(self.pk)
 		c = conn.cursor()
 		c.execute(query,(self.status.content,))
@@ -144,7 +145,7 @@ def getEntry(pk,model):
 
 def listEntries(model):
 	conn = sqlite3.connect(DB_NAME)
-	m = model()#testvalue. Replace with actual models
+	m = model()
 	c = conn.cursor()
 	query = "SELECT * FROM "+m.identifier+";"
 	c.execute(query)
