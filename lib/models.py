@@ -1,4 +1,4 @@
-from db_gorio import *
+from db import *
 
 
 class CashReceipt(DataEntry):

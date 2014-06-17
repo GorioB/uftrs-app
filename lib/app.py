@@ -18,7 +18,7 @@
 # 	removeOption(identifier, option)
 
 import db2
-from models_gorio import *
+from models import *
 import timeFuncs
 class App(object):
 	"""Main app class that exposes methods for the GUI module to access"""
