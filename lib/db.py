@@ -11,7 +11,7 @@ class DataField:
 		return self.dataType+": "+self.content
 
 class DataEntry:
-	def __init__(self,identifier,pk=0,timestamp=None,status=None,**kwargs):
+	def __init__(self,identifier,pk=0,timestamp=None,status=None,remarks=None,**kwargs):
 		self.identifier = identifier
 		self.pk = pk
 		if timestamp:
@@ -22,6 +22,10 @@ class DataEntry:
 			self.status = DataField("TEXT",status)
 		else:
 			self.status=DataField("TEXT","")
+		if remarks:
+			self.remarks=DataField("TEXT",remarks)
+		else:
+			self.remarks=DataField("TEXT","")
 		for key,value in kwargs.items():
 			if value:
 				setattr(self,key,DataField("TEXT",value))
@@ -38,7 +42,7 @@ class DataEntry:
 		for i in args:
 			setattr(self,i,DataField(fieldType,vars(self)[i].content))
 
-	def _createTable(self):
+	def createTable(self):
 		conn = sqlite3.connect(DB_NAME)
 		fields = [[i,vars(self)[i]] for i in vars(self) if i!="identifier" and i!='pk']
 		createQuery = "CREATE TABLE IF NOT EXISTS "+self.identifier+"(\n\tpk INTEGER PRIMARY KEY"
@@ -70,7 +74,7 @@ class DataEntry:
 	def save(self):
 		conn = sqlite3.connect(DB_NAME)
 		c = conn.cursor()
-		if self._createTable():
+		if self.createTable():
 			return 1
 		fields = [[i,vars(self)[i]] for i in vars(self) if i!='identifier' and i!='pk']
 		if self._checkIfExists(self.pk):

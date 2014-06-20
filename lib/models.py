@@ -147,6 +147,10 @@ class CashFlow(DataEntry):
 		'oonote':OONote,'cocpnote':COCPNote}
 		if self.source:
 			source = self.source.content.split(":")
-			return getEntry(source[1],MODELS_DICT[source[0]])		
+			return getEntry(source[1],MODELS_DICT[source[0]])
+
+for i in [CashReceipt,CashDisbursment,OAL,OME,COCPNote,OONote,LTINote,ODNote,AppProperty,CashFlow]:
+	a = i()
+	a.createTable()		
 if __name__=="__main__":
 	d = CashReceipt(payor="gorio",pk=1)
