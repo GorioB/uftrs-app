@@ -24,6 +24,7 @@ class App(object):
 	"""Main app class that exposes methods for the GUI module to access"""
 	def __init__(self):
 		self._activeUser = db2.User("dummy", "dummy")
+		self._initTables()
 
 	def createUser(self, username, password, isRoot):
 		"""Creates a new user if username isn't taken, otherwise returns -1. isRoot value should be 0 or 1"""
@@ -66,117 +67,82 @@ class App(object):
 		db2.DropDownMenu(identifier).removeOption(option)
 
 	#DB API FUNCTIONS
+	#initTables
+	def _initTables(self):
+		for i in [CashReceipt,CashDisbursment,OAL,OME,COCPNote,OONote,LTINote,ODNote,AppProperty,CashFlow]:
+			a = i()
+			a.createTable()	
 	#NEW
-	def newCashReceipt(self,dateOfTransaction,category,nature,
-		amount,payor,receiptNumber,notes):
-		c = CashReceipt(dateOfTransaction=dateOfTransaction,
-			category=category,nature=nature,
-			amount=amount,payor=payor,receiptNumber=receiptNumber,notes=notes,
-			timestamp=timeFuncs.getEpochTime())
+	def newCashReceipt(self,**kwargs):
+		c = CashReceipt(**kwargs)
 		if c.save(): return 1
-		cf = CashFlow(source=c.identifier+":"+str(c.pk),timestamp=timeFuncs.getEpochTime())
+		cf = CashFlow(source=c.identifier+":"+str(c.pk.content))
 		return cf.save()
 
-	def newCashDisbursment(self,dateOfTransaction,category,event,purpose,nature,
-		amount,liquidatingPerson,docNo,notes):
-		cd = CashDisbursment(dateOfTransaction=dateOfTransaction,category=category,
-			event=event,purpose=purpose,nature=nature,amount=amount,liquidatingPerson=liquidatingPerson,
-			docNo=docNo,notes=notes,timestamp=timeFuncs.getEpochTime())
+	def newCashDisbursment(self,**kwargs):
+		return CashDisbursment(**kwargs).sav()
 
-		return cd.save()
 
-	def newOAL(self,OALType,details,category=None):
-		oal= OAL(timestamp=timeFuncs.getEpochTime(),
-			OALType=OALType,
-			details=details,
-			category=categor)
-		return oal.save()
+	def newOAL(self,**kwargs):
+		return OAL(**kwargs).save()
 
-	def newOME(self,dateOfTransaction,purpose,nature,amount,liquidatingPerson,receiptNumber,notes):
-		ome = OME(dateOfTransaction=dateOfTransaction,
-			purpose=purpose,
-			nature=nature,
-			amount=amount,
-			liquidatingPerson=liquidatingPerson,
-			receiptNumber=receiptNumber,
-			notes=notes,
-			timestamp=timeFuncs.getEpochTime())
+	def newOME(self,**kwargs):
+		ome = OME(**kwargs)
 		if ome.save():return 1
-		cf = CashFlow(source=ome.identifier+":"+str(ome.pk),timestamp = timeFuncs.getEpochTime())
+		cf = CashFlow(source=ome.identifier+":"+str(ome.pk.content))
 		if cf.save(): return 1
 		return 0
 
-	def newNote(self,noteType,noteNumber,dateOfTransaction=None,purpose=None,nature=None,amount=None,liquidatingPerson=None,docNo=None,notes=None,event=None,flowDirection=None,description=None):
-		if noteType=='od':
-			note = ODNote(timestamp=timeFuncs.getEpochTime(),
-				description=description,noteNumber=noteNumber)
+	def newNote(self,noteType,noteNumber,**kwargs):
+		if noteType=='ODNote':
+			note = ODNote(**kwargs)
 			note.save()
-		elif noteType=='lti':
-			note = LTINote(timestamp=timeFuncs.getEpochTime(),dateOfTransaction=dateOfTransaction,
-				purpose=purpose,
-				nature=nature,
-				amount=amount,
-				liquidatingPerson=liquidatingPerson,
-				docNo=docNo,
-				notes=notes,
-				noteNumber=noteNumber)
+		elif noteType=='LTINote':
+			note = LTINote(**kwargs)
 			if note.save(): return 1
-			cf = CashFlow(source=note.identifier+":"+str(note.pk),note=noteNumber,timestamp=timeFuncs.getEpochTime())
+			cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 			if cf.save(): return 1
-		elif noteType=='oo':
-			note = OONote(timestamp=timeFuncs.getEpochTime(),dateOfTransaction=dateOfTransaction,
-				purpose=purpose,
-				nature=nature,
-				amount=amount,
-				liquidatingPerson=liquidatingPerson,
-				docNo=docNo,
-				notes=notes,
-				noteNumber=noteNumber)
+		elif noteType=='OONote':
+			note = OONote(**kwargs)
 			if note.save(): return 1
-			cf = CashFlow(source=note.identifier+":"+str(note.pk),note=noteNumber,timestamp=timeFuncs.getEpochTime())
+			cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 			if cf.save(): return 1
-		elif noteType=='cocp':
-			note = COCPNote(timestamp=timeFuncs.getEpochTime(),
-				dateOfTransaction=dateOfTransaction,
-				event=event,
-				flowDirection=flowDirection,
-				purpose=purpose,
-				nature=nature,
-				amount=amount,
-				liquidatingPerson=liquidatingPerson,
-				docNo=docNo,
-				notes=notes,
-				noteNumber=noteNumber)
+		elif noteType=='COCPNote':
+			note = COCPNote(**kwargs)
 			if note.save(): return 1
 			if flowDirection=="Outflow":
-				cf = CashFlow(source=note.identifier+":"+str(note.pk),note=noteNumber,timestmap=timeFuncs.getEpochTime())
+				cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 			else:
 				cfList = listEntries(CashFlow)
 				inflowHit = [i for i in cfList if i.getContents().nature.content==note.nature.content]
 				if inflowHit:
 					inflowHit=inflowHit[0]
-					inflowHit.addField("TEXT",note=(inflowHit.note.content+','+str(noteNumber)).strip(","))
+					inflowHit.note.set((inflowHit.note.content+","+str(noteNumber)).strip(","))
+					#inflowHit.addField("TEXT",note=(inflowHit.note.content+','+str(noteNumber)).strip(","))
 					inflowHit.save()
 		else:
 			return 1
 		return 0
 
 	#EDIT
-	def _getCashFlow(model,pk):
-		return [i for i in listEntries(CashFlow) if i.source.content==model.identifier+":"+pk]
+	def _getCashFlow(self,model,pk):
+		return [i for i in listEntries(CashFlow) if i.source.content==model.__name__+":"+str(pk)]
 
 
 	def _editEntry(self,model,pk,**kwargs):
 		m = getEntry(pk,model)
 		m.delete()
-		oldpk=m.pk
-		m.pk=0
-		m.addField("TEXT",remarks=(str(m.remarks.content)+";Edited from: "+str(oldpk)).strip(';')+";",status="")
-		m.addField("INTEGER",timestamp=timeFuncs.getEpochTime())
+		oldpk=m.pk.content
+		m.pk.set(0)
+		m.remarks.set((m.remarks.content+";Edited from:"+str(oldpk)).strip(";")+";")
+		#m.addField("TEXT",remarks=(str(m.remarks.content)+";Edited from: "+str(oldpk)).strip(';')+";",status="")
+		#m.addField("INTEGER",timestamp=timeFuncs.getEpochTime())
+		m.status.set("")
+		m.timestamp.set(timeFuncs.getEpochTime())
 		for key,value in kwargs.items():
 			setattr(m,key,DataField("TEXT",value))
 		if m.save(): return (-1,-1)
-		return oldpk,m.pk
+		return oldpk,m.pk.content
 
 	def editCashReceipt(self,pk,**kwargs):
 		oldpk,newpk = self._editEntry(CashReceipt,pk,**kwargs)
@@ -184,7 +150,8 @@ class App(object):
 			return 1
 		cashFlows = self._getCashFlow(CashReceipt,pk)
 		for cashFlow in cashFlows:
-			cashFlow.addField("TEXT",source="cashreceipt:"+str(newpk))
+			cashFlow.source.set("CashReceipt:"+str(newpk))
+			#cashFlow.addField("TEXT",source="cashreceipt:"+str(newpk))
 			return cashFlow.save()
 
 		return 0
@@ -201,23 +168,26 @@ class App(object):
 		oldpk,newpk = self._editEntry(OME,pk,**kwargs)
 		cashFlows = self._getCashFlow(OME,pk)
 		for cashFlow in cashFlows:
-			cashFlow.addField("TEXT",source="ome:"+str(newpk))
+			cashFlow.source.set("OME:"+str(newpk))
+			#cashFlow.addField("TEXT",source="ome:"+str(newpk))
 			return cashFlow.save()
 		return 0
 
 	def editNote(self,notetype,pk,**kwargs):
-		modelOptions={'od':ODNote,'lti':LTINote,'cocp':COCPNote,'oo':OONote}
+		modelOptions={'ODNote':ODNote,'LTINote':LTINote,'COCPNote':COCPNote,'OONote':OONote}
 		if 'noteNumber' in kwargs.keys():
 			note = getEntry(pk,modelOptions[notetype])
 			oldNoteNumber = note.noteNumber.content
 			cashFlowList = [i for i in listEntries(CashFlow) if oldNoteNumber in i.note.content]
 			for i in cashFlowList:
-				i.addField("TEXT",note=i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
+				i.note.set(i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
+				#i.addField("TEXT",note=i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
 				i.save()
 		oldpk,newpk = self._editEntry(modelOptions['notetype'],pk,**kwargs)
 		cashFlowList = [i for i in listEntries(CashFlow) if i.source.content==notetype+"note:"+str(oldpk)]
 		for i in cashFlowList:
-			i.addField("TEXT",source=notetype+":"+str(newpk))
+			i.source.set(notetype+":"+str(newpk))
+			#i.addField("TEXT",source=notetype+":"+str(newpk))
 			i.save()
 		return 0
 
@@ -285,7 +255,8 @@ class App(object):
 		if not notes:
 			relatedCashFlows = [i for i in listEntries(CashFlow) if a.noteNumber.content in i.note]
 			for i in relatedCashFlows:
-				i.addField("TEXT",note=i.note.content.replace(a.noteNumber.content,'').replace(",,",','))
+				i.note.set(i.note.content.replace(a.noteNumber.content,'').replace(",,",','))
+				#i.addField("TEXT",note=i.note.content.replace(a.noteNumber.content,'').replace(",,",','))
 				i.save()
 	@property
 	def timeFrame(self):
