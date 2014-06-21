@@ -17,7 +17,7 @@ class DataEntry:
 		if timestamp:
 			self.timestamp=DataField("TEXT",timestamp)
 		else:
-			self.timestamp=DataField("TEXT","None")
+			self.timestamp=DataField("INTEGER","0")
 		if status:
 			self.status = DataField("TEXT",status)
 		else:
@@ -32,7 +32,6 @@ class DataEntry:
 			else:
 				setattr(self,key,DataField("TEXT",""))
 
-		self._setFieldTypes("INTEGER","timestamp")
 
 	def addField(self,dataType,**kwargs):
 		for key,value in kwargs.items():

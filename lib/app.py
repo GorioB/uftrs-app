@@ -287,3 +287,15 @@ class App(object):
 			for i in relatedCashFlows:
 				i.addField("TEXT",note=i.note.content.replace(a.noteNumber.content,'').replace(",,",','))
 				i.save()
+	@property
+	def timeFrame(self):
+		tFrame = [i for i in listEntries(AppProperty) if i.label.content=="timeStart"]+[i for i in listEntries(AppProperty) if i.label.content=="timeEnd"]
+		if len(tFrame)==2:
+			return (int(tFrame[0].value.content),int(tFrame[1].value.content))
+		else:
+			return (0,-1)
+
+	@timeFrame.setter
+	def timeFrame(self,timeRange):
+		tStart = AppProperty(label="timeStart",value=timeRange[0]).save()
+		tEnd = AppProperty(label="timeEnd",value=timeRange[1]).save()

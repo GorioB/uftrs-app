@@ -133,11 +133,12 @@ class AppProperty(DataEntry):
 		DataEntry.__init__(self,identifier="property",pk=pk,label=label,value=value,timestamp=timestamp)
 
 class CashFlow(DataEntry):
-	def __init__(self,source=None,note=None,pk=0):
+	def __init__(self,source=None,note=None,pk=0,timestamp=None):
 		DataEntry.__init__(self,identifier="cashflow",
 			pk=pk,
 			source=source,
-			note=note)
+			note=note,
+			timestamp=timestamp)
 
 	def getContents(self):
 		MODELS_DICT = {'cashreceipt':CashReceipt,
