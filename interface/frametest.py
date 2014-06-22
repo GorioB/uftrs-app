@@ -21,7 +21,7 @@ class Application(Frame):
 		preferencesMenu.add_command(label="Settings")
 		menubar.add_cascade(label="User",menu=usersMenu)
 		menubar.add_cascade(label="Preferences",menu=preferencesMenu)
-		menubar.add_command(label="About")
+		menubar.add_command(label="About",command=self.clickAbout)
 
 		#panedwindow
 		# p = Panedwindow(self.parent,orient=HORIZONTAL)
@@ -63,6 +63,18 @@ class Application(Frame):
 		listFrame.pack(fill=BOTH,expand=1)
 		for i in range(0,500):
 			listBox.insert(END,i)
+
+	def clickAbout(self):
+		toplevel = Toplevel(height=150,width=300)
+		toplevel.title("About")
+		msg = Message(toplevel,text="This is a popup message.")
+		msg.pack(fill=BOTH,expand=1)
+		msg.pack_propagate(0)
+		button = Button(toplevel,text="OK",command=toplevel.destroy)
+		button.pack()
+		button.pack_propagate(0)
+		toplevel.pack_propagate(0)
+
 
 if __name__=="__main__":
 	root = Tk()
