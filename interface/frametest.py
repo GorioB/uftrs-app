@@ -23,17 +23,6 @@ class Application(Frame):
 		menubar.add_cascade(label="Preferences",menu=preferencesMenu)
 		menubar.add_command(label="About",command=self.clickAbout)
 
-		#panedwindow
-		# p = Panedwindow(self.parent,orient=HORIZONTAL)
-		# lf1 = Labelframe(p,text="Pane1")
-		# lf2 = Labelframe(p,text="Pane2")
-		# p.add(lf1,weight=60)
-		# p.add(lf2,weight=40)
-		# p.pack(fill=BOTH,expand=1)
-		# p.pack_propagate(0)
-		# lf1.pack_propagate(0)
-		# lf2.pack_propagate(0)
-
 		#notebook
 		n = Notebook(self.parent)
 		f1 = Frame(n)
@@ -43,7 +32,7 @@ class Application(Frame):
 		n.pack(fill=BOTH,expand=1)
 		n.pack_propagate(0)
 
-		#listbox
+		#panedwindow
 		p = Panedwindow(f1,orient=HORIZONTAL)
 		lf1=LabelFrame(p,text="Pane1")
 		lf2=Labelframe(p,text="Pane2")
@@ -54,6 +43,7 @@ class Application(Frame):
 		lf1.pack_propagate(0)
 		lf2.pack_propagate(0)
 
+		#listbox
 		listFrame = Frame(lf1)
 		scrollBar = Scrollbar(listFrame,orient=VERTICAL)
 		listBox = Listbox(listFrame,yscrollcommand=scrollBar.set)
@@ -65,13 +55,13 @@ class Application(Frame):
 			listBox.insert(END,i)
 
 	def clickAbout(self):
-		toplevel = Toplevel(height=150,width=300)
+		toplevel = Toplevel(height=100,width=200)
 		toplevel.title("About")
-		msg = Message(toplevel,text="This is a popup message.")
-		msg.pack(fill=BOTH,expand=1)
+		msg = Label(toplevel,text="This is a popup message.",anchor="center")
+		msg.pack(side=TOP,fill=BOTH,expand=1)
 		msg.pack_propagate(0)
 		button = Button(toplevel,text="OK",command=toplevel.destroy)
-		button.pack()
+		button.pack(side=TOP)
 		button.pack_propagate(0)
 		toplevel.pack_propagate(0)
 

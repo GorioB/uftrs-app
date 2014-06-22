@@ -91,7 +91,8 @@ class DataEntry:
 			try:
 				c.execute(query,vals)
 			except Exception, e:
-				print conn.close()
+				print e
+				conn.close()
 				return 1
 		else:
 			if not self.pk.content:
