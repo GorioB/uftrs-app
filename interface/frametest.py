@@ -57,9 +57,9 @@ class Application(Frame):
 
 		#add some datafield boxes
 		for i in range(0,3):
-			dfb = DataFieldBox(lf2)
+			dfb = DataFieldBox(lf2,label=str(i))
+			dfb.text="eels"
 			dfb.pack(expand=False,fill=None)
-			dfb.pack_propagate(0)
 
 	def clickAbout(self):
 		toplevel = Toplevel(height=100,width=200)
