@@ -1,6 +1,7 @@
 #TKINTER UI TESTS
 from Tkinter import *
 from ttk import *
+from dataField import DataFieldBox
 class Application(Frame):
 	def __init__(self,parent):
 		Frame.__init__(self,parent)
@@ -53,6 +54,12 @@ class Application(Frame):
 		listFrame.pack(fill=BOTH,expand=1)
 		for i in range(0,500):
 			listBox.insert(END,i)
+
+		#add some datafield boxes
+		for i in range(0,3):
+			dfb = DataFieldBox(lf2)
+			dfb.pack(expand=False,fill=None)
+			dfb.pack_propagate(0)
 
 	def clickAbout(self):
 		toplevel = Toplevel(height=100,width=200)
