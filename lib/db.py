@@ -2,6 +2,7 @@ import inspect
 import sqlite3
 from timeFuncs import getEpochTime
 DB_NAME=("db.sqlite3")
+
 class DataField:
 	def __init__(self,dataType,content):
 		self.dataType=dataType
@@ -12,8 +13,6 @@ class DataField:
 
 	def __repr__(self):
 		return str(self.content)
-class Binosaur:
-	saur=3
 
 class TextField(DataField):
 	def __init__(self,content=""):
@@ -99,7 +98,6 @@ class DataEntry:
 				query = "INSERT INTO "+self.identifier+" ("+",".join([i[0] for i in fields if i[0]!='pk'])+") VALUES ("+",".join(["?" for i in fields if i[0]!='pk'])+");"
 				vals = [i[1].content for i in fields if i[0]!='pk']
 				try:
-					
 					c.execute(query,vals)
 					c.execute("SELECT last_insert_rowid();")
 					self.pk.set(int(c.fetchone()[0]))
@@ -112,7 +110,6 @@ class DataEntry:
 				query = query+"("+",".join([i[0] for i in fields])+") VALUES ("+",".join(["?" for i in fields])+");"
 				vals = [i[1].content for i in fields]
 				try:
-					
 					c.execute(query,vals)
 				except Exception,e:
 					print e
@@ -121,8 +118,6 @@ class DataEntry:
 		conn.commit()
 		conn.close()
 		return 0
-
-
 
 	def delete(self):
 		self.status.set("DELETED")
@@ -164,6 +159,6 @@ def listEntries(model):
 	conn.close()
 	return objectList
 
-class testModel(DataEntry):
+class TestModel(DataEntry):
 	text = TextField()
 	num = IntegerField()
