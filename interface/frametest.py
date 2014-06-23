@@ -70,7 +70,7 @@ class Application(Frame):
 		self.autocomplete.text = "autocomplete"
 		self.autocomplete.pack(expand=1, fill=X)
 
-		calendarBox = CalendarBox(lf2.interior,label="Calendar",toolTip="Sample calendar")
+		self.calendarBox = calendarBox = CalendarBox(lf2.interior,label="Calendar",toolTip="Sample calendar")
 		calendarBox.pack(expand=1,fill=X)
 
 		options = ["option1", "two", "tres"]
@@ -84,6 +84,8 @@ class Application(Frame):
 		button.pack(pady=20, padx = 20)
 
 	def clickPress(self):
+		print self.calendarBox.text
+		self.calendarBox.text="6-23-2014"
 		print self.dropdown.text
 		self.dropdown.text = "cat"
 

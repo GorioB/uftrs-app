@@ -64,7 +64,6 @@ class CalendarBox(Frame,object):
 	def calPressed(self,event):
 		date= self._ttkcal.selection
 		self._calButton.config(text=str(date.month)+"-"+str(date.day)+"-"+str(date.year))
-		print date.year,date.month,date.day
 		self._calWindow.destroy()
 
 	@property
