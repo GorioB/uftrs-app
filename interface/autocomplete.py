@@ -53,6 +53,10 @@ class AutocompleteBox(Frame,object):
 		self.comboBox = Combobox(self.fLower, values=valCombo, height=-1)
 		self.comboBox.pack(fill=BOTH, expand=1)
 
+	def initDropDown(self, options=["cat", "dog", "pig"]):
+		self.comboBox = Combobox(self.fLower, values=options, height=-1,state="readonly")
+		self.comboBox.pack(fill=BOTH, expand=1)
+
 
 	@property
 	def text(self):
@@ -60,8 +64,7 @@ class AutocompleteBox(Frame,object):
 
 	@text.setter
 	def text(self, value):
-		self.comboBox.delete(0, END)
-		self.comboBox.insert(0, value)
+		self.comboBox.set(value)
 
 	#MouseOver bindings
 	def hoverHelp(self,event):
