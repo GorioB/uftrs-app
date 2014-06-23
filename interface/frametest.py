@@ -4,6 +4,7 @@ from ttk import *
 from dataField import DataFieldBox
 from autocomplete import AutocompleteBox
 from ScrolledFrame import VerticalScrolledFrame
+from dropdown import DropDownBox
 class Application(Frame):
 	def __init__(self,parent):
 		Frame.__init__(self,parent)
@@ -69,12 +70,16 @@ class Application(Frame):
 		self.autocomplete.text = "autocomplete"
 		self.autocomplete.pack(expand=1, fill=None)
 
+		options = ["option1", "two", "tres"]
+		self.dropdown = DropDownBox(lf2.interior, label="dropdown1", toolTip="dropdown!", options=options)
+		self.dropdown.pack(expand=1, fill=None)
+
 		button = Button(lf1, text = 'Press', command = self.clickPress)
 		button.pack(pady=20, padx = 20)
 
 	def clickPress(self):
-		print self.autocomplete.text
-		self.autocomplete.text = "pressed button"
+		print self.dropdown.text
+		self.dropdown.text = "pressed button"
 
 	def clickAbout(self):
 		toplevel = Toplevel(height=100,width=200)
