@@ -37,7 +37,7 @@ class Application(Frame):
 		#panedwindow
 		p = Panedwindow(f1,orient=HORIZONTAL)
 		lf1=LabelFrame(p,text="Pane1")
-		lf2=LabelFrame(p,text="Pane2")
+		lf2=VerticalScrolledFrame(p)
 		p.add(lf1,weight=60)
 		p.add(lf2,weight=40)
 		p.pack(fill=BOTH,expand=1)
@@ -57,8 +57,8 @@ class Application(Frame):
 			listBox.insert(END,i)
 
 		#add some datafield boxes
-		for i in range(0,3):
-			dfb = DataFieldBox(lf2,label=str(i))
+		for i in range(0,7):
+			dfb = DataFieldBox(lf2.interior,label=str(i),toolTip="Tooltip "+str(i))
 			print dfb.text
 			dfb.text=str(i)
 			dfb.pack(expand=False,fill=None)

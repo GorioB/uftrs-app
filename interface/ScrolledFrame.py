@@ -1,4 +1,5 @@
 from Tkinter import *
+from ttk import *
 class VerticalScrolledFrame(Frame):
     """A pure Tkinter scrollable frame that actually works!
 
