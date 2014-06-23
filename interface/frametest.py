@@ -4,7 +4,11 @@ from ttk import *
 from textfield import TextFieldBox
 from autocomplete import AutocompleteBox
 from ScrolledFrame import VerticalScrolledFrame
+<<<<<<< HEAD
 from datefield import CalendarBox
+=======
+from dropdown import DropDownBox
+>>>>>>> d1bdea7ab0e10708b296f97ede959b7df223251c
 class Application(Frame):
 	def __init__(self,parent):
 		Frame.__init__(self,parent)
@@ -73,12 +77,16 @@ class Application(Frame):
 		calendarBox = CalendarBox(lf2.interior,label="Calendar",toolTip="Sample calendar")
 		calendarBox.pack(expand=1,fill=X)
 
+		options = ["option1", "two", "tres"]
+		self.dropdown = DropDownBox(lf2.interior, label="dropdown1", toolTip="dropdown!", options=options)
+		self.dropdown.pack(expand=1, fill=None)
+
 		button = Button(lf1, text = 'Press', command = self.clickPress)
 		button.pack(pady=20, padx = 20)
 
 	def clickPress(self):
-		print self.autocomplete.text
-		self.autocomplete.text = "pressed button"
+		print self.dropdown.text
+		self.dropdown.text = "pressed button"
 
 	def clickAbout(self):
 		toplevel = Toplevel(height=100,width=200)
