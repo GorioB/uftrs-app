@@ -2,6 +2,7 @@
 from Tkinter import *
 from ttk import *
 from dataField import DataFieldBox
+from ScrolledFrame import VerticalScrolledFrame
 class Application(Frame):
 	def __init__(self,parent):
 		Frame.__init__(self,parent)
@@ -36,7 +37,7 @@ class Application(Frame):
 		#panedwindow
 		p = Panedwindow(f1,orient=HORIZONTAL)
 		lf1=LabelFrame(p,text="Pane1")
-		lf2=Labelframe(p,text="Pane2")
+		lf2=LabelFrame(p,text="Pane2")
 		p.add(lf1,weight=60)
 		p.add(lf2,weight=40)
 		p.pack(fill=BOTH,expand=1)
@@ -58,7 +59,8 @@ class Application(Frame):
 		#add some datafield boxes
 		for i in range(0,3):
 			dfb = DataFieldBox(lf2,label=str(i))
-			dfb.text="eels"
+			print dfb.text
+			dfb.text=str(i)
 			dfb.pack(expand=False,fill=None)
 
 	def clickAbout(self):
