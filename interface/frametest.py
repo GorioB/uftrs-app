@@ -64,7 +64,7 @@ class Application(Frame):
 			dfb.text=str(i)
 			dfb.pack(expand=False,fill=None)
 
-		self.autocomplete = AutocompleteBox(lf2, label="autocomplete")
+		self.autocomplete = AutocompleteBox(lf2.interior, label="autocomplete")
 		self.autocomplete.initComboBox("payors")
 		self.autocomplete.text = "autocomplete"
 		self.autocomplete.pack(expand=1, fill=None)
