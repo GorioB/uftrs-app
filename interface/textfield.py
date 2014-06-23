@@ -1,7 +1,7 @@
 from Tkinter import *
 from ttk import *
 
-class DataFieldBox(Frame,object):
+class TextFieldBox(Frame,object):
 	def __init__(self,parent,label="Label",toolTip="None",text="",**kwargs):
 		Frame.__init__(self,parent,**kwargs)
 		self.parent = parent
@@ -18,7 +18,7 @@ class DataFieldBox(Frame,object):
 
 		#frames
 		fMain = Frame(self.parent,borderwidth="2px",relief="groove")
-		fMain.pack()
+		fMain.pack(fill=X,expand=1)
 		fHigher = Frame(fMain)
 		fLower = Frame(fMain)
 		fHigher.pack(fill=X,expand=0,side=TOP)
@@ -68,5 +68,5 @@ class DataFieldBox(Frame,object):
 	
 if __name__=="__main__":
 	root = Tk()
-	app = DataFieldBox(root,toolTip="This is a sample tooltip\nTest")
+	app = TextFieldBox(root,toolTip="This is a sample tooltip\nTest")
 	app.mainloop()

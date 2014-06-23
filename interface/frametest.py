@@ -1,7 +1,7 @@
 #TKINTER UI TESTS
 from Tkinter import *
 from ttk import *
-from dataField import DataFieldBox
+from textfield import TextFieldBox
 from autocomplete import AutocompleteBox
 from ScrolledFrame import VerticalScrolledFrame
 class Application(Frame):
@@ -59,15 +59,15 @@ class Application(Frame):
 
 		#add some datafield boxes
 		for i in range(0,7):
-			dfb = DataFieldBox(lf2.interior,label=str(i),toolTip="Tooltip "+str(i))
+			dfb = TextFieldBox(lf2.interior,label=str(i),toolTip="Tooltip "+str(i))
 			print dfb.text
 			dfb.text=str(i)
-			dfb.pack(expand=False,fill=None)
+			dfb.pack(expand=1,fill=X)
 
 		self.autocomplete = AutocompleteBox(lf2.interior, label="autocomplete")
 		self.autocomplete.initComboBox("payors")
 		self.autocomplete.text = "autocomplete"
-		self.autocomplete.pack(expand=1, fill=None)
+		self.autocomplete.pack(expand=1, fill=X)
 
 		button = Button(lf1, text = 'Press', command = self.clickPress)
 		button.pack(pady=20, padx = 20)

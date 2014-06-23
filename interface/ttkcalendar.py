@@ -61,7 +61,7 @@ class Calendar(ttk.Frame):
         self._build_calendar()
 
         # set the minimal size for the widget
-        self._calendar.bind('<Map>', self.__minsize)
+        #self._calendar.bind('<Map>', self.__minsize)
 
     def __setitem__(self, item, value):
         if item in ('year', 'month'):
@@ -100,7 +100,7 @@ class Calendar(ttk.Frame):
         rbtn = ttk.Button(hframe, style='R.TButton', command=self._next_month)
         self._header = ttk.Label(hframe, width=15, anchor='center')
         # the calendar
-        self._calendar = ttk.Treeview(show='', selectmode='none', height=7)
+        self._calendar = ttk.Treeview(self,show='', selectmode='none', height=7)
 
         # pack the widgets
         hframe.pack(in_=self, side='top', pady=4, anchor='center')
@@ -131,10 +131,10 @@ class Calendar(ttk.Frame):
         self._calendar.bind('<Configure>', lambda evt: canvas.place_forget())
         self._calendar.bind('<ButtonPress-1>', self._pressed)
 
-    def __minsize(self, evt):
-        width, height = self._calendar.master.geometry().split('x')
-        height = height[:height.index('+')]
-        self._calendar.master.minsize(width, height)
+    # def __minsize(self, evt):
+    #     width, height = self._calendar.master.geometry().split('x')
+    #     height = height[:height.index('+')]
+    #     self._calendar.master.minsize(width, height)
 
     def _build_calendar(self):
         year, month = self._date.year, self._date.month
