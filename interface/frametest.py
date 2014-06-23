@@ -2,6 +2,7 @@
 from Tkinter import *
 from ttk import *
 from dataField import DataFieldBox
+from autocomplete import AutocompleteBox
 from ScrolledFrame import VerticalScrolledFrame
 class Application(Frame):
 	def __init__(self,parent):
@@ -62,6 +63,18 @@ class Application(Frame):
 			print dfb.text
 			dfb.text=str(i)
 			dfb.pack(expand=False,fill=None)
+
+		self.autocomplete = AutocompleteBox(lf2, label="autocomplete")
+		self.autocomplete.initComboBox("payors")
+		self.autocomplete.text = "autocomplete"
+		self.autocomplete.pack(expand=1, fill=None)
+
+		button = Button(lf1, text = 'Press', command = self.clickPress)
+		button.pack(pady=20, padx = 20)
+
+	def clickPress(self):
+		print self.autocomplete.text
+		self.autocomplete.text = "pressed button"
 
 	def clickAbout(self):
 		toplevel = Toplevel(height=100,width=200)
