@@ -4,6 +4,7 @@ from ttk import *
 from textfield import TextFieldBox
 from autocomplete import AutocompleteBox
 from ScrolledFrame import VerticalScrolledFrame
+from datefield import CalendarBox
 class Application(Frame):
 	def __init__(self,parent):
 		Frame.__init__(self,parent)
@@ -68,6 +69,9 @@ class Application(Frame):
 		self.autocomplete.initComboBox("payors")
 		self.autocomplete.text = "autocomplete"
 		self.autocomplete.pack(expand=1, fill=X)
+
+		calendarBox = CalendarBox(lf2.interior,label="Calendar",toolTip="Sample calendar")
+		calendarBox.pack(expand=1,fill=X)
 
 		button = Button(lf1, text = 'Press', command = self.clickPress)
 		button.pack(pady=20, padx = 20)

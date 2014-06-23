@@ -68,10 +68,10 @@ class CalendarBox(Frame,object):
 		self._calWindow.destroy()
 
 	@property
-	def date(self):
+	def text(self):
 	    return self._calButton.config('text')[-1]
-	@date.setter
-	def date(self, value):
+	@text.setter
+	def text(self, value):
 	    self._calButton.config(text=value)
 	
 
