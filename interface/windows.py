@@ -17,7 +17,7 @@ def newExistsInTree(tree):
 class CashReceiptsWindow(Frame,object):
 	def __init__(self,parent,app,deletedVar=None):
 		Frame.__init__(self,parent)
-		self.selectedpk=0
+		self.selectedpk="New"
 		self.parent=parent
 		self.app=app
 		if deletedVar:
@@ -111,7 +111,7 @@ class CashReceiptsWindow(Frame,object):
 		self.fields['nature']=nature = AutocompleteBox(upperRight.interior,label="Nature",toolTip=None)
 		nature.initComboBox(self.app.listOptions("Nature"))
 
-		self.fields['amount'] = TextFieldBox(upperRight.interior,label="Amount",readonly=False,height=1)
+		self.fields['amount'] = TextFieldBox(upperRight.interior,label="Amount",readonly=False,height=1,textType="number")
 
 		self.fields['payor'] = TextFieldBox(upperRight.interior,label="Payor's Name",readonly=False,toolTip = "Name of the individual who actually gave the cash.")
 
@@ -131,8 +131,10 @@ class CashReceiptsWindow(Frame,object):
 		for i in range(0,len(self.fieldList)):
 			self.fields[self.fieldList[i]].text=values[i]
 
-		if self.fields['dateOfTransaction']=="":
-			self.fields['dateOfTransaction']="Calendar"
+		if self.fields['dateOfTransaction'].text=="":
+			self.fields['dateOfTransaction'].text=secsToDay(getEpochTime())
+		else:
+			self.fields['dateOfTransaction'].text=secsToDay(values[1])
 		self.selectedpk=self.tree.item(item,"text")
 		print self.selectedpk
 
@@ -153,6 +155,7 @@ class CashReceiptsWindow(Frame,object):
 			for j in self.fieldList:
 				dataFields.append(vars(i)[j].content)
 			dataFields[0]=secsToString(dataFields[0])
+			dataFields[1]=secsToDay(dataFields[1])
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
 			else:
@@ -179,7 +182,7 @@ class CashReceiptsWindow(Frame,object):
 	def save(self):
 		if self.selectedpk!="New":
 			self.selectedpk = self.app.editCashReceipt(self.selectedpk,
-				dateOfTransaction=self.fields['dateOfTransaction'].text,
+				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				category = self.fields['category'].text,
 				nature = self.fields['nature'].text,
 				amount = self.fields['amount'].text,
@@ -188,7 +191,7 @@ class CashReceiptsWindow(Frame,object):
 				notes = self.fields['notes'].text)
 		else:
 			self.selectedpk=self.app.newCashReceipt(
-				dateOfTransaction=self.fields['dateOfTransaction'].text,
+				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				category=self.fields['category'].text,
 				nature=self.fields['nature'].text,
 				amount=self.fields['amount'].text,

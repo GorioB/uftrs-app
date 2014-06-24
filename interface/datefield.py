@@ -2,6 +2,7 @@ from Tkinter import *
 from ttk import *
 from ttkcalendar import Calendar
 import calendar
+from lib.timeFuncs import *
 
 class CalendarBox(Frame,object):
 	def __init__(self,parent,label="Label",toolTip=None,**kwargs):
@@ -39,7 +40,7 @@ class CalendarBox(Frame,object):
 
 
 
-		self._calButton=calButton = Button(fLower,text="Calendar",command=self.createCalendar)
+		self._calButton=calButton = Button(fLower,text=secsToDay(getEpochTime()),command=self.createCalendar)
 		calButton.pack(fill=X,expand=1)
 
 		#toolTip

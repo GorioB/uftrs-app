@@ -132,6 +132,8 @@ class App(object):
 
 	def _editEntry(self,model,pk,**kwargs):
 		m = getEntry(pk,model)
+		if not m:
+			return -1,-1
 		m.delete()
 		oldpk=m.pk.content
 		m.pk.set(0)

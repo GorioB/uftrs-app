@@ -17,3 +17,6 @@ def stringToSecs(s):
 	
 def secsToString(s):
 	return '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.fromtimestamp(float(s)))
+
+def secsToDay(s):
+	return secsToString(s).split(" ")[0]

@@ -2,7 +2,7 @@ from Tkinter import *
 from ttk import *
 
 class TextFieldBox(Frame,object):
-	def __init__(self,parent,label="Label",toolTip=None,readonly=False,text="",height=3,**kwargs):
+	def __init__(self,parent,label="Label",toolTip=None,readonly=False,text="",height=3,textType="text",**kwargs):
 		Frame.__init__(self,parent,**kwargs)
 		self.parent = parent
 		#self.config(borderwidth=2,relief="groove")
@@ -11,6 +11,9 @@ class TextFieldBox(Frame,object):
 		self.toolTip=toolTip
 		self.readonly=readonly
 		self.height=height
+		self.textType=textType
+
+		#STYLE
 		self.initUI()
 
 	def initUI(self):
@@ -48,6 +51,7 @@ class TextFieldBox(Frame,object):
 		self.textField.bind("<Tab>",self.focusNext)
 		if self.readonly:
 			self.textField.configure(state='disabled')
+			self.textField.configure(background='grey')
 
 		#tooltip
 		if self.toolTip:
@@ -57,7 +61,14 @@ class TextFieldBox(Frame,object):
 
 	@property
 	def text(self):
-	    return self.textField.get('1.0','end').strip('\n')
+		value = self.textField.get('1.0','end').strip('\n')
+
+		if self.textType=="number":
+			try:
+				value=float(value)
+			except:
+				return 0
+		return self.textField.get('1.0','end').strip('\n')
 
 	@text.setter
 	def text(self, value):
