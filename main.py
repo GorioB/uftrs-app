@@ -29,7 +29,7 @@ class MainProgram(Frame,object):
 		preferencesMenu.add_checkbutton(label="Show History",variable=self.showDeleted,onvalue=1,offvalue=0)
 		preferencesMenu.add_command(label="Settings")
 		menubar.add_cascade(label="User",menu=usersMenu)
-		menubar.add_cascade(label="Preferences",menu=preferencesMenu)
+		menubar.add_cascade(label="Options",menu=preferencesMenu)
 		menubar.add_command(label="About",command=self.about)
 
 		#notebook
