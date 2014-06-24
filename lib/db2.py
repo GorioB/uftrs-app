@@ -36,6 +36,7 @@ class User(object):
 		conn.close()
 
 	def getEmail(self):
+		"""Gets the email that corresponds to the User instance's username"""
 		conn = sqlite3.connect(DB_NAME)
 		cursor = conn.cursor()
 		cursor.execute("SELECT email FROM users WHERE username=?", (self.username,))
