@@ -27,6 +27,11 @@ class CashReceiptsWindow(Frame,object):
 			self.deletedVar.set(0)
 
 		self.deletedVar.trace("w",self.populateTree)
+
+		#STYLE
+		s = Style()
+		s.configure("NEWButton.TButton",background="green")
+		s.configure("SAVEButton.TButton",background="blue")
 		self.initUI()
 
 	def initUI(self):
@@ -40,12 +45,18 @@ class CashReceiptsWindow(Frame,object):
 		leftFrame.pack_propagate(0)
 		rightFrame.pack_propagate(0)
 
+
+
 		#leftFrame elements
+		leftFrameUpperest = Frame(leftFrame)
 		leftFrameUpper = Frame(leftFrame)
 		leftFrameLower = Frame(leftFrame)
 		leftFrameLower.pack(expand=0,fill=X,side=BOTTOM)
+		leftFrameUpperest.pack(expand=0,fill=X,side=TOP)
 		leftFrameUpper.pack(expand=1,fill=BOTH,side=BOTTOM)
 
+		newButton = Button(leftFrameUpperest,text="New",command=self.newEntry,style="NEWButton.TButton")
+		newButton.pack(fill=None,expand=0,side=LEFT)
 		self.tree = tree = Treeview(leftFrameUpper,selectmode="browse")
 		tree.bind("<<TreeviewSelect>>",self.getSelection)
 		yscroll = Scrollbar(leftFrameUpper,orient="vertical",command=tree.yview)
@@ -65,8 +76,7 @@ class CashReceiptsWindow(Frame,object):
 		#bottombar
 		leftLowestFrame = Frame(leftFrameLower)
 		leftLowestFrame.pack(fill=X,expand=0)
-		newButton = Button(leftLowestFrame,text="New",command=self.newEntry)
-		newButton.pack(fill=None,expand=0,side=LEFT)
+
 		self.totalLabel=totalLabel=Label(leftLowestFrame,text="Total: ",relief=SUNKEN,width=20)
 		totalLabel.pack(fill=None,expand=0,side=RIGHT)
 
@@ -81,7 +91,7 @@ class CashReceiptsWindow(Frame,object):
 		lowerRight.pack(fill=X,expand=0,side=BOTTOM)
 		upperRight.pack(fill=BOTH,expand=1,side=TOP)
 
-		saveButton = Button(lowerRight,text="Save",command=self.save)
+		saveButton = Button(lowerRight,text="Save",command=self.save,style="SAVEButton.TButton")
 		saveButton.pack(side=LEFT,fill=X,expand=1)
 		deleteButton = Button(lowerRight,text="Delete",command=self.delete)
 		deleteButton.pack(side=LEFT,fill=X,expand=1)
