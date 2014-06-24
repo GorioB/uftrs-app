@@ -140,6 +140,7 @@ class CashReceiptsWindow(Frame,object):
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields)
 		self.totalLabel.config(text="Total: "+str(total))
+		self.total = total
 		self.exportToExcel()
 
 	def exportToExcel(self):
@@ -177,7 +178,10 @@ class CashReceiptsWindow(Frame,object):
 				colNumber += 1
 			colNumber = startingCol
 			rowNumber += 1
-			# print self.tree.item(i, tags)
+		# Write the total
+		sheet1.write(rowNumber, colNumber + 3, "TOTAL")
+		sheet1.write(rowNumber, colNumber + 4, str(self.total))
+
 		book.save('sample.xls')
 
 	def save(self):
