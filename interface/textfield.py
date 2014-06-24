@@ -55,7 +55,7 @@ class TextFieldBox(Frame,object):
 
 	@property
 	def text(self):
-	    return self.textField.get('1.0','end').strip()
+	    return self.textField.get('1.0','end').strip('\n')
 
 	@text.setter
 	def text(self, value):

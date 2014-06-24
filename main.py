@@ -25,6 +25,7 @@ class MainProgram(Frame,object):
 		usersMenu=Menu(menubar)
 		usersMenu.add_command(label="Create User")
 		preferencesMenu=Menu(menubar)
+		preferencesMenu.add_command(label="Export this page to Excel",command=self.exportSelectedNote)
 		preferencesMenu.add_checkbutton(label="Show History",variable=self.showDeleted,onvalue=1,offvalue=0)
 		preferencesMenu.add_command(label="Settings")
 		menubar.add_cascade(label="User",menu=usersMenu)
@@ -49,6 +50,10 @@ class MainProgram(Frame,object):
 	#callbacks
 	def about(self):
 		pass
+
+	def exportSelectedNote(self):
+		noteName = self.notebook.tab(self.notebook.select(),"text")
+		self.notes[noteName].exportToExcel()
 
 if __name__=="__main__":
 	root = Tk()
