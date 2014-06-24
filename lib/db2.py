@@ -1,17 +1,23 @@
 import sqlite3
 import hashlib
+import random
+import string
 
 DB_NAME = "db.sqlite3"
 
+def randomword(length):
+   return ''.join(random.choice(string.lowercase) for i in range(length))
+
 class User(object):
 	"""docstring for User. Database table name is users"""
-	def __init__(self, username, password):
+	def __init__(self, username, password, email):
 		self.username = username
 		self.password = password
+		self.email = email
 		# create user table if it doesn't exist
 		conn = sqlite3.connect(DB_NAME)
 		cursor = conn.cursor()
-		cursor.execute("CREATE TABLE IF NOT EXISTS users(username TEXT PRIMARY KEY, passwordHash TEXT, isRoot INTEGER)")
+		cursor.execute("CREATE TABLE IF NOT EXISTS users(username TEXT PRIMARY KEY, passwordHash TEXT, email TEXT, isRoot INTEGER)")
 		conn.commit()
 		conn.close()
 
@@ -22,10 +28,10 @@ class User(object):
 		if isRoot!=0: isRoot=1
 
 		if self.userExists(self.username):
-			cursor.execute("UPDATE users SET username=?, passwordHash=?, isRoot=? WHERE username=?", 
-				(self.username, self.passwordHash, isRoot, self.username))
+			cursor.execute("UPDATE users SET username=?, passwordHash=?, email=?, isRoot=? WHERE username=?", 
+				(self.username, self.passwordHash, self.email, isRoot, self.username))
 		else:
-			cursor.execute("INSERT INTO users VALUES (?, ?, ?)", (self.username, self.passwordHash, isRoot))
+			cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.username, self.passwordHash, self.email, isRoot))
 
 		conn.commit()
 		conn.close()
@@ -52,6 +58,21 @@ class User(object):
 		isRoot = cursor.fetchone()
 		conn.close()
 		return isRoot[0]==1
+
+	def resetPassword(self):
+		"""Resets the password and emails the new password to the user's email.
+		Doesn't do anything if user's username-password combo is invalid."""
+		if not self.auth(): 
+			return
+
+		self.password = randomword(8)
+		conn = sqlite3.connect(DB_NAME)
+		cursor = conn.cursor()
+		cursor.execute("UPDATE users SET passwordHash=? WHERE username=?", (self.passwordHash, self.username))
+		conn.commit()
+		conn.close()
+
+		# TODO: send an email
 
 
 	@staticmethod
