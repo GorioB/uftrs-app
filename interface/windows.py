@@ -4,7 +4,7 @@ from ScrolledFrame import VerticalScrolledFrame
 from interface.textfield import *
 from interface.datefield import *
 from interface.autocomplete import *
-
+from lib.timeFuncs import *
 class CashReceiptsWindow(Frame,object):
 	def __init__(self,parent,app,deletedVar=None):
 		Frame.__init__(self,parent)
@@ -123,10 +123,15 @@ class CashReceiptsWindow(Frame,object):
 		for i in entryList:
 			dataFields=[]
 			pk = i.pk.content
-			total+=float(i.amount.content)
+			try:
+				amt = float(i.amount.content)
+			except:
+				amt =0
+			if i.status.content!="DELETED":
+				total+=amt
 			for j in self.fieldList:
 				dataFields.append(vars(i)[j].content)
-
+			dataFields[0]=secsToString(dataFields[0])
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
 			else:
@@ -135,8 +140,7 @@ class CashReceiptsWindow(Frame,object):
 
 	def save(self):
 		if self.selectedpk!=0:
-			print self.app.editCashReceipt(self.selectedpk,
-				timestamp=self.fields['timestamp'].text,
+			self.selectedpk = self.app.editCashReceipt(self.selectedpk,
 				dateOfTransaction=self.fields['dateOfTransaction'].text,
 				category = self.fields['category'].text,
 				nature = self.fields['nature'].text,
@@ -149,6 +153,7 @@ class CashReceiptsWindow(Frame,object):
 		#combobox stuff
 		self.app.addOption("Nature", self.fields['nature'].text)
 		self.fields['nature'].comboBox.config(values = self.app.listOptions("Nature"))
+
 
 	def delete(self):
 		if self.selectedpk!=0:

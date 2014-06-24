@@ -134,7 +134,7 @@ class App(object):
 		m.delete()
 		oldpk=m.pk.content
 		m.pk.set(0)
-		m.remarks.set((m.remarks.content+";Edited from:"+str(oldpk)).strip(";")+";")
+		m.remarks.set("Edited from:"+str(oldpk))
 		#m.addField("TEXT",remarks=(str(m.remarks.content)+";Edited from: "+str(oldpk)).strip(';')+";",status="")
 		#m.addField("INTEGER",timestamp=timeFuncs.getEpochTime())
 		m.status.set("")
@@ -147,22 +147,22 @@ class App(object):
 	def editCashReceipt(self,pk,**kwargs):
 		oldpk,newpk = self._editEntry(CashReceipt,pk,**kwargs)
 		if oldpk+newpk==-2:
-			return 1
+			return newpk
 		cashFlows = self._getCashFlow(CashReceipt,pk)
 		for cashFlow in cashFlows:
 			cashFlow.source.set("CashReceipt:"+str(newpk))
 			#cashFlow.addField("TEXT",source="cashreceipt:"+str(newpk))
 			return cashFlow.save()
 
-		return 0
+		return newpk
 
 	def editCashDisbursment(self,pk,**kwargs):
 		oldpk,newpk = self._editEntry(CashDisbursment,pk,**kwargs)
-		return oldpk+newpk==-2
+		return newpk
 
 	def editOAL(self,pk,**kwargs):
 		oldpk,newpk = self._editEntry(OAL,pk,**kwargs)
-		return oldpk+newpk==-2
+		return newpk
 
 	def editOME(self,pk,**kwargs):
 		oldpk,newpk = self._editEntry(OME,pk,**kwargs)
@@ -171,7 +171,7 @@ class App(object):
 			cashFlow.source.set("OME:"+str(newpk))
 			#cashFlow.addField("TEXT",source="ome:"+str(newpk))
 			return cashFlow.save()
-		return 0
+		return newpk
 
 	def editNote(self,notetype,pk,**kwargs):
 		modelOptions={'ODNote':ODNote,'LTINote':LTINote,'COCPNote':COCPNote,'OONote':OONote}
@@ -189,11 +189,11 @@ class App(object):
 			i.source.set(notetype+":"+str(newpk))
 			#i.addField("TEXT",source=notetype+":"+str(newpk))
 			i.save()
-		return 0
+		return newpk
 
 	def editCashflow(self,pk,**kwargs):
 		oldpk,newpk=self._editEntry(CashFlow,pk,**kwargs)
-		return oldpk+newpk==-2
+		return newpk
 
 	#LIST
 	def _listGeneral(self,model,showDeleted=False):

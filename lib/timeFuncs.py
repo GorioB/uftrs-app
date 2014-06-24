@@ -16,4 +16,4 @@ def stringToSecs(s):
 	return calendar.timegm(d.timetuple())+(TZ_OFFSET*60*60)#hardcoded because hassle
 	
 def secsToString(s):
-	return '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.fromtimestamp(s))
+	return '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.fromtimestamp(float(s)))
