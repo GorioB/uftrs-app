@@ -11,6 +11,8 @@ except:
 	print "Requires xlwt"
 	exit(1)
 import datetime
+def newExistsInTree(tree):
+	return [i for i in tree.get_children() if tree.item(i,"text")=="New"]
 
 class CashReceiptsWindow(Frame,object):
 	def __init__(self,parent,app,deletedVar=None):
@@ -191,7 +193,11 @@ class CashReceiptsWindow(Frame,object):
 
 	def newEntry(self):
 		#create blank entry for demonstration purposes
-		dummyEntry = self.tree.insert("","end",text='New',values=('','','','','','','','',''))
+		dummyEntry = newExistsInTree(self.tree)
+		if not dummyEntry:
+			dummyEntry = self.tree.insert("","end",text='New',values=('','','','','','','','',''))
+		else:
+			dummyEntry = dummyEntry[0]
 		self.tree.selection_set(dummyEntry)
 		self.selectedpk="New"
 		print self.selectedpk
