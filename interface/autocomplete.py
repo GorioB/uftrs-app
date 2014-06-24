@@ -40,11 +40,11 @@ class AutocompleteBox(Frame,object):
 
 		#tooltip
 		if self.toolTip:
-			if len(self.toolTip)<50:
+			if len(self.toolTip)<100:
 				self.shortToolTip=self.toolTip
 			else:
 				self.shortToolTip="Click ? for help."
-			button = Button(fRight,text="?",width=2,command=self.createHelpBox)
+			button = Button(fRight,text="?",width=2,command=self.createHelpBox,takefocus=0)
 			button.pack(fill=NONE,expand=0)
 			button.bind("<Enter>",self.hoverHelp)
 			button.bind("<Leave>",self.leaveHelp)

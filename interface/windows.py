@@ -303,7 +303,7 @@ class CashDisbursmentsWindow(Frame,object):
 		options=['Council and Other Projects','Operation and Maintenance Expenses','Long Term Investments','Other Outflows']
 
 		self.fields['category']=AutocompleteBox(self.fieldsFrame.interior,
-			label="Category",toolTip="")
+			label="Category",toolTip="[Council and Other Projects]: Cash outflows from all projects undertaken by the council.\n[Operation and Maintenance Expenses]: Cash outflows from recurring expenses of operation and upkeep of the council.\n[Long Term Investments]: Cash outflows for assets intended for use and ownership beyond the current academic year.\n[Other Outflows]: Cash outflows other than those incurred for council projects, operations and maintenance and long term investments")
 		self.fields['category'].initDropDown(options)
 
 		self.fields['event']=TextFieldBox(self.fieldsFrame.interior,

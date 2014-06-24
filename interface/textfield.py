@@ -1,6 +1,6 @@
 from Tkinter import *
 from ttk import *
-
+from helpbox import createHelpBox
 class TextFieldBox(Frame,object):
 	def __init__(self,parent,label="Label",toolTip=None,readonly=False,text="",height=3,textType="text",**kwargs):
 		Frame.__init__(self,parent,**kwargs)
@@ -40,11 +40,7 @@ class TextFieldBox(Frame,object):
 		#elements
 		label = Label(fLeft,text=self.label)
 		label.pack(side=LEFT,fill=BOTH,expand=1)
-		if self.toolTip:
-			button = Button(fRight,text="?",width=2,takefocus=0)
-			button.pack(fill=NONE,expand=0)
-			button.bind("<Enter>",self.hoverHelp)
-			button.bind("<Leave>",self.leaveHelp)
+			
 
 		self.textField = Text(fLower,height=self.height)
 		self.textField.pack(fill=BOTH,expand=1)
@@ -55,10 +51,20 @@ class TextFieldBox(Frame,object):
 
 		#tooltip
 		if self.toolTip:
-			self.tooltipLabel = Label(fHighLow,text=self.toolTip,style="ToolTip.TLabel")
+			if len(self.toolTip)<100:
+				self.shortToolTip=self.toolTip
+				button=Button(fRight,text="?",width=2,takefocus=0)
+			else:
+				self.shortToolTip="Click ? for help."
+				button = Button(fRight,text="?",width=2,command=self.createHelpBox,takefocus=0)
+			button.pack(fill=NONE,expand=0)
+			button.bind("<Enter>",self.hoverHelp)
+			button.bind("<Leave>",self.leaveHelp)
+			self.tooltipLabel = Label(fHighLow,text=self.shortToolTip,style="ToolTip.TLabel")
 			self.tooltipLabel.pack(fill=X,expand=1)
 
-
+	def createHelpBox(self):
+		createHelpBox(self.toolTip)
 	@property
 	def text(self):
 		value = self.textField.get('1.0','end').strip('\n')
