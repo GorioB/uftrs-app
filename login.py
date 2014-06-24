@@ -1,6 +1,6 @@
 from lib.app import App
 from lib.db2 import User
-from interface import windows, textfield
+from interface import textfield
 from Tkinter import *
 from ttk import *
 
@@ -15,8 +15,8 @@ class LogIn(Frame,object):
 	def initUI(self):
 		# Window settings
 		self.parent.title("UFTRS Accounting System")
-		self.parent.geometry("800x500")
-		self.parent.state("zoomed")
+		self.parent.geometry("300x300")
+		#self.parent.state("zoomed")
 		menubar = Menu(self.parent)
 		self.parent.config(menu=menubar)
 
@@ -35,7 +35,7 @@ class LogIn(Frame,object):
 		self.logIn_username = Entry(logInFrame)
 		self.logIn_username.pack()
 		Label(logInFrame, text="Enter password").pack()
-		self.logIn_password = Entry(logInFrame)
+		self.logIn_password = Entry(logInFrame,show="*")
 		self.logIn_password.pack()
 		self.logIn_submit = Button(logInFrame, text="Submit", command=self.submitLogIn)
 		self.logIn_submit.pack()
