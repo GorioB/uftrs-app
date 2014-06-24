@@ -13,14 +13,14 @@ class LogIn(Frame,object):
 		self.initUI()
 
 	def initUI(self):
-		#Window settings
+		# Window settings
 		self.parent.title("UFTRS Accounting System")
 		self.parent.geometry("800x500")
 		self.parent.state("zoomed")
 		menubar = Menu(self.parent)
 		self.parent.config(menu=menubar)
 
-		#notebook
+		# Notebook
 		self.notebook = Notebook(self.parent)
 		self.notes={}
 		for i in ["Log In","Reset Password","Create Account"]:
@@ -39,18 +39,19 @@ class LogIn(Frame,object):
 		self.logIn_password.pack()
 		self.logIn_submit = Button(logInFrame, text="Submit", command=self.submitLogIn)
 		self.logIn_submit.pack()
+		self.logIn_label = Label(logInFrame)
+		self.logIn_label.pack()
 
-	#callbacks
+	# Callbacks
 	def submitLogIn(self):
 		print self.logIn_username.get()
 		print self.logIn_password.get()
 		user = User(self.logIn_username.get(), self.logIn_password.get())
 		if user.auth():
-			print "Log in successful!"
+			self.logIn_label.config(text='Log in successful!', foreground='darkgreen')
 			# TODO: move on to main program
 		else:
-			print "Log in failed."
-			pass
+			self.logIn_label.config(text='Wrong credentials. Try again.', foreground='red')
 			# TODO: notify user in gui that credentials are wrong
 
 if __name__=="__main__":
