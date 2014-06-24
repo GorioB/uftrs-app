@@ -81,7 +81,7 @@ class App(object):
 		return cf.save()
 
 	def newCashDisbursment(self,**kwargs):
-		return CashDisbursment(**kwargs).sav()
+		return CashDisbursment(**kwargs).save()
 
 
 	def newOAL(self,**kwargs):
