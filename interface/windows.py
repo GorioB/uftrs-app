@@ -140,11 +140,8 @@ class CashReceiptsWindow(Frame,object):
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
 		self.totalLabel.config(text="Total: "+str(total))
-<<<<<<< HEAD
-=======
 		self.total = total
-		self.exportToExcel()
->>>>>>> 3be7ba1b939099514c7173c2eb352456c0c3ce88
+
 
 	def exportToExcel(self):
 		"""Exports the data displayed on the treebox to excel"""
