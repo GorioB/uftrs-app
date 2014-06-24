@@ -227,7 +227,7 @@ class ExcelBuilder(object):
 		self.fileName = value
 
 	def setTableColumnWidth(self, value):
-		self.colWidth = 5000
+		self.colWidth = value
 		
 	def build(self):
 		"""Builds and saves the excel file"""
