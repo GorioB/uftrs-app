@@ -156,12 +156,16 @@ class CashReceiptsWindow(Frame,object):
 		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
 		headerStyle = easyxf('font: bold 1;')
 		deletedStyle = easyxf('font: color red;')
-
-		timeNow = datetime.datetime.now().strftime("%I:%M%p %B %d, %Y")
-		sheet1.write(0, 0, "This file was generated on " + timeNow)
 		# starting location of the table
 		startingRow = 3
-		startingCol = 1
+		startingCol = 0
+		# adjust column widths
+		for i in xrange(9):
+			sheet1.col(i).width = 5000
+
+		# Write auto-generated timestamp
+		timeNow = datetime.datetime.now().strftime("%I:%M%p %B %d, %Y")
+		sheet1.write(0, 0, "This file was generated on " + timeNow)
 
 		# Write the table column names
 		colList = ["Timestamp","Date of Transaction","Category","Nature","Amount","Payor's Name","Acknowledgement Receipt #","Notes","Remarks"]
@@ -174,12 +178,10 @@ class CashReceiptsWindow(Frame,object):
 
 		# Write the table data
 		for i in rows:
-			print i[0]
-			print i[1]
 			for columnValue in i[0]:
-				if i[1]=="" or i[1]==None:
+				if "none" in i[1]:
 					sheet1.write(rowNumber, colNumber, columnValue)
-				elif i[1][0] == 'deleted':
+				elif "deleted" in i[1]:
 					sheet1.write(rowNumber, colNumber, columnValue, deletedStyle)
 				colNumber += 1
 			colNumber = startingCol
@@ -188,7 +190,9 @@ class CashReceiptsWindow(Frame,object):
 		sheet1.write(rowNumber, colNumber + 3, "TOTAL")
 		sheet1.write(rowNumber, colNumber + 4, str(self.total))
 
-		book.save('sample.xls')
+		# Save the excel file
+		fileName = 'CashReceipt_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+		book.save(fileName)
 
 	def save(self):
 		if self.selectedpk!="0":
