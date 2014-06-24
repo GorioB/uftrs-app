@@ -5,6 +5,9 @@ from interface.textfield import *
 from interface.datefield import *
 from interface.autocomplete import *
 from lib.timeFuncs import *
+from xlwt import Workbook, easyxf
+import datetime
+
 class CashReceiptsWindow(Frame,object):
 	def __init__(self,parent,app,deletedVar=None):
 		Frame.__init__(self,parent)
@@ -137,6 +140,45 @@ class CashReceiptsWindow(Frame,object):
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
 		self.totalLabel.config(text="Total: "+str(total))
+		self.exportToExcel()
+
+	def exportToExcel(self):
+		"""Exports the data displayed on the treebox to excel"""
+		book = Workbook()
+		sheet1 = book.add_sheet('Sheet 1')
+		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
+		headerStyle = easyxf('font: bold 1;')
+		deletedStyle = easyxf('font: color red;')
+
+		timeNow = datetime.datetime.now().strftime("%I:%M%p %B %d, %Y")
+		sheet1.write(0, 0, "This file was generated on " + timeNow)
+		# starting location of the table
+		startingRow = 3
+		startingCol = 1
+
+		# Write the table column names
+		colList = ["Timestamp","Date of Transaction","Category","Nature","Amount","Payor's Name","Acknowledgement Receipt #","Notes","Remarks"]
+		colNumber = startingCol
+		for columnHeader in colList:
+			sheet1.write(startingRow, colNumber, columnHeader, headerStyle)
+			colNumber += 1
+		colNumber = startingCol
+		rowNumber = startingRow + 1
+
+		# Write the table data
+		for i in rows:
+			print i[0]
+			print i[1]
+			for columnValue in i[0]:
+				if i[1]=="" or i[1]==None:
+					sheet1.write(rowNumber, colNumber, columnValue)
+				elif i[1][0] == 'deleted':
+					sheet1.write(rowNumber, colNumber, columnValue, deletedStyle)
+				colNumber += 1
+			colNumber = startingCol
+			rowNumber += 1
+			# print self.tree.item(i, tags)
+		book.save('sample.xls')
 
 	def save(self):
 		if self.selectedpk!=0:
