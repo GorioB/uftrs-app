@@ -151,48 +151,17 @@ class CashReceiptsWindow(Frame,object):
 
 	def exportToExcel(self):
 		"""Exports the data displayed on the treebox to excel"""
-		book = Workbook()
-		sheet1 = book.add_sheet('Sheet 1')
+
 		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
-		headerStyle = easyxf('font: bold 1;')
-		deletedStyle = easyxf('font: color red;')
-		# starting location of the table
-		startingRow = 3
-		startingCol = 0
-		# adjust column widths
-		for i in xrange(9):
-			sheet1.col(i).width = 5000
-
-		# Write auto-generated timestamp
-		timeNow = datetime.datetime.now().strftime("%I:%M%p %B %d, %Y")
-		sheet1.write(0, 0, "This file was generated on " + timeNow)
-
-		# Write the table column names
-		colList = ["Timestamp","Date of Transaction","Category","Nature","Amount","Payor's Name","Acknowledgement Receipt #","Notes","Remarks"]
-		colNumber = startingCol
-		for columnHeader in colList:
-			sheet1.write(startingRow, colNumber, columnHeader, headerStyle)
-			colNumber += 1
-		colNumber = startingCol
-		rowNumber = startingRow + 1
-
-		# Write the table data
-		for i in rows:
-			for columnValue in i[0]:
-				if "none" in i[1]:
-					sheet1.write(rowNumber, colNumber, columnValue)
-				elif "deleted" in i[1]:
-					sheet1.write(rowNumber, colNumber, columnValue, deletedStyle)
-				colNumber += 1
-			colNumber = startingCol
-			rowNumber += 1
-		# Write the total
-		sheet1.write(rowNumber, colNumber + 3, "TOTAL")
-		sheet1.write(rowNumber, colNumber + 4, str(self.total))
-
-		# Save the excel file
+		columnHeaders = ["Timestamp","Date of Transaction","Category","Nature","Amount","Payor's Name","Acknowledgement Receipt #","Notes","Remarks"]
 		fileName = 'CashReceipt_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
-		book.save(fileName)
+
+		excelBuilder = ExcelBuilder()
+		excelBuilder.setRows(rows)
+		excelBuilder.setColumnHeaders(columnHeaders)
+		excelBuilder.setStartingPoint(3, 0)
+		excelBuilder.setFileName(fileName)
+		excelBuilder.build()
 
 	def save(self):
 		if self.selectedpk!="0":
@@ -230,6 +199,71 @@ class CashReceiptsWindow(Frame,object):
 		if self.selectedpk!=0:
 			print self.app.deleteCashReceipt(self.selectedpk)
 		self.populateTree()
+
+class ExcelBuilder(object):
+	"""docstring for ExcelBuilder"""
+	def __init__(self):
+		pass
+
+	def setRows(self, value):
+		"""Expects a list of tuples where tuple[0] is the list of column values in order
+		and tuple[1] contains the tags e.g. 'deleted' or 'none'"""
+		self.rows = value
+
+	def setStartingPoint(self, row, column):
+		"""Sets the starting row and column for the table in the excel file"""
+		self.row = row
+		self.column = column
+
+	def setColumnHeaders(self, value):
+		"""Expects a list of strings"""
+		self.colList = value
+
+	def setFileName(self, value):
+		"""Sets the file name to be saved"""
+		self.fileName = value
+		
+	def build(self):
+		"""Builds and saves the excel file"""
+		book = Workbook()
+		sheet1 = book.add_sheet('Sheet 1')
+		rows = self.rows
+		headerStyle = easyxf('font: bold 1;')
+		deletedStyle = easyxf('font: color red;')
+		# starting location of the table
+		startingRow = self.row
+		startingCol = self.column
+		# adjust column widths
+		for i in xrange(9):
+			sheet1.col(i).width = 5000
+
+		# Write auto-generated timestamp
+		timeNow = datetime.datetime.now().strftime("%I:%M%p %B %d, %Y")
+		sheet1.write(0, 0, "This file was generated on " + timeNow)
+
+		# Write the table column names
+		colList = self.colList
+		colNumber = startingCol
+		for columnHeader in colList:
+			sheet1.write(startingRow, colNumber, columnHeader, headerStyle)
+			colNumber += 1
+		colNumber = startingCol
+		rowNumber = startingRow + 1
+
+		# Write the table data
+		for i in rows:
+			for columnValue in i[0]:
+				if "none" in i[1]:
+					sheet1.write(rowNumber, colNumber, columnValue)
+				elif "deleted" in i[1]:
+					sheet1.write(rowNumber, colNumber, columnValue, deletedStyle)
+				colNumber += 1
+			colNumber = startingCol
+			rowNumber += 1
+
+		# Save the excel file
+		book.save(self.fileName)
+
 if __name__=="__main__":
 	root = Tk()
 	program = CashReceiptsWindow(root,None)
