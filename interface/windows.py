@@ -135,7 +135,7 @@ class CashReceiptsWindow(Frame,object):
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
 			else:
-				self.tree.insert("","end",text=str(pk),values=dataFields)
+				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
 		self.totalLabel.config(text="Total: "+str(total))
 
 	def save(self):
