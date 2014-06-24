@@ -164,7 +164,7 @@ class CashReceiptsWindow(Frame,object):
 		excelBuilder.build()
 
 	def save(self):
-		if self.selectedpk!="0":
+		if self.selectedpk!="New":
 			self.selectedpk = self.app.editCashReceipt(self.selectedpk,
 				dateOfTransaction=self.fields['dateOfTransaction'].text,
 				category = self.fields['category'].text,
@@ -190,9 +190,9 @@ class CashReceiptsWindow(Frame,object):
 
 	def newEntry(self):
 		#create blank entry for demonstration purposes
-		dummyEntry = self.tree.insert("","end",text="0",values=('','','','','','','','',''))
+		dummyEntry = self.tree.insert("","end",text='New',values=('','','','','','','','',''))
 		self.tree.selection_set(dummyEntry)
-		self.selectedpk=0
+		self.selectedpk="New"
 		print self.selectedpk
 
 	def delete(self):
