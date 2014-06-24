@@ -239,7 +239,7 @@ class ExcelBuilder(object):
 		startingRow = self.row
 		startingCol = self.column
 		# adjust column widths
-		for i in xrange(self.row, self.row + len(self.colList)):
+		for i in xrange(self.column, self.column + len(self.colList)):
 			sheet1.col(i).width = self.colWidth
 
 		# Write auto-generated timestamp
