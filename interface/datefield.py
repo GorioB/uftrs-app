@@ -4,7 +4,7 @@ from ttkcalendar import Calendar
 import calendar
 
 class CalendarBox(Frame,object):
-	def __init__(self,parent,label="Label",toolTip="None",**kwargs):
+	def __init__(self,parent,label="Label",toolTip=None,**kwargs):
 		Frame.__init__(self,parent,**kwargs)
 		self.parent=parent
 		self.label=label
@@ -36,17 +36,19 @@ class CalendarBox(Frame,object):
 		label = Label(fLeft,text=self.label)
 		label.pack(side=LEFT,fill=BOTH,expand=1)
 
-		button = Button(fRight,text="?",width=2)
-		button.pack(fill=NONE,expand=0)
-		button.bind("<Enter>",self.hoverHelp)
-		button.bind("<Leave>",self.leaveHelp)
+
 
 		self._calButton=calButton = Button(fLower,text="Calendar",command=self.createCalendar)
 		calButton.pack(fill=X,expand=1)
 
 		#toolTip
-		self.tooltipLabel = Label(self.fHigh_Low,text=self.toolTip,style="ToolTip.TLabel")
-		self.tooltipLabel.pack(fill=X,expand=1)
+		if self.toolTip:
+			button = Button(fRight,text="?",width=2)
+			button.pack(fill=NONE,expand=0)
+			button.bind("<Enter>",self.hoverHelp)
+			button.bind("<Leave>",self.leaveHelp)
+			self.tooltipLabel = Label(self.fHigh_Low,text=self.toolTip,style="ToolTip.TLabel")
+			self.tooltipLabel.pack(fill=X,expand=1)
 
 	def hoverHelp(self,event):
 		self.fHigh_Low.pack(fill=X,expand=1,side=TOP)

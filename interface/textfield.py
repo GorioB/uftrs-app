@@ -2,13 +2,14 @@ from Tkinter import *
 from ttk import *
 
 class TextFieldBox(Frame,object):
-	def __init__(self,parent,label="Label",toolTip="None",text="",**kwargs):
+	def __init__(self,parent,label="Label",toolTip=None,readonly=False,text="",**kwargs):
 		Frame.__init__(self,parent,**kwargs)
 		self.parent = parent
 		#self.config(borderwidth=2,relief="groove")
 		self.label=label
 		self._text=text
 		self.toolTip=toolTip
+		self.readonly=readonly
 		self.initUI()
 
 	def initUI(self):
@@ -35,18 +36,21 @@ class TextFieldBox(Frame,object):
 		#elements
 		label = Label(fLeft,text=self.label)
 		label.pack(side=LEFT,fill=BOTH,expand=1)
-
-		button = Button(fRight,text="?",width=2)
-		button.pack(fill=NONE,expand=0)
-		button.bind("<Enter>",self.hoverHelp)
-		button.bind("<Leave>",self.leaveHelp)
+		if self.toolTip:
+			button = Button(fRight,text="?",width=2)
+			button.pack(fill=NONE,expand=0)
+			button.bind("<Enter>",self.hoverHelp)
+			button.bind("<Leave>",self.leaveHelp)
 
 		self.textField = Text(fLower,height=3)
 		self.textField.pack(fill=BOTH,expand=1)
+		if self.readonly:
+			self.textField.configure(state='disabled')
 
 		#tooltip
-		self.tooltipLabel = Label(fHighLow,text=self.toolTip,style="ToolTip.TLabel")
-		self.tooltipLabel.pack(fill=X,expand=1)
+		if self.toolTip:
+			self.tooltipLabel = Label(fHighLow,text=self.toolTip,style="ToolTip.TLabel")
+			self.tooltipLabel.pack(fill=X,expand=1)
 
 
 	@property
@@ -55,7 +59,11 @@ class TextFieldBox(Frame,object):
 
 	@text.setter
 	def text(self, value):
+		self.textField.configure(state='normal')
+		self.textField.delete('1.0',END)
 		self.textField.insert('1.0',value)
+		if self.readonly:
+			self.textField.configure(state='disabled')
 
 	def hoverHelp(self,event):
 		self.fHighLow.pack(fill=X,expand=1,side=TOP)

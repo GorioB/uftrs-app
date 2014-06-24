@@ -9,7 +9,6 @@ class Application(Frame):
 	def __init__(self,parent):
 		Frame.__init__(self,parent)
 		self.parent = parent
-		self.pack()
 		self.initUI()
 
 	def initUI(self):

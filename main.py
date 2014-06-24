@@ -1,5 +1,5 @@
 from lib.app import App
-from interface import *
+from interface import windows
 from Tkinter import *
 from ttk import *
 
@@ -9,12 +9,15 @@ class MainProgram(Frame,object):
 		self.parent = parent
 		self.app = App()
 		self.pack()
+		self.showDeleted=BooleanVar()
+		self.showDeleted.set(0)
 		self.initUI()
 
 	def initUI(self):
 		#Window settings
 		self.parent.title("UFTRS Accounting System")
 		self.parent.geometry("800x500")
+		self.parent.state("zoomed")
 		menubar = Menu(self.parent)
 		self.parent.config(menu=menubar)
 
@@ -22,6 +25,7 @@ class MainProgram(Frame,object):
 		usersMenu=Menu(menubar)
 		usersMenu.add_command(label="Create User")
 		preferencesMenu=Menu(menubar)
+		preferencesMenu.add_checkbutton(label="Show History",variable=self.showDeleted,onvalue=1,offvalue=0)
 		preferencesMenu.add_command(label="Settings")
 		menubar.add_cascade(label="User",menu=usersMenu)
 		menubar.add_cascade(label="Preferences",menu=preferencesMenu)
@@ -37,6 +41,10 @@ class MainProgram(Frame,object):
 			self.notebook.add(self.notes[i],text=i)
 		self.notebook.pack(fill=BOTH,expand=1)
 		self.notebook.pack_propagate(0)
+
+		#CashReceiptsWindow
+		self.notes['Cash Receipts']=windows.CashReceiptsWindow(self.notes['Cash Receipts'],self.app,deletedVar = self.showDeleted)
+		self.notes['Cash Receipts'].pack()
 
 	#callbacks
 	def about(self):

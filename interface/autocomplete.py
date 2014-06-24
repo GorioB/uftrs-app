@@ -1,8 +1,9 @@
 from Tkinter import *
 from ttk import *
+from helpbox import createHelpBox
 
 class AutocompleteBox(Frame,object):
-	def __init__(self,parent,label="Label",toolTip="None",text="",**kwargs):
+	def __init__(self,parent,label="Label",toolTip=None,text="",**kwargs):
 		Frame.__init__(self,parent,**kwargs)
 		self.parent = parent
 		self.label=label
@@ -35,17 +36,26 @@ class AutocompleteBox(Frame,object):
 		label = Label(fLeft,text=self.label)
 		label.pack(side=LEFT,fill=BOTH,expand=1)
 
-		button = Button(fRight,text="?",width=2)
-		button.pack(fill=NONE,expand=0)
-		button.bind("<Enter>",self.hoverHelp)
-		button.bind("<Leave>",self.leaveHelp)
+		
 
 		#tooltip
-		self.tooltipLabel = Label(fHighLow,text=self.toolTip,style="ToolTip.TLabel")
-		self.tooltipLabel.pack(fill=X,expand=1)
+		if self.toolTip:
+			if len(self.toolTip)<50:
+				self.shortToolTip=self.toolTip
+			else:
+				self.shortToolTip="Click ? for help."
+			button = Button(fRight,text="?",width=2,command=self.createHelpBox)
+			button.pack(fill=NONE,expand=0)
+			button.bind("<Enter>",self.hoverHelp)
+			button.bind("<Leave>",self.leaveHelp)
+			self.tooltipLabel = Label(fHighLow,text=self.shortToolTip,style="ToolTip.TLabel")
+			self.tooltipLabel.pack(fill=X,expand=1)
+
 
 		# self.textField = Text(self.fLower,height=-1)
 		# self.textField.pack(fill=BOTH,expand=1)
+	def createHelpBox(self):
+		createHelpBox(self.toolTip)
 
 	def initComboBox(self, identifier):
 		# TODO: pull values from th db
