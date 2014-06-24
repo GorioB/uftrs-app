@@ -2,7 +2,7 @@ from Tkinter import *
 from ttk import *
 
 class TextFieldBox(Frame,object):
-	def __init__(self,parent,label="Label",toolTip=None,readonly=False,text="",**kwargs):
+	def __init__(self,parent,label="Label",toolTip=None,readonly=False,text="",height=3,**kwargs):
 		Frame.__init__(self,parent,**kwargs)
 		self.parent = parent
 		#self.config(borderwidth=2,relief="groove")
@@ -10,6 +10,7 @@ class TextFieldBox(Frame,object):
 		self._text=text
 		self.toolTip=toolTip
 		self.readonly=readonly
+		self.height=height
 		self.initUI()
 
 	def initUI(self):
@@ -42,7 +43,7 @@ class TextFieldBox(Frame,object):
 			button.bind("<Enter>",self.hoverHelp)
 			button.bind("<Leave>",self.leaveHelp)
 
-		self.textField = Text(fLower,height=3)
+		self.textField = Text(fLower,height=self.height)
 		self.textField.pack(fill=BOTH,expand=1)
 		if self.readonly:
 			self.textField.configure(state='disabled')

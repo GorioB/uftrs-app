@@ -83,7 +83,7 @@ class CashReceiptsWindow(Frame,object):
 		#fields
 		self.fields={}
 		newColList = colList
-		self.fields['timestamp'] = timestamp = TextFieldBox(upperRight.interior,label="Timestamp",readonly=True)
+		self.fields['timestamp'] = timestamp = TextFieldBox(upperRight.interior,label="Timestamp",readonly=True,height=1)
 
 		self.fields['dateOfTransaction']=dot = CalendarBox(upperRight.interior,label="Date of Transaction")
 
@@ -95,7 +95,7 @@ class CashReceiptsWindow(Frame,object):
 		self.fields['nature']=nature = AutocompleteBox(upperRight.interior,label="Nature",toolTip=None)
 		nature.initComboBox(self.app.listOptions("Nature"))
 
-		self.fields['amount'] = TextFieldBox(upperRight.interior,label="Amount",readonly=False)
+		self.fields['amount'] = TextFieldBox(upperRight.interior,label="Amount",readonly=False,height=1)
 
 		self.fields['payor'] = TextFieldBox(upperRight.interior,label="Payor's Name",readonly=False,toolTip = "Name of the individual who actually gave the cash.")
 
