@@ -38,13 +38,14 @@ class TextFieldBox(Frame,object):
 		label = Label(fLeft,text=self.label)
 		label.pack(side=LEFT,fill=BOTH,expand=1)
 		if self.toolTip:
-			button = Button(fRight,text="?",width=2)
+			button = Button(fRight,text="?",width=2,takefocus=0)
 			button.pack(fill=NONE,expand=0)
 			button.bind("<Enter>",self.hoverHelp)
 			button.bind("<Leave>",self.leaveHelp)
 
 		self.textField = Text(fLower,height=self.height)
 		self.textField.pack(fill=BOTH,expand=1)
+		self.textField.bind("<Tab>",self.focusNext)
 		if self.readonly:
 			self.textField.configure(state='disabled')
 
@@ -65,6 +66,10 @@ class TextFieldBox(Frame,object):
 		self.textField.insert('1.0',value)
 		if self.readonly:
 			self.textField.configure(state='disabled')
+
+	def focusNext(self,event):
+		event.widget.tk_focusNext().focus()
+		return ("break")
 
 	def hoverHelp(self,event):
 		self.fHighLow.pack(fill=X,expand=1,side=TOP)

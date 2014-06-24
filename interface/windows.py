@@ -59,7 +59,7 @@ class CashReceiptsWindow(Frame,object):
 		#bottombar
 		leftLowestFrame = Frame(leftFrameLower)
 		leftLowestFrame.pack(fill=X,expand=0)
-		newButton = Button(leftLowestFrame,text="New")
+		newButton = Button(leftLowestFrame,text="New",command=self.newEntry)
 		newButton.pack(fill=None,expand=0,side=LEFT)
 		self.totalLabel=totalLabel=Label(leftLowestFrame,text="Total: ",relief=SUNKEN,width=20)
 		totalLabel.pack(fill=None,expand=0,side=RIGHT)
@@ -115,6 +115,8 @@ class CashReceiptsWindow(Frame,object):
 		for i in range(0,len(self.fieldList)):
 			self.fields[self.fieldList[i]].text=values[i]
 
+		if self.fields['dateOfTransaction']=="":
+			self.fields['dateOfTransaction']="Calendar"
 		self.selectedpk=self.tree.item(item,"text")
 		print self.selectedpk
 
@@ -185,7 +187,7 @@ class CashReceiptsWindow(Frame,object):
 		book.save('sample.xls')
 
 	def save(self):
-		if self.selectedpk!=0:
+		if self.selectedpk!="0":
 			self.selectedpk = self.app.editCashReceipt(self.selectedpk,
 				dateOfTransaction=self.fields['dateOfTransaction'].text,
 				category = self.fields['category'].text,
@@ -194,12 +196,27 @@ class CashReceiptsWindow(Frame,object):
 				payor = self.fields['payor'].text,
 				receiptNumber = self.fields['receiptNumber'].text,
 				notes = self.fields['notes'].text)
+		else:
+			self.selectedpk=self.app.newCashReceipt(
+				dateOfTransaction=self.fields['dateOfTransaction'].text,
+				category=self.fields['category'].text,
+				nature=self.fields['nature'].text,
+				amount=self.fields['amount'].text,
+				payor=self.fields['payor'].text,
+				receiptNumber = self.fields['receiptNumber'].text,
+				notes=self.fields['notes'].text)
 		self.populateTree()
 
 		#combobox stuff
 		self.app.addOption("Nature", self.fields['nature'].text)
 		self.fields['nature'].comboBox.config(values = self.app.listOptions("Nature"))
 
+	def newEntry(self):
+		#create blank entry for demonstration purposes
+		dummyEntry = self.tree.insert("","end",text="0",values=('','','','','','','','',''))
+		self.tree.selection_set(dummyEntry)
+		self.selectedpk=0
+		print self.selectedpk
 
 	def delete(self):
 		if self.selectedpk!=0:
