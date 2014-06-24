@@ -62,13 +62,17 @@ class CalendarBox(Frame,object):
 		if not self._calendarCreated:
 			self._calWindow=calWindow = Toplevel()
 			calWindow.title("Calendar")
+			calWindow.protocol("WM_DELETE_WINDOW",self.deleteCallback)
 			self._ttkcal = ttkcal = Calendar(calWindow,firstweekday=calendar.SUNDAY)
 			ttkcal.pack(expand=1,fill='both')
 			ttkcal._calendar.bind("<ButtonPress-1>",self.calPressed,add="+")
 			self._calendarCreated+=1
 
 
-
+	def deleteCallback(self):
+		self._calendarCreated-=1
+		self._calWindow.destroy()
+		
 	def calPressed(self,event):
 		date= self._ttkcal.selection
 		self._calButton.config(text=str(date.year)+"-"+str(date.month)+"-"+str(date.day))
