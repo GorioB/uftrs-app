@@ -237,6 +237,7 @@ class CashDisbursmentsWindow(Frame,object):
 		self.populateTree()
 
 	def initUI(self):
+		#portable
 		p = Panedwindow(self.parent,orient=HORIZONTAL)
 		leftFrame = LabelFrame(p)
 		rightFrame = LabelFrame(p)
@@ -265,6 +266,7 @@ class CashDisbursmentsWindow(Frame,object):
 		newButton.pack(expand=0,fill=None,side=LEFT)
 
 	def initTree(self):
+		#nonportable
 		self.tree = tree = Treeview(self.treeFrame,selectmode="browse")
 		tree.bind("<<TreeviewSelect>>",self.getSelection)
 		yscroll = Scrollbar(self.treeFrame,orient="vertical",command=tree.yview)
@@ -283,10 +285,12 @@ class CashDisbursmentsWindow(Frame,object):
 		tree.tag_configure("deleted",foreground="red")
 
 	def initTotalTag(self):
+		#portable,optional
 		self.totalLabel = totalLabel = Label(self.totalFrame,text="Total: ",relief=SUNKEN,width=20)
 		totalLabel.pack(fill=None,expand=0,side=RIGHT)
 
 	def initSaveDelete(self):
+		#portable
 		saveButton=Button(self.saveDeleteFrame,text="Save",command=self.save,
 			style="SAVEButton.TButton")
 		saveButton.pack(side=LEFT,fill=X,expand=1)
@@ -294,6 +298,7 @@ class CashDisbursmentsWindow(Frame,object):
 		deleteButton.pack(side=LEFT,fill=X,expand=1)
 
 	def initFields(self):
+		#nonportable
 		self.fields={}
 		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
 			label="Timestamp",readonly=True,height=1)
@@ -337,6 +342,7 @@ class CashDisbursmentsWindow(Frame,object):
 
 
 	def newButtonCallback(self):
+		#portable
 		dummyEntry=newExistsInTree(self.tree)
 		if not dummyEntry:
 			dummyEntry=self.tree.insert("","end",text="New",values=["" for i in self.colList])
@@ -348,6 +354,7 @@ class CashDisbursmentsWindow(Frame,object):
 
 
 	def getSelection(self,event):
+		#semiportable
 		item=self.tree.selection()[0]
 		values=self.tree.item(item,'values')
 		print self.tree.item(item,"values")
@@ -361,6 +368,7 @@ class CashDisbursmentsWindow(Frame,object):
 		print self.selectedpk
 
 	def _populateTree(self,entryList):
+		#portable
 		total=0
 		[self.tree.delete(item) for item in self.tree.get_children()]
 		for i in entryList:
@@ -384,6 +392,7 @@ class CashDisbursmentsWindow(Frame,object):
 		self.total=total
 
 	def populateTree(self,*a):
+		#nonportable
 		self.fieldList=['timestamp','dateOfTransaction','category',
 			'event','purpose','nature','amount','liquidatingPerson',
 			'docNo','notes','remarks']
@@ -391,6 +400,7 @@ class CashDisbursmentsWindow(Frame,object):
 		self._populateTree(self.app.listCashDisbursments(showDeleted=showDeleted))
 
 	def save(self):
+		#nonportable
 		if self.selectedpk!="New":
 			self.selectedpk = self.app.editCashDisbursment(self.selectedpk,
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
@@ -418,10 +428,91 @@ class CashDisbursmentsWindow(Frame,object):
 		self.fields['nature'].comboBox.config(values=self.app.listOptions("CD_Nature"))
 
 	def delete(self):
+		#nonportable
 		if self.selectedpk!="New":
 			print self.app.deleteCashDisbursment(self.selectedpk)
 		self.populateTree()
 
+class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
+	def initTree(self):
+		self.tree = tree = Treeview(self.treeFrame,selectmode="browse")
+		tree.bind("<<TreeviewSelect>>",self.getSelection)
+		yscroll = Scrollbar(self.treeFrame,orient="vertical",command=tree.yview)
+		xscroll = Scrollbar(self.xScrollFrame,orient="horizontal",command=tree.xview)
+		self.colList = colList = ["Timestamp","Date of Transaction","Purpose","Nature","Amount","Liquidating Person/Payee","Receipt Number","Notes","Remarks"]
+		tree['columns']=colList
+		for i in colList:
+			tree.heading(i,text=i)
+			tree.column(i,anchor=W,width=60)
+		tree.column("#0",width=3,anchor=W)
+		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
+		yscroll.pack(side=RIGHT,fill=Y,expand=0)
+		xscroll.pack(side=TOP,fill=X,expand=0)
+		tree.pack(side=LEFT,fill=BOTH,expand=1)
+		tree.tag_configure("deleted",foreground="red")
+
+	def initFields(self):
+		self.fields={}
+		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
+			label="Timestamp",readonly=True,height=1)
+		self.fields['dateOfTransaction']=CalendarBox(self.fieldsFrame.interior,
+			label="Date of Transaction")
+
+		self.fields['purpose']=TextFieldBox(self.fieldsFrame.interior,
+			label="Purpose",toolTip="What the cash was used for.")
+
+		self.fields['nature']=AutocompleteBox(self.fieldsFrame.interior,
+			label="Nature",toolTip=None)
+		self.fields['nature'].initComboBox(self.app.listOptions("OME_Nature"))
+
+		self.fields['amount'] = TextFieldBox(self.fieldsFrame.interior,
+			label="Amount",readonly=False,height=1,textType="number",
+			toolTip="Amount of actual expenditure")
+
+		self.fields['liquidatingPerson'] = TextFieldBox(self.fieldsFrame.interior,
+			label="Liquidating Person/Payee",toolTip="Name of the individual who actually received the cash.")
+
+		self.fields['receiptNumber'] = TextFieldBox(self.fieldsFrame.interior,
+			label="Receipt number",toolTip="Put all receipt numbers here.")
+
+		self.fields['notes'] = TextFieldBox(self.fieldsFrame.interior,
+			label="Notes",toolTip="Any added notes about the transaction.")
+
+		self.fields['remarks'] = TextFieldBox(self.fieldsFrame.interior,label="Remarks",readonly=True)
+
+	def populateTree(self,*a):
+		self.fieldList=['timestamp','dateOfTransaction','purpose','nature','amount','liquidatingPerson','receiptNumber','notes','remarks']
+		showDeleted=self.deletedVar.get()
+		self._populateTree(self.app.listOMEs(showDeleted=showDeleted))
+
+	def save(self):
+		if self.selectedpk!="New":
+			self.selectedpk = self.app.editOME(self.selectedpk,
+				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
+				purpose=self.fields['purpose'].text,
+				nature=self.fields['nature'].text,
+				amount=self.fields['amount'].text,
+				liquidatingPerson=self.fields['liquidatingPerson'].text,
+				receiptNumber=self.fields['receiptNumber'].text,
+				notes=self.fields['notes'].text)
+		else:
+			self.selectedpk=self.app.newOME(
+				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
+				purpose=self.fields['purpose'].text,
+				nature=self.fields['nature'].text,
+				amount=self.fields['amount'].text,
+				liquidatingPerson=self.fields['liquidatingPerson'].text,
+				receiptNumber=self.fields['receiptNumber'].text,
+				notes=self.fields['notes'].text)
+		self.populateTree()
+
+		self.app.addOption("OME_Nature",self.fields['nature'].text)
+		self.fields['nature'].comboBox.config(values=self.app.listOptions("OME_Nature"))
+
+	def delete(self):
+		if self.selectedpk!="New":
+			print self.app.deleteOME(self.selectedpk)
+		self.populateTree()
 
 
 class ExcelBuilder(object):

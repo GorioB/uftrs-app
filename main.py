@@ -48,6 +48,8 @@ class MainProgram(Frame,object):
 		self.notes['Cash Receipts'].pack()
 		self.notes['Cash Disbursments']=windows.CashDisbursmentsWindow(self.notes['Cash Disbursments'],self.app,deletedVar=self.showDeleted)
 		self.notes['Cash Receipts'].pack()
+		self.notes['Operation and Maintenance Expense']=windows.OperationMaintenanceExpensesWindow(self.notes['Operation and Maintenance Expense'],self.app,deletedVar=self.showDeleted)
+		self.notes['Operation and Maintenance Expense'].pack()
 
 	#callbacks
 	def about(self):
