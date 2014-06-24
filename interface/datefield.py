@@ -8,6 +8,7 @@ class CalendarBox(Frame,object):
 		Frame.__init__(self,parent,**kwargs)
 		self.parent=parent
 		self.label=label
+		self._calendarCreated=0
 		self.toolTip=toolTip
 		self.initUI()
 
@@ -57,16 +58,21 @@ class CalendarBox(Frame,object):
 		self.fHigh_Low.pack_forget()
 
 	def createCalendar(self):
-		self._calWindow=calWindow = Toplevel()
-		calWindow.title("Calendar")
-		self._ttkcal = ttkcal = Calendar(calWindow,firstweekday=calendar.SUNDAY)
-		ttkcal.pack(expand=1,fill='both')
-		ttkcal._calendar.bind("<ButtonPress-1>",self.calPressed,add="+")
+		if not self._calendarCreated:
+			self._calWindow=calWindow = Toplevel()
+			calWindow.title("Calendar")
+			self._ttkcal = ttkcal = Calendar(calWindow,firstweekday=calendar.SUNDAY)
+			ttkcal.pack(expand=1,fill='both')
+			ttkcal._calendar.bind("<ButtonPress-1>",self.calPressed,add="+")
+			self._calendarCreated+=1
+
+
 
 	def calPressed(self,event):
 		date= self._ttkcal.selection
 		self._calButton.config(text=str(date.year)+"-"+str(date.month)+"-"+str(date.day))
 		self._calWindow.destroy()
+		self._calendarCreated-=1
 
 	@property
 	def text(self):
