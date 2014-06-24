@@ -5,7 +5,11 @@ from interface.textfield import *
 from interface.datefield import *
 from interface.autocomplete import *
 from lib.timeFuncs import *
-from xlwt import Workbook, easyxf
+try:
+	from xlwt import Workbook, easyxf
+except:
+	print "Requires xlwt"
+	exit(1)
 import datetime
 
 class CashReceiptsWindow(Frame,object):
