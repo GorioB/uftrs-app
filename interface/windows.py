@@ -195,7 +195,7 @@ class CashReceiptsWindow(Frame,object):
 		book.save(fileName)
 
 	def save(self):
-		if self.selectedpk!="None":
+		if self.selectedpk!="New":
 			self.selectedpk = self.app.editCashReceipt(self.selectedpk,
 				dateOfTransaction=self.fields['dateOfTransaction'].text,
 				category = self.fields['category'].text,
