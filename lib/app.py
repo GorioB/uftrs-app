@@ -26,22 +26,23 @@ class App(object):
 		self._activeUser = db2.User("dummy", "dummy")
 		self._initTables()
 
-	def createUser(self, username, password, isRoot):
+	def createUser(self, username, email, password, isRoot):
 		"""Creates a new user if username isn't taken, otherwise returns -1. isRoot value should be 0 or 1"""
 		if db2.User.userExists(username):
 			return -1
 		else:
 			newUser = db2.User(username, password)
-			newUser.saveUser(isRoot)
+			newUser.saveUser(email, isRoot)
 
 	def changePass(self, username, oldpassword, newpassword):
 		"""Changes the user's password if username-oldpassword combo is valid."""
 		if db2.User(username, oldpassword).auth():
 			changedUser = db2.User(username, newpassword)
+			email = changedUser.getEmail()
 			if changedUser.checkIfRoot():
-				changedUser.saveUser(1)
+				changedUser.saveUser(email, 1)
 			else:
-				changedUser.saveUser(0)
+				changedUser.saveUser(email, 0)
 		else:
 			return -1
 
