@@ -133,8 +133,6 @@ class CashReceiptsWindow(Frame,object):
 
 		if self.fields['dateOfTransaction'].text=="":
 			self.fields['dateOfTransaction'].text=secsToDay(getEpochTime())
-		else:
-			self.fields['dateOfTransaction'].text=secsToDay(values[1])
 		self.selectedpk=self.tree.item(item,"text")
 		print self.selectedpk
 
