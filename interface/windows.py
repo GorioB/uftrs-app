@@ -159,8 +159,9 @@ class CashReceiptsWindow(Frame,object):
 		excelBuilder = ExcelBuilder()
 		excelBuilder.setRows(rows)
 		excelBuilder.setColumnHeaders(columnHeaders)
-		excelBuilder.setStartingPoint(3, 0)
+		excelBuilder.setStartingPoint(5, 5)
 		excelBuilder.setFileName(fileName)
+		excelBuilder.setTableColumnWidth(8000)
 		excelBuilder.build()
 
 	def save(self):
@@ -201,9 +202,11 @@ class CashReceiptsWindow(Frame,object):
 		self.populateTree()
 
 class ExcelBuilder(object):
-	"""docstring for ExcelBuilder"""
+	"""To use: instantiate, call all setter methods, then call build"""
 	def __init__(self):
-		pass
+		self.setTableColumnWidth(5000)
+		self.setFileName("export.xls")
+		self.setStartingPoint(3, 0)
 
 	def setRows(self, value):
 		"""Expects a list of tuples where tuple[0] is the list of column values in order
@@ -222,20 +225,22 @@ class ExcelBuilder(object):
 	def setFileName(self, value):
 		"""Sets the file name to be saved"""
 		self.fileName = value
+
+	def setTableColumnWidth(self, value):
+		self.colWidth = 5000
 		
 	def build(self):
 		"""Builds and saves the excel file"""
 		book = Workbook()
 		sheet1 = book.add_sheet('Sheet 1')
-		rows = self.rows
 		headerStyle = easyxf('font: bold 1;')
 		deletedStyle = easyxf('font: color red;')
 		# starting location of the table
 		startingRow = self.row
 		startingCol = self.column
 		# adjust column widths
-		for i in xrange(9):
-			sheet1.col(i).width = 5000
+		for i in xrange(self.row, self.row + len(self.colList)):
+			sheet1.col(i).width = self.colWidth
 
 		# Write auto-generated timestamp
 		timeNow = datetime.datetime.now().strftime("%I:%M%p %B %d, %Y")
@@ -251,7 +256,7 @@ class ExcelBuilder(object):
 		rowNumber = startingRow + 1
 
 		# Write the table data
-		for i in rows:
+		for i in self.rows:
 			for columnValue in i[0]:
 				if "none" in i[1]:
 					sheet1.write(rowNumber, colNumber, columnValue)
