@@ -57,10 +57,8 @@ class AutocompleteBox(Frame,object):
 	def createHelpBox(self):
 		createHelpBox(self.toolTip)
 
-	def initComboBox(self, identifier):
-		# TODO: pull values from th db
-		valCombo = ['cat', 'dog', 'pig', 'alberto', 'al', 'alberto lasco']
-		self.comboBox = Combobox(self.fLower, values=valCombo, height=-1)
+	def initComboBox(self, options=["cat", "dog", "pig"]):
+		self.comboBox = Combobox(self.fLower, values=options, height=-1)
 		self.comboBox.pack(fill=BOTH, expand=1)
 
 	def initDropDown(self, options=["cat", "dog", "pig"]):

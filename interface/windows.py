@@ -90,7 +90,7 @@ class CashReceiptsWindow(Frame,object):
 		category.initDropDown(options)
 
 		self.fields['nature']=nature = AutocompleteBox(upperRight.interior,label="Nature",toolTip=None)
-		nature.initComboBox("nature")
+		nature.initComboBox(self.app.listOptions("Nature"))
 
 		self.fields['amount'] = TextFieldBox(upperRight.interior,label="Amount",readonly=False)
 
@@ -145,6 +145,10 @@ class CashReceiptsWindow(Frame,object):
 				receiptNumber = self.fields['receiptNumber'].text,
 				notes = self.fields['notes'].text)
 		self.populateTree()
+
+		#combobox stuff
+		self.app.addOption("Nature", self.fields['nature'].text)
+		self.fields['nature'].comboBox.config(values = self.app.listOptions("Nature"))
 
 	def delete(self):
 		if self.selectedpk!=0:
