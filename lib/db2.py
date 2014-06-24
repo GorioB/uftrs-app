@@ -10,10 +10,9 @@ def randomword(length):
 
 class User(object):
 	"""docstring for User. Database table name is users"""
-	def __init__(self, username, password, email):
+	def __init__(self, username, password):
 		self.username = username
 		self.password = password
-		self.email = email
 		# create user table if it doesn't exist
 		conn = sqlite3.connect(DB_NAME)
 		cursor = conn.cursor()
@@ -21,7 +20,7 @@ class User(object):
 		conn.commit()
 		conn.close()
 
-	def saveUser(self, isRoot=0):
+	def saveUser(self, email, isRoot=0):
 		"""Saves/updates the user into the database. Optional: pass a 0 or 1 to specify isRoot value (0 by default)"""
 		conn = sqlite3.connect(DB_NAME)
 		cursor = conn.cursor()
@@ -29,12 +28,20 @@ class User(object):
 
 		if self.userExists(self.username):
 			cursor.execute("UPDATE users SET username=?, passwordHash=?, email=?, isRoot=? WHERE username=?", 
-				(self.username, self.passwordHash, self.email, isRoot, self.username))
+				(self.username, self.passwordHash, email, isRoot, self.username))
 		else:
-			cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.username, self.passwordHash, self.email, isRoot))
+			cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.username, self.passwordHash, email, isRoot))
 
 		conn.commit()
 		conn.close()
+
+	def getEmail(self):
+		conn = sqlite3.connect(DB_NAME)
+		cursor = conn.cursor()
+		cursor.execute("SELECT email FROM users WHERE username=?", (self.username,))
+		isRoot = cursor.fetchone()
+		conn.close()
+		return isRoot[0]
 
 
 	def auth(self):
