@@ -159,9 +159,9 @@ class CashReceiptsWindow(Frame,object):
 		excelBuilder = ExcelBuilder()
 		excelBuilder.setRows(rows)
 		excelBuilder.setColumnHeaders(columnHeaders)
-		excelBuilder.setStartingPoint(5, 5)
+		excelBuilder.setStartingPoint(2, 0)
 		excelBuilder.setFileName(fileName)
-		excelBuilder.setTableColumnWidth(8000)
+		excelBuilder.setTableColumnWidth(5000)
 		excelBuilder.build()
 
 	def save(self):
