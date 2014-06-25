@@ -111,7 +111,19 @@ class OALWindow(CashDisbursmentsWindow):
 		pass
 
 	def exportToExcel(self):
-		pass
+		"""Exports the data displayed on the treebox to excel"""
+
+		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
+		columnHeaders = self.colList
+		fileName = 'OAL_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+
+		excelBuilder = ExcelBuilder()
+		excelBuilder.setRows(rows)
+		excelBuilder.setColumnHeaders(columnHeaders)
+		excelBuilder.setStartingPoint(2, 0)
+		excelBuilder.setFileName(fileName)
+		excelBuilder.setTableColumnWidth(7000)
+		excelBuilder.build()
 
 	def save(self):
 		pass
