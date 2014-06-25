@@ -27,30 +27,9 @@ class App(object):
 		self._activeUser = db2.User("dummy", "dummy")
 		self._initTables()
 
-	def createUser(self, username, email, password, isRoot):
-		"""Creates a new user if username isn't taken, otherwise returns -1. isRoot value should be 0 or 1"""
-		if db2.User.userExists(username):
-			return -1
-		else:
-			newUser = db2.User(username, password)
-			newUser.saveUser(email, isRoot)
-
-	def changePass(self, username, oldpassword, newpassword):
-		"""Changes the user's password if username-oldpassword combo is valid."""
-		if db2.User(username, oldpassword).auth():
-			changedUser = db2.User(username, newpassword)
-			email = changedUser.getEmail()
-			if changedUser.checkIfRoot():
-				changedUser.saveUser(email, 1)
-			else:
-				changedUser.saveUser(email, 0)
-		else:
-			return -1
-
-	def login(self, username, password):
-		"""Returns true if the username-password combination is valid"""
-		self._activeUser = db2.User(username, password)
-		return self._activeUser.auth()
+	def isAdmin(self):
+		"""AKA isRoot. Returns True if the app instance's active user is an admin/root"""
+		return self._activeUser.checkIfRoot()
 
 	def listOptions(self, identifier):
 		"""Returns a list of options (list of strings) for the given identifier e.g. 'payors'"""
