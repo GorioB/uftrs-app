@@ -15,7 +15,7 @@ class LogIn(Frame,object):
 	def initUI(self):
 		# Window settings
 		self.parent.title("UFTRS Accounting System")
-		self.parent.geometry("300x400")
+		self.parent.geometry("360x400")
 		#self.parent.state("zoomed")
 		menubar = Menu(self.parent)
 		self.parent.config(menu=menubar)
@@ -23,7 +23,7 @@ class LogIn(Frame,object):
 		# Notebook
 		self.notebook = Notebook(self.parent)
 		self.notes={}
-		for i in ["Log In", "Create Account", "Reset Password"]:
+		for i in ["Log In", "Create Account", "Change Password"]:
 			self.notes[i]=Frame(self.notebook)
 			self.notebook.add(self.notes[i],text=i)
 		self.notebook.pack(fill=BOTH,expand=1)
@@ -37,6 +37,8 @@ class LogIn(Frame,object):
 		Label(logInFrame, text="Enter password").pack()
 		self.logIn_password = Entry(logInFrame,show="*")
 		self.logIn_password.pack()
+		## Submit button and text notifier
+		Label(logInFrame, text="").pack()
 		self.logIn_submit = Button(logInFrame, text="Submit", command=self.submitLogIn)
 		self.logIn_submit.pack()
 		self.logIn_notifier = Label(logInFrame)
@@ -65,11 +67,33 @@ class LogIn(Frame,object):
 		Label(createFrame, text="Enter new account's email address").pack()
 		self.create_newMail = Entry(createFrame)
 		self.create_newMail.pack()
-		self.create_submit = Button(createFrame, text="Submit", command=self.submitCreateUser)
+		## Submit button and text notifier
+		self.create_submit = Button(createFrame, text="Register New User", command=self.submitCreateUser)
 		self.create_submit.pack()
 		self.create_notifier = Label(createFrame)
 		self.create_notifier.pack()
 
+		# Change password widgets
+		changeFrame = self.notes["Change Password"]
+		Label(changeFrame, text="Enter username").pack()
+		self.change_user = Entry(changeFrame)
+		self.change_user.pack()
+		Label(changeFrame, text="Enter password").pack()
+		self.change_oldPass = Entry(changeFrame, show="*")
+		self.change_oldPass.pack()
+		Label(changeFrame, text="").pack()
+		Label(changeFrame, text="Enter new password").pack()
+		self.change_newPass = Entry(changeFrame, show="*")
+		self.change_newPass.pack()
+		Label(changeFrame, text="Re-enter new password").pack()
+		self.change_newPass2 = Entry(changeFrame, show="*")
+		self.change_newPass2.pack()
+		## Submit button and text notifier
+		Label(changeFrame, text="").pack()
+		self.change_submit = Button(changeFrame, text="Change Password", command=self.submitChangePass)
+		self.change_submit.pack()
+		self.change_notifier = Label(changeFrame)
+		self.change_notifier.pack()
 
 	# Callbacks
 	def submitLogIn(self):
@@ -113,6 +137,32 @@ class LogIn(Frame,object):
 
 		newUser.saveUser(newUserMail)
 		self.create_notifier.config(text="New user created.", foreground='darkgreen')
+
+	def submitChangePass(self):
+		user = User(self.change_user.get(), self.change_oldPass.get())
+		newPass = self.change_newPass.get()
+		newPass2 = self.change_newPass2.get()
+
+		# Error checking: username doesn't exist
+		if not user.userExists(user.username):
+			self.change_notifier.config(text='Username does not exist.', foreground='red')
+			return
+		# Error checking: wrong password
+		elif not user.auth():
+			self.change_notifier.config(text='Wrong password.', foreground='red')
+			return
+		# Error checking: blank fields
+		elif newPass=="" or newPass2=="":
+			self.change_notifier.config(text='Please fill up all fields.', foreground='red')
+			return
+		# Error checking: unmatched new passwords
+		elif newPass!=newPass2:
+			self.change_notifier.config(text="New passwords don't match.", foreground='red')
+			return
+
+		user.changePassword(newPass)
+		self.change_notifier.config(text="Password successfuly changed.", foreground='darkgreen')
+
 
 if __name__=="__main__":
 	root = Tk()
