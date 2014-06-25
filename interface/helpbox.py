@@ -4,7 +4,7 @@ from ttk import *
 def createHelpBox(toolTip):
 	helpbox = Toplevel()
 	helpbox.title("Help")
-	msg = Message(helpbox,text=toolTip)
+	msg = Message(helpbox,text=toolTip,aspect=200)
 
 	msg.pack(expand=1,fill=BOTH)
 
