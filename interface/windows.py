@@ -509,7 +509,7 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 
 		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
 		columnHeaders = self.colList
-		fileName = 'OperationMaint' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+		fileName = 'OperationMaint_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
 
 		excelBuilder = ExcelBuilder()
 		excelBuilder.setRows(rows)
