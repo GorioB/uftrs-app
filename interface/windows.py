@@ -103,7 +103,7 @@ class CashReceiptsWindow(Frame,object):
 		self.fields['timestamp'] = timestamp = TextFieldBox(upperRight.interior,label="Timestamp",readonly=True,height=1)
 
 		self.fields['dateOfTransaction']=dot = CalendarBox(upperRight.interior,label="Date of Transaction")
-
+		dot.pack(side=TOP,fill=X,expand=1)
 		#options for removal, get from DB
 		options = ["Council Mandated Funds","General Sponsorship Inflows","Income Generating Projects","Other Inflows","Excess"]
 		self.fields['category'] = category = AutocompleteBox(upperRight.interior,label="Category",toolTip="[Council Mandated Funds]: All fees, commissions and revenues that the council body is authorized to collect among students and all businesses within the college\n[General Sponsorhip Inflows]: Cash inflows acquired gratuitously from business organizations, studentry/alumni body and other entities\n[Income Generating Projects]: Cash inflows from all council events to raise revenues and generate additional funds supplementary to its operations\n[Other Inflows]: Cash inflows other than council mandated funds, general sponsoships and income generating projects")
@@ -251,7 +251,7 @@ class CashDisbursmentsWindow(Frame,object):
 		leftFrame.pack_propagate(0)
 		rightFrame.pack_propagate(0)
 
-		saveFrame = Frame(leftFrame)
+		self.saveFrame = saveFrame = Frame(leftFrame)
 		self.treeFrame = treeFrame = Frame(leftFrame)
 		self.xScrollFrame = xScrollFrame = Frame(leftFrame)
 		self.totalFrame = totalFrame = Frame(leftFrame)
@@ -265,7 +265,10 @@ class CashDisbursmentsWindow(Frame,object):
 		self.saveDeleteFrame.pack(expand=0,fill=X,side=BOTTOM)
 		self.fieldsFrame.pack(expand=1,fill=BOTH,side=TOP)
 
-		newButton=Button(saveFrame,text="New",style="NEWButton.TButton",command=self.newButtonCallback)
+		self.generateNewButton()
+
+	def generateNewButton(self):
+		newButton=Button(self.saveFrame,text="New",style="NEWButton.TButton",command=self.newButtonCallback)
 		newButton.pack(expand=0,fill=None,side=LEFT)
 
 	def initTree(self):
@@ -307,6 +310,7 @@ class CashDisbursmentsWindow(Frame,object):
 			label="Timestamp",readonly=True,height=1)
 		self.fields['dateOfTransaction']=CalendarBox(self.fieldsFrame.interior,
 			label="Date of Transaction")
+		self.fields['dateOfTransaction'].pack(side=TOP,fill=X,expand=1)
 		#patchin get from DB here
 		options=['Council and Other Projects','Operation and Maintenance Expenses','Long Term Investments','Other Outflows']
 
@@ -476,6 +480,7 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 			label="Timestamp",readonly=True,height=1)
 		self.fields['dateOfTransaction']=CalendarBox(self.fieldsFrame.interior,
 			label="Date of Transaction")
+		self.fields['dateOfTransaction'].pack(side=TOP,expand=1,fill=X)
 
 		self.fields['purpose']=TextFieldBox(self.fieldsFrame.interior,
 			label="Purpose",toolTip="What the cash was used for.")

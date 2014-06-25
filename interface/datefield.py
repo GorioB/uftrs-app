@@ -18,7 +18,7 @@ class CalendarBox(Frame,object):
 		s.configure("ToolTip.TLabel",background="yellow")
 
 		#frames
-		fMain = Frame(self.parent,borderwidth="2px",relief="groove")
+		fMain = Frame(self,borderwidth="2px",relief="groove")
 		fMain.pack(fill=X,expand=1)
 
 		fHigher = Frame(fMain)

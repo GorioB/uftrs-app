@@ -3,6 +3,7 @@ from interface import windows
 from Tkinter import *
 from ttk import *
 from interface import windows2
+from interface import cashflowswindow
 
 class MainProgram(Frame,object):
 	def __init__(self,parent):
@@ -57,6 +58,9 @@ class MainProgram(Frame,object):
 
 		self.notes['Notes'] = windows2.NotesWindow(self.notes['Notes'],self.app,deletedVar=self.showDeleted)
 		self.notes['Notes'].pack()
+
+		self.notes['Cash Flows'] = cashflowswindow.CashFlowsWindow(self.notes['Cash Flows'],self.app,deletedVar=self.showDeleted)
+		self.notes['Cash Flows'].pack()
 		self.notebook.bind("<<NotebookTabChanged>>",self.refreshPage)
 
 	#callbacks

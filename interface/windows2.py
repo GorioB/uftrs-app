@@ -233,7 +233,7 @@ class COCPWindow(CashDisbursmentsWindow):
 
 		self.fields['dateOfTransaction']=CalendarBox(self.fieldsFrame.interior,
 			label="Date of Transaction")
-
+		self.fields['dateOfTransaction'].pack(fill=X,expand=1,side=TOP)
 		self.fields['event']=AutocompleteBox(self.fieldsFrame.interior,
 			label="Event/Project",toolTip="Specify Event")
 		self.fields['event'].initComboBox(self.app.listOptions("COCP_Event"))
@@ -347,7 +347,7 @@ class LTIWindow(CashDisbursmentsWindow):
 
 		self.fields['dateOfTransaction']=CalendarBox(self.fieldsFrame.interior,
 			label="Date of Transaction")
-
+		self.fields['dateOfTransaction'].pack(fill=X,expand=1,side=TOP)
 		self.fields['purpose']=TextFieldBox(self.fieldsFrame.interior,
 			label="Purpose",toolTip="What the cash was used for.")
 
@@ -442,7 +442,7 @@ class OOWindow(LTIWindow):
 
 		self.fields['dateOfTransaction']=CalendarBox(self.fieldsFrame.interior,
 			label="Date of Transaction")
-
+		self.fields['dateOfTransaction'].pack(fill=X,expand=1,side=TOP)
 		self.fields['purpose']=TextFieldBox(self.fieldsFrame.interior,
 			label="Purpose",toolTip="What the cash was used for.")
 
