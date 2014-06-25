@@ -357,7 +357,7 @@ class CashDisbursmentsWindow(Frame,object):
 
 
 	def getSelection(self,event):
-		#semiportable
+		#semiportable -> must have dateOfTransaction
 		item=self.tree.selection()[0]
 		values=self.tree.item(item,'values')
 		print self.tree.item(item,"values")
@@ -371,7 +371,7 @@ class CashDisbursmentsWindow(Frame,object):
 		print self.selectedpk
 
 	def _populateTree(self,entryList):
-		#semiportable
+		#semiportable -> doesn't work if no total
 		total=0
 		[self.tree.delete(item) for item in self.tree.get_children()]
 		for i in entryList:

@@ -19,6 +19,7 @@
 
 import db2
 from models import *
+from db import *
 import timeFuncs
 class App(object):
 	"""Main app class that exposes methods for the GUI module to access"""
@@ -96,34 +97,59 @@ class App(object):
 
 	def newNote(self,noteType,noteNumber,**kwargs):
 		if noteType=='ODNote':
-			note = ODNote(**kwargs)
+			note = ODNote(noteNumber=noteNumber,**kwargs)
 			note.save()
 		elif noteType=='LTINote':
-			note = LTINote(**kwargs)
+			note = LTINote(noteNumber=noteNumber,**kwargs)
 			if note.save(): return 1
 			cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 			if cf.save(): return 1
 		elif noteType=='OONote':
-			note = OONote(**kwargs)
+			note = OONote(noteNumber=noteNumber,**kwargs)
 			if note.save(): return 1
 			cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 			if cf.save(): return 1
 		elif noteType=='COCPNote':
-			note = COCPNote(**kwargs)
+			note = COCPNote(noteNumber=noteNumber,**kwargs)
 			if note.save(): return 1
+			flowDirection=kwargs['flowDirection']
 			if flowDirection=="Outflow":
 				cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 			else:
 				cfList = listEntries(CashFlow)
-				inflowHit = [i for i in cfList if i.getContents().nature.content==note.nature.content]
-				if inflowHit:
-					inflowHit=inflowHit[0]
-					inflowHit.note.set((inflowHit.note.content+","+str(noteNumber)).strip(","))
-					#inflowHit.addField("TEXT",note=(inflowHit.note.content+','+str(noteNumber)).strip(","))
-					inflowHit.save()
+				print cfList
+				if cfList:
+					inflowHit = [i for i in cfList if i.getContents().nature.content==note.nature.content]
+					if inflowHit:
+						inflowHit=inflowHit[0]
+						inflowHit.note.set((inflowHit.note.content+","+str(noteNumber)).strip(","))
+						#inflowHit.addField("TEXT",note=(inflowHit.note.content+','+str(noteNumber)).strip(","))
+						inflowHit.save()
 		else:
 			return 1
 		return 0
+
+	def getNoteNumber(self,key):
+		COCPNotes= [i for i in self.listNotes(showDeleted=True) if i.__class__==COCPNote]
+		for i in COCPNotes:
+			if i.event.content==key:
+				return i.noteNumber.content
+
+		if key=="LTINote":
+			LTINotes = [i for i in self.listNotes(showDeleted=True) if i.__class__==LTINote]
+			for i in LTINotes:
+				return i.noteNumber.content
+		elif key=="OONote":
+			OONotes = [i for i in self.listNotes(showDeleted=True) if i.__class__==OONote]
+			for i in OONotes:
+				return i.noteNumber.content
+
+		notenumbers =[int(i.noteNumber.content) for i in self.listNotes(showDeleted=True)]
+		notenumbers.sort()
+		if notenumbers:
+			return (notenumbers[-1])+1
+		return 1
+
 
 	#EDIT
 	def _getCashFlow(self,model,pk):
@@ -186,8 +212,8 @@ class App(object):
 				i.note.set(i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
 				#i.addField("TEXT",note=i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
 				i.save()
-		oldpk,newpk = self._editEntry(modelOptions['notetype'],pk,**kwargs)
-		cashFlowList = [i for i in listEntries(CashFlow) if i.source.content==notetype+"note:"+str(oldpk)]
+		oldpk,newpk = self._editEntry(modelOptions[notetype],pk,**kwargs)
+		cashFlowList = [i for i in listEntries(CashFlow) if i.source.content==notetype+":"+str(oldpk)]
 		for i in cashFlowList:
 			i.source.set(notetype+":"+str(newpk))
 			#i.addField("TEXT",source=notetype+":"+str(newpk))
@@ -251,14 +277,17 @@ class App(object):
 		return 0
 
 	def deleteNote(self,notetype,pk):
-		noteTypes={'od':ODNote,'lti':LTINote,'cocp':COCPNote,'oo':OONote}
+		noteTypes={'ODNote':ODNote,'LTINote':LTINote,'COCPNote':COCPNote,'OONote':OONote}
 		a = getEntry(pk,noteTypes[notetype])
 		a.delete()
-		notes = [i for i in self.listNotes(False) if i.noteNumber.content==a.noteNumber.content]
+		notes = [i for i in self.listNotes(showDeleted=False) if i.noteNumber.content==a.noteNumber.content]
+		print notes
 		if not notes:
-			relatedCashFlows = [i for i in listEntries(CashFlow) if a.noteNumber.content in i.note]
+			relatedCashFlows = [i for i in listEntries(CashFlow) if a.noteNumber.content in i.note.content]
 			for i in relatedCashFlows:
 				i.note.set(i.note.content.replace(a.noteNumber.content,'').replace(",,",','))
+				if i.note.content==",":
+					i.note.set("")
 				#i.addField("TEXT",note=i.note.content.replace(a.noteNumber.content,'').replace(",,",','))
 				i.save()
 	@property
