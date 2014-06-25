@@ -371,7 +371,7 @@ class CashDisbursmentsWindow(Frame,object):
 		print self.selectedpk
 
 	def _populateTree(self,entryList):
-		#portable
+		#semiportable
 		total=0
 		[self.tree.delete(item) for item in self.tree.get_children()]
 		for i in entryList:

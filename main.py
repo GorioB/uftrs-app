@@ -2,6 +2,7 @@ from lib.app import App
 from interface import windows
 from Tkinter import *
 from ttk import *
+from interface import windows2
 
 class MainProgram(Frame,object):
 	def __init__(self,parent):
@@ -50,6 +51,9 @@ class MainProgram(Frame,object):
 		self.notes['Cash Receipts'].pack()
 		self.notes['Operation and Maintenance Expense']=windows.OperationMaintenanceExpensesWindow(self.notes['Operation and Maintenance Expense'],self.app,deletedVar=self.showDeleted)
 		self.notes['Operation and Maintenance Expense'].pack()
+
+		self.notes['Other Assets and Liabilities']=windows2.OALWindow(self.notes['Other Assets and Liabilities'],self.app,deletedVar=self.showDeleted)
+		self.notes['Other Assets and Liabilities'].pack()
 
 	#callbacks
 	def about(self):
