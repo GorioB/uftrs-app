@@ -54,6 +54,9 @@ class MainProgram(Frame,object):
 
 		self.notes['Other Assets and Liabilities']=windows2.OALWindow(self.notes['Other Assets and Liabilities'],self.app,deletedVar=self.showDeleted)
 		self.notes['Other Assets and Liabilities'].pack()
+
+		self.notes['Notes'] = windows2.NotesWindow(self.notes['Notes'],self.app,deletedVar=self.showDeleted)
+		self.notes['Notes'].pack()
 		self.notebook.bind("<<NotebookTabChanged>>",self.refreshPage)
 
 	#callbacks

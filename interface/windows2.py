@@ -8,6 +8,7 @@ from interface.autocomplete import *
 from interface.readingBox import ReadingBox
 from lib.timeFuncs import *
 import datetime
+from lib.models import *
 class EmptyBox(object):
 	def __init__(self):
 		self.text=""
@@ -93,7 +94,6 @@ class OALWindow(CashDisbursmentsWindow):
 			text="Please indicate the item in question, the amount, the source of the item, and other pertinent data.\n\t(e.g. Received X-deals from Company DEF. 200 black ballpens were received in good condition on October 20, 2013. These are expected to be given away as freebies during the general registration next semester.)\n\t(e.g. Received a brand-new projector from Company GHI in accordance with the sponsorship agreement entered into last August 24, 2013. The projector was received in good condition on September 12, 2013.)")
 
 		for i in [i for i in self.fields[cn] if i!="category"]:
-			print i
 			self.fields[cn][i].pack(side=TOP,fill=X,expand=1)
 		helpfulMessage2.pack(fill=BOTH,expand=1)
 
@@ -202,3 +202,208 @@ class OALWindow(CashDisbursmentsWindow):
 			print self.app.deleteOAL(self.selectedpk)
 		self.populateTree()
 
+class COCPWindow(CashDisbursmentsWindow):
+	def initTree(self):
+		self.tree = tree = Treeview(self.treeFrame,selectmode="browse")
+		tree.bind("<<TreeviewSelect>>",self.getSelection)
+		yscroll = Scrollbar(self.treeFrame,orient="vertical",command=tree.yview)
+		xscroll = Scrollbar(self.xScrollFrame,orient="horizontal",command=tree.xview)
+		self.colList = colList = ["Note #","Timestamp","Date of Transaction","Event/Project","Inflow/Outflow","Purpose","Nature","Amount","Liquidating Person/Payee's Name","Official Receipt #","Notes","Remarks"]
+		tree['columns']=colList
+		for i in colList:
+			tree.heading(i,text=i)
+			tree.column(i,anchor=W,width=60)
+		tree.column("#0",width=3,anchor=W)
+		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
+		yscroll.pack(side=RIGHT,fill=Y,expand=0)
+		xscroll.pack(side=TOP,fill=X,expand=0)
+		tree.pack(side=LEFT,fill=BOTH,expand=1)
+		tree.tag_configure("deleted",foreground="red")
+
+	def initTotalTag(self):
+		pass
+
+	def initFields(self):
+		self.fields={}
+		self.fields['noteNumber'] = TextFieldBox(self.fieldsFrame.interior,
+			label="Note #",readonly=True,height=1)
+
+		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
+			label="Timestamp",readonly=True,height=1)
+
+		self.fields['dateOfTransaction']=CalendarBox(self.fieldsFrame.interior,
+			label="Date of Transaction")
+
+		self.fields['event']=AutocompleteBox(self.fieldsFrame.interior,
+			label="Event/Project",toolTip="Specify Event")
+		self.fields['event'].initComboBox(self.app.listOptions("COCP_Event"))
+
+		self.fields['flowDirection']=AutocompleteBox(self.fieldsFrame.interior,
+			label="Inflow/Outflow")
+		self.fields['flowDirection'].initDropDown(["Inflow","Outflow"])
+
+		self.fields['purpose']=TextFieldBox(self.fieldsFrame.interior,
+			label="Purpose",toolTip="What the cash was used for.")
+
+		self.fields['nature']=AutocompleteBox(self.fieldsFrame.interior,
+			label="Nature",toolTip='The "Council Budget" is a budgeting tool for events to determine whether the expenditures are within the budget. They are not actual cash inflows but are categorized as inflows as a tool only.')
+		self.natureFromReceipts = self.app.listOptions("Nature")
+		self.fields['nature'].initDropDown(["Council Budget"]+self.natureFromReceipts)
+
+		self.fields['amount']=TextFieldBox(self.fieldsFrame.interior,
+			label="Amount",toolTip="Amount of actual expenditure",height=1,textType="number")
+
+		self.fields['liquidatingPerson']=TextFieldBox(self.fieldsFrame.interior,
+			label="Liquidating Person/Payee's Name",toolTip="Name of the individual who actually received the cash for the expenditure")
+
+		self.fields['docNo']=TextFieldBox(self.fieldsFrame.interior,
+			label="Document Number",toolTip="Put all receipt numbers here")
+
+		self.fields['notes']=TextFieldBox(self.fieldsFrame.interior,
+			label="Notes",toolTip="Any added notes about the transaction")
+
+	def _populateTree(self,entryList):
+		pass
+
+	def populateTree(self,*a):
+		self.fieldList=['noteNumber','timestamp','dateOfTransaction','event','flowDirection','purpose','nature','amount','liquidatingPerson','docNo','notes']
+		showDeleted=self.deletedVar.get()
+		[self.tree.delete(item) for item in self.tree.get_children()]
+		entryList = self.app._listGeneral(COCPNote,showDeleted=showDeleted)
+		for i in entryList:
+			dataFields=[]
+			pk = i.pk.content
+			for j in self.fieldList:
+				dataFields.append(vars(i)[j].content)
+			dataFields[1]=secsToString(dataFields[1])
+			dataFields[2]=secsToDay(dataFields[2])
+			if i.status.content=="DELETED":
+				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
+			else:
+				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
+		self.fields['nature'].comboBox.config(values=["Council Budget",]+self.app.listOptions("Nature"))
+
+	def exportToExcel(self):
+		pass
+
+	def save(self):
+		print self.fields['event'].text,self.app.getNoteNumber(str(self.fields['event'].text))
+		if self.selectedpk!="New":
+			self.selectedpk = self.app.editNote("COCPNote",self.selectedpk,
+				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
+				event=self.fields['event'].text,
+				flowDirection=self.fields['flowDirection'].text,
+				purpose=self.fields['purpose'].text,
+				nature=self.fields['nature'].text,
+				amount=self.fields['amount'].text,
+				liquidatingPerson=self.fields['liquidatingPerson'].text,
+				docNo=self.fields['docNo'].text,
+				notes=self.fields['notes'].text,
+				noteNumber=str(self.app.getNoteNumber(self.fields['event'].text)))
+		else:
+			self.selectedpk=self.app.newNote("COCPNote",str(self.app.getNoteNumber(self.fields['event'].text)),
+				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
+				event=self.fields['event'].text,
+				flowDirection=self.fields['flowDirection'].text,
+				purpose=self.fields['purpose'].text,
+				nature=self.fields['nature'].text,
+				amount=self.fields['amount'].text,
+				liquidatingPerson=self.fields['liquidatingPerson'].text,
+				docNo=self.fields['docNo'].text,
+				notes=self.fields['notes'].text)
+		self.populateTree()
+
+		self.app.addOption("COCP_Event",self.fields['event'].text)
+		self.fields['event'].comboBox.config(values=self.app.listOptions("COCP_Event"))
+	def delete(self):
+		if self.selectedpk!="New":
+			print self.app.deleteNote("COCPNote",self.selectedpk)
+		self.populateTree()
+
+class LTIWindow(CashDisbursmentsWindow):
+	def initTree(self):
+		pass
+	def initTotalTag(self):
+		pass
+	def initFields(self):
+		pass
+	def _populateTree(self,entryList):
+		pass
+	def populateTree(self,*a):
+		pass
+	def exportToExcel(self):
+		pass
+	def save(self):
+		pass
+	def delete(self):
+		pass
+class OOWindow(CashDisbursmentsWindow):
+	def initTree(self):
+		pass
+	def initTotalTag(self):
+		pass
+	def initFields(self):
+		pass
+	def _populateTree(self,entryList):
+		pass
+	def populateTree(self,*a):
+		pass
+	def exportToExcel(self):
+		pass
+	def save(self):
+		pass
+	def delete(self):
+		pass
+class ODNWindow(CashDisbursmentsWindow):
+	def initTree(self):
+		pass
+	def initTotalTag(self):
+		pass
+	def initFields(self):
+		pass
+	def getSelection(self,event):
+		pass
+	def _populateTree(self,entryList):
+		pass
+	def populateTree(self,*a):
+		pass
+	def exportToExcel(self):
+		pass
+	def save(self):
+		pass
+	def delete(self):
+		pass
+
+class NotesWindow(Frame,object):
+	def __init__(self,parent,app,deletedVar):
+		Frame.__init__(self,parent)
+		self.parent=parent
+		self.nb = Notebook(self.parent)
+		self.notes={}
+		self.app=app
+		self.deletedVar=deletedVar
+		for i in ["Council and Other College Projects","Long Term Investments","Other Outflows","Other Descriptive Notes"]:
+			self.notes[i]=Frame(self.nb)
+			self.nb.add(self.notes[i],text=i)
+		self.nb.pack(fill=BOTH,expand=1)
+		self.nb.pack_propagate(0)
+
+		self.notes['Council and Other College Projects']=COCPWindow(self.notes['Council and Other College Projects'],self.app,deletedVar=self.deletedVar)
+		self.notes['Council and Other College Projects'].pack()
+
+		# self.notes['Long Term Investments']=LTIWindow(self.notes['Long Term Investments'],self.app,deletedVar=self.deletedVar)
+		# self.notes['Long Term Investments'].pack()
+
+		# self.notes['Other Outflows']=OOWindow(self.notes['Other Outflows'],self.app,deletedVar=self.deletedVar)
+		# self.notes['Other Outflows'].pack()
+
+		# self.notes['Other Descriptive Notes'] = ODNWindow(self.notes['Other Descriptive Notes'],self.app,deletedVar=self.deletedVar)
+		# self.notes['Other Descriptive Notes'].pack()
+		self.nb.bind("<<NotebookTabChanged>>",self.refreshPage)
+	def populateTree(self,*a):
+		self.refreshPage()
+		
+	def refreshPage(self,*a):
+		selectedpage = self.nb.select()
+		tabName=self.nb.tab(selectedpage,option="text")
+		self.notes[tabName].populateTree()
