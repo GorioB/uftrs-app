@@ -102,6 +102,10 @@ class LogIn(Frame,object):
 		self.logIn_notifier = Label(logInFrame)
 		self.logIn_notifier.pack()
 
+		#press enter to submit
+		self.logIn_username.focus()
+		self.logIn_password.bind("<Return>",self.submitLogIn)
+
 		# Create account widgets
 		## Admin account widgets
 		createFrame = self.notes["Create Account"]
@@ -131,6 +135,9 @@ class LogIn(Frame,object):
 		self.create_notifier = Label(createFrame)
 		self.create_notifier.pack()
 
+		#bind submitCreateUser to return event on last entry
+		self.create_newMail.bind("<Return>",self.submitCreateUser)
+
 		# Change password widgets
 		changeFrame = self.notes["Change Password"]
 		Label(changeFrame, text="Enter username").pack()
@@ -153,8 +160,11 @@ class LogIn(Frame,object):
 		self.change_notifier = Label(changeFrame)
 		self.change_notifier.pack()
 
+		#bind submitChangePass to last entry
+		self.change_newPass2.bind("<Return>",self.submitChangePass)
+
 	# Callbacks
-	def submitLogIn(self):
+	def submitLogIn(self,*a):
 		user = User(self.logIn_username.get(), self.logIn_password.get())
 		if not user.auth():
 			self.logIn_notifier.config(text='Wrong credentials. Try again.', foreground='red')
@@ -164,10 +174,11 @@ class LogIn(Frame,object):
 			self.notebook.destroy()
 
 			# Move on to main program
+			self.parent.geometry("800x500")
 			mainProgram = MainProgram(self.parent)
 			mainProgram.app._activeUser = user
 
-	def submitCreateUser(self):
+	def submitCreateUser(self,*a):
 		admin = User(self.create_adminUser.get(), self.create_adminPass.get())
 		newUser = User(self.create_newUser.get(), self.create_newPass.get())
 		newUserMail = self.create_newMail.get()
@@ -199,7 +210,7 @@ class LogIn(Frame,object):
 		newUser.saveUser(newUserMail)
 		self.create_notifier.config(text="New user created.", foreground='darkgreen')
 
-	def submitChangePass(self):
+	def submitChangePass(self,*a):
 		user = User(self.change_user.get(), self.change_oldPass.get())
 		newPass = self.change_newPass.get()
 		newPass2 = self.change_newPass2.get()
