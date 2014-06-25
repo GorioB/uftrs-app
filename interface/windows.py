@@ -5,11 +5,12 @@ from interface.textfield import *
 from interface.datefield import *
 from interface.autocomplete import *
 from lib.timeFuncs import *
+import sys
 try:
 	from xlwt import Workbook, easyxf
 except:
 	print "Requires xlwt"
-	exit(1)
+	sys.exit(1)
 import datetime
 import shutil #for moving files
 import os
