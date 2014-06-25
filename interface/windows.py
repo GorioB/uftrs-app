@@ -11,6 +11,8 @@ except:
 	print "Requires xlwt"
 	exit(1)
 import datetime
+import shutil #for moving files
+import os
 def newExistsInTree(tree):
 	return [i for i in tree.get_children() if tree.item(i,"text")=="New"]
 
@@ -400,6 +402,22 @@ class CashDisbursmentsWindow(Frame,object):
 		showDeleted = self.deletedVar.get()
 		self._populateTree(self.app.listCashDisbursments(showDeleted=showDeleted))
 
+	def exportToExcel(self):
+		"""Exports the data displayed on the treebox to excel"""
+
+		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
+		columnHeaders = self.colList
+		fileName = 'CashDisbursments_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+
+		excelBuilder = ExcelBuilder()
+		excelBuilder.setRows(rows)
+		excelBuilder.setColumnHeaders(columnHeaders)
+		excelBuilder.setStartingPoint(2, 0)
+		excelBuilder.setFileName(fileName)
+		excelBuilder.setTableColumnWidth(5000)
+		excelBuilder.build()
+
+
 	def save(self):
 		#nonportable
 		if self.selectedpk!="New":
@@ -486,6 +504,21 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 		showDeleted=self.deletedVar.get()
 		self._populateTree(self.app.listOMEs(showDeleted=showDeleted))
 
+	def exportToExcel(self):
+		"""Exports the data displayed on the treebox to excel"""
+
+		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
+		columnHeaders = self.colList
+		fileName = 'OperationMaint' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+
+		excelBuilder = ExcelBuilder()
+		excelBuilder.setRows(rows)
+		excelBuilder.setColumnHeaders(columnHeaders)
+		excelBuilder.setStartingPoint(2, 0)
+		excelBuilder.setFileName(fileName)
+		excelBuilder.setTableColumnWidth(5000)
+		excelBuilder.build()
+
 	def save(self):
 		if self.selectedpk!="New":
 			self.selectedpk = self.app.editOME(self.selectedpk,
@@ -518,9 +551,14 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 class ExcelBuilder(object):
 	"""To use: instantiate, call all setter methods, then call build"""
 	def __init__(self):
+		self.EXPORT_DIRECTORY = 'ExcelExports'
 		self.setTableColumnWidth(5000)
 		self.setFileName("export.xls")
 		self.setStartingPoint(3, 0)
+
+		# Create export directory if it doesn't exist
+		if not os.path.exists(self.EXPORT_DIRECTORY):
+			os.makedirs(self.EXPORT_DIRECTORY)
 
 	def setRows(self, value):
 		"""Expects a list of tuples where tuple[0] is the list of column values in order
@@ -582,6 +620,7 @@ class ExcelBuilder(object):
 
 		# Save the excel file
 		book.save(self.fileName)
+		shutil.move(self.fileName, self.EXPORT_DIRECTORY+'/'+self.fileName)
 
 if __name__=="__main__":
 	root = Tk()
