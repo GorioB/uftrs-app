@@ -102,19 +102,19 @@ class App(object):
 		elif noteType=='LTINote':
 			note = LTINote(noteNumber=noteNumber,**kwargs)
 			if note.save(): return 1
-			cf = CashFlow(source=note.identifier+":"+str(note.pk.content),noteNumber=noteNumber)
+			cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 			if cf.save(): return 1
 		elif noteType=='OONote':
 			note = OONote(noteNumber=noteNumber,**kwargs)
 			if note.save(): return 1
-			cf = CashFlow(source=note.identifier+":"+str(note.pk.content),noteNumber=noteNumber)
+			cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 			if cf.save(): return 1
 		elif noteType=='COCPNote':
 			note = COCPNote(noteNumber=noteNumber,**kwargs)
 			if note.save(): return 1
 			flowDirection=kwargs['flowDirection']
 			if flowDirection=="Outflow":
-				cf = CashFlow(source=note.identifier+":"+str(note.pk.content),noteNumber=noteNumber)
+				cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 			else:
 				cfList = listEntries(CashFlow)
 				print cfList
@@ -213,7 +213,7 @@ class App(object):
 				#i.addField("TEXT",note=i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
 				i.save()
 		oldpk,newpk = self._editEntry(modelOptions[notetype],pk,**kwargs)
-		cashFlowList = [i for i in listEntries(CashFlow) if i.source.content==notetype+"note:"+str(oldpk)]
+		cashFlowList = [i for i in listEntries(CashFlow) if i.source.content==notetype+":"+str(oldpk)]
 		for i in cashFlowList:
 			i.source.set(notetype+":"+str(newpk))
 			#i.addField("TEXT",source=notetype+":"+str(newpk))
