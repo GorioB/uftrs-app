@@ -56,8 +56,13 @@ class LogIn(Frame,object):
 		self.first_notifier = Label(frame)
 		self.first_notifier.pack()
 
+		#autofocus on first text entry
+		self.first_username.focus()
+		#bind submitFirstUser to return even on first_pass2
+		self.first_pass2.bind("<Return>",self.submitFirstUser)
 
-	def submitFirstUser(self):
+
+	def submitFirstUser(self,*a):
 		user = User(self.first_username.get(), self.first_pass.get())
 		reEnteredPass = self.first_pass2.get()
 		email = self.first_email.get()
