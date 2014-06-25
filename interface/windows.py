@@ -217,6 +217,7 @@ class CashReceiptsWindow(Frame,object):
 			print self.app.deleteCashReceipt(self.selectedpk)
 		self.populateTree()
 
+#Refer to CashDisbursmentsWinow for creating pages. Override nonportable functions
 class CashDisbursmentsWindow(Frame,object):
 	def __init__(self,parent,app,deletedVar):
 		Frame.__init__(self,parent)
@@ -513,7 +514,6 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 		if self.selectedpk!="New":
 			print self.app.deleteOME(self.selectedpk)
 		self.populateTree()
-
 
 class ExcelBuilder(object):
 	"""To use: instantiate, call all setter methods, then call build"""
