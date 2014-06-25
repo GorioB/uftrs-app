@@ -54,8 +54,14 @@ class MainProgram(Frame,object):
 
 		self.notes['Other Assets and Liabilities']=windows2.OALWindow(self.notes['Other Assets and Liabilities'],self.app,deletedVar=self.showDeleted)
 		self.notes['Other Assets and Liabilities'].pack()
+		self.notebook.bind("<<NotebookTabChanged>>",self.refreshPage)
 
 	#callbacks
+	def refreshPage(self,*a):
+		selectedpage = self.notebook.select()
+		tabName = self.notebook.tab(selectedpage,option="text")
+		self.notes[tabName].populateTree()
+
 	def about(self):
 		pass
 
