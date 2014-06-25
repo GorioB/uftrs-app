@@ -3,6 +3,7 @@ from lib.db2 import User
 from interface import textfield
 from Tkinter import *
 from ttk import *
+from main import *
 
 class LogIn(Frame,object):
 	def __init__(self,parent):
@@ -10,9 +11,7 @@ class LogIn(Frame,object):
 		self.parent = parent
 		self.app = App()
 		self.pack()
-		self.initUI()
 
-	def initUI(self):
 		# Window settings
 		self.parent.title("UFTRS Accounting System")
 		self.parent.geometry("360x400")
@@ -20,6 +19,65 @@ class LogIn(Frame,object):
 		menubar = Menu(self.parent)
 		self.parent.config(menu=menubar)
 
+		if User.listUsers()==[]:
+			print "NO USERS YET"
+			self.initUI_FirstRun()
+		else:
+			self.initUI()
+
+	# if no users exist yet
+	def initUI_FirstRun(self):
+		# Window settings
+		self.parent.title("UFTRS Accounting System")
+		self.parent.geometry("360x400")
+		#self.parent.state("zoomed")
+		self.frame = frame = Frame(self.parent)
+		self.frame.pack()
+
+		Label(frame, text="""Hello first time user!\n To begin, register the first account of the system. This account will serve as the administrator account with the highest privileges. i.e. it can edit the budget and register other user accounts.\n"""
+			, wraplength=350, justify=CENTER).pack()
+
+		Label(frame, text="Enter username").pack()
+		self.first_username = Entry(frame)
+		self.first_username.pack()
+		Label(frame, text="Enter email address").pack()
+		self.first_email = Entry(frame)
+		self.first_email.pack()
+		Label(frame, text="Enter password").pack()
+		self.first_pass = Entry(frame, show="*")
+		self.first_pass.pack()
+		Label(frame, text="Re-enter password").pack()
+		self.first_pass2 = Entry(frame, show="*")
+		self.first_pass2.pack()
+		## Submit button and text notifier
+		Label(frame, text="").pack()
+		self.first_submit = Button(frame, text="Register Account", command=self.submitFirstUser)
+		self.first_submit.pack()
+		self.first_notifier = Label(frame)
+		self.first_notifier.pack()
+
+
+	def submitFirstUser(self):
+		user = User(self.first_username.get(), self.first_pass.get())
+		reEnteredPass = self.first_pass2.get()
+		email = self.first_email.get()
+
+		if user.password!=reEnteredPass:
+			self.first_notifier.config(text="Passwords don't match.", foreground='red')
+			return
+		elif user.username=="" or user.password=="" or reEnteredPass=="" or email=="":
+			self.first_notifier.config(text="Please fill up all fields.", foreground='red')
+			return
+
+		# Save the user into the database
+		user.saveUser(email, 1)
+
+		# Move on to login screen
+		self.frame.pack_forget()
+		self.frame.destroy()
+		self.initUI()
+
+	def initUI(self):
 		# Notebook
 		self.notebook = Notebook(self.parent)
 		self.notes={}
@@ -98,13 +156,16 @@ class LogIn(Frame,object):
 	# Callbacks
 	def submitLogIn(self):
 		user = User(self.logIn_username.get(), self.logIn_password.get())
-		if user.auth():
-			self.logIn_notifier.config(text='Log in successful!', foreground='darkgreen')
-			# TODO: move on to main program
-		else:
+		if not user.auth():
 			self.logIn_notifier.config(text='Wrong credentials. Try again.', foreground='red')
-			# TODO: notify user in gui that credentials are wrong
+		else:
+			# Destroy log in screen
+			self.notebook.pack_forget()
+			self.notebook.destroy()
 
+			# Move on to main program
+			mainProgram = MainProgram(self.parent)
+			mainProgram.app._activeUser = user
 
 	def submitCreateUser(self):
 		admin = User(self.create_adminUser.get(), self.create_adminPass.get())
