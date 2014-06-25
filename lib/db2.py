@@ -35,6 +35,15 @@ class User(object):
 		conn.commit()
 		conn.close()
 
+	def changePassword(self, newPassword):
+		"""Sets the instance's password attribute and updates the passwordHash stored in the database"""
+		self.password = newPassword
+		conn = sqlite3.connect(DB_NAME)
+		cursor = conn.cursor()
+		cursor.execute("UPDATE users SET passwordHash=? WHERE username=?", (self.passwordHash, self.username))
+		conn.commit()
+		conn.close()
+
 	def getEmail(self):
 		"""Gets the email that corresponds to the User instance's username"""
 		conn = sqlite3.connect(DB_NAME)
