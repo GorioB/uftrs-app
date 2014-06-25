@@ -94,6 +94,7 @@ class App(object):
 			flowDirection=kwargs['flowDirection']
 			if flowDirection=="Outflow":
 				cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
+				cf.save()
 			else:
 				cfList = listEntries(CashFlow)
 				print cfList

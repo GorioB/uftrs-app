@@ -425,7 +425,7 @@ class LTIWindow(CashDisbursmentsWindow):
 		self.populateTree()
 
 		self.app.addOption("LTI_Nature",self.fields['nature'].text)
-		self.fields['nature'].comboBox.config(values=self.app.listOption("LTI_Nature"))
+		self.fields['nature'].comboBox.config(values=self.app.listOptions("LTI_Nature"))
 	def delete(self):
 		if self.selectedpk!="New":
 			print self.app.deleteNote("LTINote",self.selectedpk)
