@@ -16,6 +16,7 @@ class SuperComboBox(Combobox,object):
 		self._buffer=self._buffer+event.char
 		closestMatch = [i for i in self['values'] if i.lower().startswith(self._buffer.lower())]
 		if closestMatch:
+			closestMatch.sort()
 			self._string.set(closestMatch[0])
 
 	def backspace(self,event):
@@ -26,7 +27,7 @@ class SuperComboBox(Combobox,object):
 		self._string.set("")
 
 	def leaveFocus(self,event):
-		self.clear(None)
+		self._buffer=""
 
 if __name__=="__main__":
 	root = Tk()
