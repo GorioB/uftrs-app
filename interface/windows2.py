@@ -262,11 +262,13 @@ class COCPWindow(CashDisbursmentsWindow):
 		self.fields['notes']=TextFieldBox(self.fieldsFrame.interior,
 			label="Notes",toolTip="Any added notes about the transaction")
 
+		self.fields['remarks']=TextFieldBox(self.fieldsFrame.interior,
+			label="Remarks",readonly=True)
 	def _populateTree(self,entryList):
 		pass
 
 	def populateTree(self,*a):
-		self.fieldList=['noteNumber','timestamp','dateOfTransaction','event','flowDirection','purpose','nature','amount','liquidatingPerson','docNo','notes']
+		self.fieldList=['noteNumber','timestamp','dateOfTransaction','event','flowDirection','purpose','nature','amount','liquidatingPerson','docNo','notes','remarks']
 		showDeleted=self.deletedVar.get()
 		[self.tree.delete(item) for item in self.tree.get_children()]
 		entryList = self.app._listGeneral(COCPNote,showDeleted=showDeleted)
