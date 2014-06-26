@@ -100,11 +100,10 @@ class App(object):
 				print cfList
 				if cfList:
 					inflowHit = [i for i in cfList if i.getContents().nature.content==note.nature.content]
-					if inflowHit:
-						inflowHit=inflowHit[0]
-						inflowHit.note.set((inflowHit.note.content+","+str(noteNumber)).strip(","))
+					for i in inflowHit:
+						i.note.set((i.note.content+","+str(noteNumber)).strip(","))
 						#inflowHit.addField("TEXT",note=(inflowHit.note.content+','+str(noteNumber)).strip(","))
-						inflowHit.save()
+						i.save()
 		else:
 			return 1
 		return 0

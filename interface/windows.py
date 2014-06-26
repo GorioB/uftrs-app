@@ -203,6 +203,7 @@ class CashReceiptsWindow(Frame,object):
 		#combobox stuff
 		self.app.addOption("Nature", self.fields['nature'].text)
 		self.fields['nature'].comboBox.config(values = self.app.listOptions("Nature"))
+		self.newEntry()
 
 	def newEntry(self):
 		#create blank entry for demonstration purposes

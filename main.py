@@ -4,6 +4,7 @@ from Tkinter import *
 from ttk import *
 from interface import windows2
 from interface import cashflowswindow
+import os
 
 class MainProgram(Frame,object):
 	def __init__(self,parent):
@@ -79,4 +80,7 @@ class MainProgram(Frame,object):
 if __name__=="__main__":
 	root = Tk()
 	app = MainProgram(root)
+	if os.path.exists(os.path.join("assets","UFTRSGIFLOGO69.gif")):
+		img = PhotoImage(file=os.path.join("assets","UFTRSGIFLOGO69.gif"))
+		root.tk.call('wm','iconphoto',root._w,img)
 	app.mainloop()

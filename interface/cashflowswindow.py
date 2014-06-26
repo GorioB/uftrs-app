@@ -94,7 +94,8 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 				self.tree.delete(item)
 
 		totalInflows=0
-		partialTotals={'councilmandatedfunds':0,'generalsponsorshipinflows':0,'incomegeneratingprojects':0,'otherinflows':0}
+		#change this when db is implemented
+		partialTotals={'councilmandatedfunds':{},'generalsponsorshipinflows':{},'incomegeneratingprojects':{},'otherinflows':{}}
 		showDeleted = self.deletedVar.get()
 		cashFlowList = self.app.listCashflows(showDeleted=False)
 		inflowList = [i for i in cashFlowList if i.source.content.split(":")[0]=="CashReceipt"]
@@ -105,34 +106,62 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 			category = i.getContents().category.content.lower().replace(" ","")
 			try:
 				amount=float(amount)
-				totalInflows+=amount
-				partialTotals[category]+=amount
 			except:
-				pass
-			self.tree.insert(category,"end",text=name,values=(notes,amount,))
+				amount=0
+
+			if category in partialTotals:
+				totalInflows+=amount
+				if name in partialTotals[category]:
+					partialTotals[category][name][0]+=amount
+				else:
+					partialTotals[category][name]=[amount]
+					partialTotals[category][name].append(notes)
+
+		for i in partialTotals:
+			partialTotalKeys = [key for key in partialTotals[i].keys()]
+			partialTotalKeys.sort()
+			for j in partialTotalKeys:
+				self.tree.insert(i,"end",text=j,values=(partialTotals[i][j][1],partialTotals[i][j][0],))
 
 		self.tree.item('inflows',values=("","",totalInflows,""))
 		for i in partialTotals:
-			self.tree.item(i,values=("","",partialTotals[i],""))
+			categoryTotal = reduce(lambda x,y:x+y,[d[0] for d in partialTotals[i].values()]+[0,])
+			self.tree.item(i,values=("","",categoryTotal,""))
 		outflowList = [i for i in cashFlowList if i.source.content.split(":")[0] in ("OME","COCPNote","LTINote","OONote")]
 		totalOutflows=0
-		partialOutflows={"otheroutflows":0,"operationandmaintenanceexpenses":0,"councilandothercollegeprojects":0,"longterminvestments":0}
+		#change for when updated to db-stored variables
+		partialOutflows={"otheroutflows":{},"operationandmaintenanceexpenses":{},"councilandothercollegeprojects":{},"longterminvestments":{}}
 		treeParent = {"OONote":"otheroutflows","OME":"operationandmaintenanceexpenses","COCPNote":"councilandothercollegeprojects","LTINote":"longterminvestments"}
 		for i in outflowList:
 			name=i.getContents().nature.content
 			amount = i.getContents().amount.content
+			notes = i.note.content
+			category = i.source.content.split(":")[0]
+
 			try:
 				amount=float(amount)
-				totalOutflows+=amount
-				partialOutflows[treeParent[i.source.content.split(":")[0]]]+=amount
 			except:
-				pass
-			notes=i.note.content
-			self.tree.insert(treeParent[i.source.content.split(":")[0]],"end",text=name,values=(notes,amount,))
+				amount=0
+
+			if category in treeParent:
+				category = treeParent[category]
+				totalOutflows+=amount
+				if name in partialOutflows[category]:
+					partialOutflows[category][name][0]+=amount
+				else:
+					partialOutflows[category][name]=[amount]
+					partialOutflows[category][name].append(notes)
+
 
 		self.tree.item('outflows',values=("","",totalOutflows,""))
 		for i in partialOutflows:
-			self.tree.item(i,values=("","",partialOutflows[i],""))
+			partialOutflowsSorted = [key for key in partialOutflows[i].keys()]
+			partialOutflowsSorted.sort()
+			for j in partialOutflowsSorted:
+				self.tree.insert(i,"end",text=j,values=(partialOutflows[i][j][1],partialOutflows[i][j][0],))
+			categoryTotal = reduce(lambda x,y:x+y,[d[0] for d in partialOutflows[i].values()]+[0,])
+			self.tree.item(i,values=("","",categoryTotal,""))
+
 
 		self.tree.item('net',values=("","",totalInflows-totalOutflows,""))
 	def exportToExcel(self):
