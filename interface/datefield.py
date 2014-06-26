@@ -40,8 +40,11 @@ class CalendarBox(Frame,object):
 
 
 
-		self._calButton=calButton = Button(fLower,text=secsToDay(getEpochTime()),command=self.createCalendar)
-		calButton.pack(fill=X,expand=1)
+		self._calButton=calButton = Button(fLower,text="...",command=self.createCalendar,width=2)
+		calButton.pack(side=RIGHT,fill=X,expand=0)
+
+		self._entryField = entryField = Entry(fLower,justify=CENTER)
+		entryField.pack(side=LEFT,fill=X,expand=1)
 
 		#toolTip
 		if self.toolTip:
@@ -75,20 +78,23 @@ class CalendarBox(Frame,object):
 		
 	def calPressed(self,event):
 		date= self._ttkcal.selection
-		self._calButton.config(text=str(date.year)+"-"+str(date.month)+"-"+str(date.day))
+		self.text = (str(date.year)+"-"+str(date.month)+"-"+str(date.day))
+		#self._calButton.config(text=str(date.year)+"-"+str(date.month)+"-"+str(date.day))
 		self._calWindow.destroy()
 		self._calendarCreated-=1
 
 	@property
 	def text(self):
-	    return self._calButton.config('text')[-1]
+	    return self._entryField.get()
 	@text.setter
 	def text(self, value):
-	    self._calButton.config(text=value)
+		self._entryField.delete(0,END)
+		self._entryField.insert(0,value)
 	
 
 if __name__=="__main__":
 	root=Tk()
 	app = CalendarBox(root)
+	app.pack()
 	app.mainloop()
 
