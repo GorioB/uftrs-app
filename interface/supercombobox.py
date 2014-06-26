@@ -33,5 +33,7 @@ if __name__=="__main__":
 	root = Tk()
 	app = SuperComboBox(root,values=['Zinedine','Zidane','Superstar'],state="readonly")
 	app.pack()
+	button = Button(text="Button")
+	button.pack()
 	app.focus()
 	app.mainloop()

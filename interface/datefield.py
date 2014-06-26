@@ -3,6 +3,7 @@ from ttk import *
 from ttkcalendar import Calendar
 import calendar
 from lib.timeFuncs import *
+from supercombobox import SuperComboBox
 
 class CalendarBox(Frame,object):
 	def __init__(self,parent,label="Label",toolTip=None,**kwargs):
@@ -43,8 +44,19 @@ class CalendarBox(Frame,object):
 		self._calButton=calButton = Button(fLower,text="...",command=self.createCalendar,width=2)
 		calButton.pack(side=RIGHT,fill=X,expand=0)
 
-		self._entryField = entryField = Entry(fLower,justify=CENTER)
-		entryField.pack(side=LEFT,fill=X,expand=1)
+		years = range(1990,2030)
+		self._yearField = SuperComboBox(fLower,values=years,justify=CENTER,state='readonly')
+		self._yearField.pack(side=LEFT,fill=X,expand=1)
+
+		# months=("January","February","March","April","May","June","July","August",
+		# 	"September","October","November","December")
+		months = range(1,13)
+		self._monthField = SuperComboBox(fLower,values=months,justify=CENTER,state='readonly')
+		self._monthField.pack(side=LEFT,fill=X,expand=1)
+
+		days = range(1,32)
+		self._dayField = SuperComboBox(fLower,values=days,justify=CENTER,state='readonly')
+		self._dayField.pack(side=LEFT,fill=X,expand=1)
 
 		#toolTip
 		if self.toolTip:
@@ -85,11 +97,15 @@ class CalendarBox(Frame,object):
 
 	@property
 	def text(self):
-	    return self._entryField.get()
+	    return str(self._yearField.get())+"-"+str(self._monthField.get())+"-"+str(self._dayField.get())
 	@text.setter
 	def text(self, value):
-		self._entryField.delete(0,END)
-		self._entryField.insert(0,value)
+		year,month,day=("","","")
+		if len(value.split("-"))==3:
+			year,month,day = value.split("-")
+		self._yearField.set(year)
+		self._monthField.set(month)
+		self._dayField.set(day)
 	
 
 if __name__=="__main__":
