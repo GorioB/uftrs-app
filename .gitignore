@@ -2,7 +2,6 @@
 venv
 *.sqlite3
 *.xls
-assets
 build
 dist
 *.spec
