@@ -34,6 +34,8 @@ class OALWindow(CashDisbursmentsWindow):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=0,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
@@ -222,6 +224,8 @@ class COCPWindow(CashDisbursmentsWindow):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
@@ -360,6 +364,8 @@ class LTIWindow(CashDisbursmentsWindow):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
@@ -580,6 +586,8 @@ class ODNWindow(CashDisbursmentsWindow):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)

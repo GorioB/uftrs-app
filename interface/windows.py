@@ -71,6 +71,8 @@ class CashReceiptsWindow(Frame,object):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column('#0',width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y)
 		xscroll.pack(side=TOP,fill=X)
@@ -295,6 +297,8 @@ class CashDisbursmentsWindow(Frame,object):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
@@ -493,6 +497,8 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
