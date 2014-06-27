@@ -177,6 +177,8 @@ class CashReceiptsWindow(Frame,object):
 		excelBuilder.setStartingPoint(2, 0)
 		excelBuilder.setFileName(fileName)
 		excelBuilder.setTableColumnWidth(5000)
+		excelBuilder.setSheetName("Cash Receipts")
+		excelBuilder.buildSheet()
 		excelBuilder.build()
 
 	def save(self):
@@ -413,7 +415,7 @@ class CashDisbursmentsWindow(Frame,object):
 
 		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
 		columnHeaders = self.colList
-		fileName = 'CashDisbursments_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+		fileName = 'CashDisbursements_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
 
 		excelBuilder = ExcelBuilder()
 		excelBuilder.setRows(rows)
@@ -421,6 +423,8 @@ class CashDisbursmentsWindow(Frame,object):
 		excelBuilder.setStartingPoint(2, 0)
 		excelBuilder.setFileName(fileName)
 		excelBuilder.setTableColumnWidth(5000)
+		excelBuilder.setSheetName("Cash Disbursements")
+		excelBuilder.buildSheet()
 		excelBuilder.build()
 
 
@@ -524,6 +528,8 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 		excelBuilder.setStartingPoint(2, 0)
 		excelBuilder.setFileName(fileName)
 		excelBuilder.setTableColumnWidth(5000)
+		excelBuilder.setSheetName("Operation and Maintenance Expense")
+		excelBuilder.buildSheet()
 		excelBuilder.build()
 
 	def save(self):
@@ -562,6 +568,7 @@ class ExcelBuilder(object):
 		self.setTableColumnWidth(5000)
 		self.setFileName("export.xls")
 		self.setStartingPoint(3, 0)
+		self.book = Workbook()
 
 		# Create export directory if it doesn't exist
 		if not os.path.exists(self.EXPORT_DIRECTORY):
@@ -581,17 +588,25 @@ class ExcelBuilder(object):
 		"""Expects a list of strings"""
 		self.colList = value
 
-	def setFileName(self, value):
+	def setFileName(self, string):
 		"""Sets the file name to be saved"""
-		self.fileName = value
+		self.fileName = string
 
 	def setTableColumnWidth(self, value):
 		self.colWidth = value
+
+	def setSheetName(self, string):
+		self.sheetName = string
 		
 	def build(self):
 		"""Builds and saves the excel file"""
-		book = Workbook()
-		sheet1 = book.add_sheet('Sheet 1')
+		# Save the excel file
+		self.book.save(self.fileName)
+		shutil.move(self.fileName, self.EXPORT_DIRECTORY+'/'+self.fileName)
+
+	def buildSheet(self):
+		"""Adds the sheet to the workbook"""
+		sheet = self.book.add_sheet(self.sheetName)
 		headerStyle = easyxf('font: bold 1;')
 		deletedStyle = easyxf('font: color red;')
 		# starting location of the table
@@ -599,17 +614,17 @@ class ExcelBuilder(object):
 		startingCol = self.column
 		# adjust column widths
 		for i in xrange(self.column, self.column + len(self.colList)):
-			sheet1.col(i).width = self.colWidth
+			sheet.col(i).width = self.colWidth
 
 		# Write auto-generated timestamp
 		timeNow = datetime.datetime.now().strftime("%I:%M%p %B %d, %Y")
-		sheet1.write(0, 0, "This file was generated on " + timeNow)
+		sheet.write(0, 0, "This file was generated on " + timeNow)
 
 		# Write the table column names
 		colList = self.colList
 		colNumber = startingCol
 		for columnHeader in colList:
-			sheet1.write(startingRow, colNumber, columnHeader, headerStyle)
+			sheet.write(startingRow, colNumber, columnHeader, headerStyle)
 			colNumber += 1
 		colNumber = startingCol
 		rowNumber = startingRow + 1
@@ -618,16 +633,12 @@ class ExcelBuilder(object):
 		for i in self.rows:
 			for columnValue in i[0]:
 				if "none" in i[1]:
-					sheet1.write(rowNumber, colNumber, columnValue)
+					sheet.write(rowNumber, colNumber, columnValue)
 				elif "deleted" in i[1]:
-					sheet1.write(rowNumber, colNumber, columnValue, deletedStyle)
+					sheet.write(rowNumber, colNumber, columnValue, deletedStyle)
 				colNumber += 1
 			colNumber = startingCol
 			rowNumber += 1
-
-		# Save the excel file
-		book.save(self.fileName)
-		shutil.move(self.fileName, self.EXPORT_DIRECTORY+'/'+self.fileName)
 
 if __name__=="__main__":
 	root = Tk()

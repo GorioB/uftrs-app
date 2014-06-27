@@ -176,6 +176,8 @@ class OALWindow(CashDisbursmentsWindow):
 		excelBuilder.setStartingPoint(2, 0)
 		excelBuilder.setFileName(fileName)
 		excelBuilder.setTableColumnWidth(7000)
+		excelBuilder.setSheetName("Other Assets and Liabilities")
+		excelBuilder.buildSheet()
 		excelBuilder.build()
 
 	def save(self):
