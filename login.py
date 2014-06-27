@@ -1,5 +1,5 @@
 from lib.app import App
-from lib.db2 import User
+from lib.db2 import User, DropDownMenu
 from interface import textfield
 from Tkinter import *
 from ttk import *
@@ -62,6 +62,12 @@ class LogIn(Frame,object):
 		#bind submitFirstUser to return even on first_pass2
 		self.first_pass2.bind("<Return>",self.submitFirstUser)
 
+		self.initDropDownMenus()
+
+	def initDropDownMenus(self):
+		"""Initializes the drop down menus list of options"""
+		DropDownMenu("Nature").addOption("N/A")
+		# TODO: everything else
 
 	def submitFirstUser(self,*a):
 		user = User(self.first_username.get(), self.first_pass.get())
