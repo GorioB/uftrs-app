@@ -2,9 +2,10 @@ from lib.app import App
 from interface import windows
 from Tkinter import *
 from ttk import *
-from interface import windows2
+from interface import windows2, windows
 from interface import cashflowswindow
 import os
+import datetime
 
 class MainProgram(Frame,object):
 	def __init__(self,parent):
@@ -29,6 +30,7 @@ class MainProgram(Frame,object):
 		usersMenu.add_command(label="Create User")
 		preferencesMenu=Menu(menubar)
 		preferencesMenu.add_command(label="Export This Page to Excel",command=self.exportSelectedNote)
+		preferencesMenu.add_command(label="Export All Pages to Excel", command=self.exportEverything)
 		preferencesMenu.add_checkbutton(label="Show History",variable=self.showDeleted,onvalue=1,offvalue=0)
 		preferencesMenu.add_command(label="Settings")
 		menubar.add_cascade(label="User",menu=usersMenu)
@@ -76,6 +78,17 @@ class MainProgram(Frame,object):
 	def exportSelectedNote(self):
 		noteName = self.notebook.tab(self.notebook.select(),"text")
 		self.notes[noteName].exportToExcel()
+
+	def exportEverything(self):
+		excelBuilder = windows.ExcelBuilder()
+		for i in ["Cash Receipts","Cash Disbursments","Cash Flows","Other Assets and Liabilities","Notes",
+			"Operation and Maintenance Expense"]:
+			self.notes[i].addSheet(excelBuilder)
+
+		fileName = 'Everything_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+		excelBuilder.setFileName(fileName)
+
+		excelBuilder.build()
 
 if __name__=="__main__":
 	root = Tk()
