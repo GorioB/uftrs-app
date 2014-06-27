@@ -5,6 +5,15 @@ from Tkinter import *
 from ttk import *
 from main import *
 import os
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class LogIn(Frame,object):
 	def __init__(self,parent):
@@ -251,7 +260,7 @@ class LogIn(Frame,object):
 if __name__=="__main__":
 	root = Tk()
 	app = LogIn(root)
-	if os.path.exists(os.path.join("assets","logo.gif")):
-		img=PhotoImage(file=os.path.join("assets","logo.gif"))
+	if os.path.exists(resource_path(os.path.join("assets","logo.gif"))):
+		img=PhotoImage(file=resource_path(os.path.join("assets","logo.gif")))
 		root.tk.call("wm","iconphoto",root._w,img)
 	app.mainloop()
