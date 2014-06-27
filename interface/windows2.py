@@ -172,12 +172,15 @@ class OALWindow(CashDisbursmentsWindow):
 
 	def exportToExcel(self):
 		"""Exports the data displayed on the treebox to excel"""
+		excelBuilder = ExcelBuilder()
+		self.addSheet(excelBuilder)
+		excelBuilder.build()
 
+	def addSheet(self, excelBuilder):
 		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
 		columnHeaders = self.colList
 		fileName = 'OAL_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
 
-		excelBuilder = ExcelBuilder()
 		excelBuilder.setRows(rows)
 		excelBuilder.setColumnHeaders(columnHeaders)
 		excelBuilder.setStartingPoint(2, 0)
@@ -185,7 +188,7 @@ class OALWindow(CashDisbursmentsWindow):
 		excelBuilder.setTableColumnWidth(7000)
 		excelBuilder.setSheetName("Other Assets and Liabilities")
 		excelBuilder.buildSheet()
-		excelBuilder.build()
+
 
 	def save(self):
 		cn=[i for i in self.fieldsIdent if self.fieldsIdent[i]==self.fieldsNotebook.select()][0]
@@ -710,9 +713,14 @@ class NotesWindow(Frame,object):
 	def exportToExcel(self):
 		"""Exports all subtabs as different sheets under one excel file"""
 		excelBuilder = ExcelBuilder()
+		self.addSheet(excelBuilder)
+
+		fileName = 'Notes_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+		excelBuilder.setFileName(fileName)
+
+		excelBuilder.build()
+
+	def addSheet(self, excelBuilder):
 		for key in ["Council and Other College Projects","Long Term Investments","Other Outflows","Other Descriptive Notes"]:
 			subTab = self.notes[key]
 			subTab.addSheet(excelBuilder)
-		fileName = 'Notes_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
-		excelBuilder.setFileName(fileName)
-		excelBuilder.build()
