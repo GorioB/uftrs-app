@@ -288,7 +288,33 @@ class COCPWindow(CashDisbursmentsWindow):
 		self.fields['nature'].comboBox.config(values=["Council Budget",]+self.app.listOptions("Nature"))
 
 	def exportToExcel(self):
-		pass
+		"""Exports the data displayed on the treebox to excel"""
+
+		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
+		columnHeaders = self.colList
+		fileName = 'OAL_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+
+		excelBuilder = ExcelBuilder()
+		excelBuilder.setRows(rows)
+		excelBuilder.setColumnHeaders(columnHeaders)
+		excelBuilder.setStartingPoint(2, 0)
+		excelBuilder.setFileName(fileName)
+		excelBuilder.setTableColumnWidth(7000)
+		excelBuilder.setSheetName("")
+		excelBuilder.buildSheet()
+		excelBuilder.build()
+
+	def addSheet(self, excelBuilder):
+		"""Called by the Notes tab's exportToExcel method"""
+		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
+		columnHeaders = self.colList
+
+		excelBuilder.setRows(rows)
+		excelBuilder.setColumnHeaders(columnHeaders)
+		excelBuilder.setStartingPoint(2, 0)
+		excelBuilder.setTableColumnWidth(5000)
+		excelBuilder.setSheetName("Council and Other Projects")
+		excelBuilder.buildSheet()
 
 	def save(self):
 		if self.selectedpk!="New":
@@ -406,6 +432,20 @@ class LTIWindow(CashDisbursmentsWindow):
 
 	def exportToExcel(self):
 		pass
+
+
+	def addSheet(self, excelBuilder):
+		"""Called by the Notes tab's exportToExcel method"""
+		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
+		columnHeaders = self.colList
+
+		excelBuilder.setRows(rows)
+		excelBuilder.setColumnHeaders(columnHeaders)
+		excelBuilder.setStartingPoint(2, 0)
+		excelBuilder.setTableColumnWidth(5000)
+		excelBuilder.setSheetName("Long Term Investments")
+		excelBuilder.buildSheet()
+
 	def save(self):
 		if self.selectedpk!="New":
 			self.selectedpk=self.app.editNote("LTINote",self.selectedpk,
@@ -469,10 +509,24 @@ class OOWindow(LTIWindow):
 	
 		self.fields['remarks']=TextFieldBox(self.fieldsFrame.interior,
 			label="Remarks",readonly=True)
+
 	def populateTree(self,*a):
 		self.fieldList=['noteNumber','timestamp','dateOfTransaction','purpose','nature','amount','liquidatingPerson','docNo','notes','remarks']
 		showDeleted=self.deletedVar.get()
 		self._populateTree(self.app._listGeneral(OONote,showDeleted=showDeleted))
+
+
+	def addSheet(self, excelBuilder):
+		"""Called by the Notes tab's exportToExcel method"""
+		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
+		columnHeaders = self.colList
+
+		excelBuilder.setRows(rows)
+		excelBuilder.setColumnHeaders(columnHeaders)
+		excelBuilder.setStartingPoint(2, 0)
+		excelBuilder.setTableColumnWidth(5000)
+		excelBuilder.setSheetName("Other Outflows")
+		excelBuilder.buildSheet()
 
 	def save(self):
 		if self.selectedpk!="New":
@@ -570,6 +624,18 @@ class ODNWindow(CashDisbursmentsWindow):
 	def exportToExcel(self):
 		pass
 
+	def addSheet(self, excelBuilder):
+		"""Called by the Notes tab's exportToExcel method"""
+		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
+		columnHeaders = self.colList
+
+		excelBuilder.setRows(rows)
+		excelBuilder.setColumnHeaders(columnHeaders)
+		excelBuilder.setStartingPoint(2, 0)
+		excelBuilder.setTableColumnWidth(5000)
+		excelBuilder.setSheetName("Other Descriptive Notes")
+		excelBuilder.buildSheet()
+
 	def save(self):
 		if self.selectedpk!="New":
 			self.selectedpk=self.app.editNote("ODNote",self.selectedpk,
@@ -619,3 +685,13 @@ class NotesWindow(Frame,object):
 		selectedpage = self.nb.select()
 		tabName=self.nb.tab(selectedpage,option="text")
 		self.notes[tabName].populateTree()
+
+	def exportToExcel(self):
+		"""Exports all subtabs as different sheets under one excel file"""
+		excelBuilder = ExcelBuilder()
+		for key in ["Council and Other College Projects","Long Term Investments","Other Outflows","Other Descriptive Notes"]:
+			subTab = self.notes[key]
+			subTab.addSheet(excelBuilder)
+		fileName = 'Notes_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+		excelBuilder.setFileName(fileName)
+		excelBuilder.build()
