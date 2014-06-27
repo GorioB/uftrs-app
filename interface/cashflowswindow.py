@@ -6,6 +6,7 @@ from ScrolledFrame import VerticalScrolledFrame
 from textfield import *
 from lib.timeFuncs import *
 from buttonbox import ButtonBox
+from lib.floattostr import *
 
 class CashFlowsWindow(CashDisbursmentsWindow):
 	def generateNewButton(self):
@@ -121,12 +122,12 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 			partialTotalKeys = [key for key in partialTotals[i].keys()]
 			partialTotalKeys.sort()
 			for j in partialTotalKeys:
-				self.tree.insert(i,"end",text=j,values=(partialTotals[i][j][1],partialTotals[i][j][0],))
+				self.tree.insert(i,"end",text=j,values=(partialTotals[i][j][1],floatToStr(partialTotals[i][j][0]),))
 
-		self.tree.item('inflows',values=("","",totalInflows,""))
+		self.tree.item('inflows',values=("","",floatToStr(totalInflows),""))
 		for i in partialTotals:
 			categoryTotal = reduce(lambda x,y:x+y,[d[0] for d in partialTotals[i].values()]+[0,])
-			self.tree.item(i,values=("","",categoryTotal,""))
+			self.tree.item(i,values=("","",floatToStr(categoryTotal),""))
 		outflowList = [i for i in cashFlowList if i.source.content.split(":")[0] in ("OME","COCPNote","LTINote","OONote")]
 		totalOutflows=0
 		#change for when updated to db-stored variables
@@ -137,7 +138,9 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 			amount = i.getContents().amount.content
 			notes = i.note.content
 			category = i.source.content.split(":")[0]
-
+			print category
+			if category=="COCPNote":
+				name = i.getContents().event.content
 			try:
 				amount=float(amount)
 			except:
@@ -153,17 +156,17 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 					partialOutflows[category][name].append(notes)
 
 
-		self.tree.item('outflows',values=("","",totalOutflows,""))
+		self.tree.item('outflows',values=("","",floatToStr(totalOutflows),""))
 		for i in partialOutflows:
 			partialOutflowsSorted = [key for key in partialOutflows[i].keys()]
 			partialOutflowsSorted.sort()
 			for j in partialOutflowsSorted:
-				self.tree.insert(i,"end",text=j,values=(partialOutflows[i][j][1],partialOutflows[i][j][0],))
+				self.tree.insert(i,"end",text=j,values=(partialOutflows[i][j][1],floatToStr(partialOutflows[i][j][0]),))
 			categoryTotal = reduce(lambda x,y:x+y,[d[0] for d in partialOutflows[i].values()]+[0,])
-			self.tree.item(i,values=("","",categoryTotal,""))
+			self.tree.item(i,values=("","",floatToStr(categoryTotal),""))
 
 
-		self.tree.item('net',values=("","",totalInflows-totalOutflows,""))
+		self.tree.item('net',values=("","",floatToStr(totalInflows-totalOutflows),""))
 	def exportToExcel(self):
 		pass
 

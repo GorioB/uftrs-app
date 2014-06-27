@@ -4,6 +4,7 @@ from ttkcalendar import Calendar
 import calendar
 from lib.timeFuncs import *
 from supercombobox import SuperComboBox
+import datetime
 
 class CalendarBox(Frame,object):
 	def __init__(self,parent,label="Label",toolTip=None,**kwargs):
@@ -57,6 +58,10 @@ class CalendarBox(Frame,object):
 		days = range(1,32)
 		self._dayField = SuperComboBox(fLower,values=days,justify=CENTER,state='readonly')
 		self._dayField.pack(side=LEFT,fill=X,expand=1)
+
+		self._yearField.set(datetime.datetime.now().year)
+		self._monthField.set(datetime.datetime.now().month)
+		self._dayField.set(datetime.datetime.now().day)
 
 		#toolTip
 		if self.toolTip:
