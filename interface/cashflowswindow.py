@@ -164,8 +164,47 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 
 
 		self.tree.item('net',values=("","",totalInflows-totalOutflows,""))
+
 	def exportToExcel(self):
-		pass
+		"""Exports the data displayed on the treebox to excel"""
+		rowData = []
+		for tierAItem in self.tree.get_children():
+			# print self.tree.item(tierAItem)
+			text = self.tree.item(tierAItem, "text")
+			values = self.tree.item(tierAItem, "values")
+			newTuple = (text, "", "") + values
+			rowData.append(newTuple)
+			for tierBItem in self.tree.get_children(tierAItem):
+				text = self.tree.item(tierBItem, "text")
+				values = self.tree.item(tierBItem, "values")
+				newTuple = ("", text, "") + values
+				rowData.append(newTuple)
+				for tierCItem in self.tree.get_children(tierBItem):
+					text = self.tree.item(tierCItem, "text")
+					values = self.tree.item(tierCItem, "values")
+					newTuple = ("", "", text) + values
+					# newTuple = (text,) + values
+					rowData.append(newTuple)
+		rows = [(i, ("none",)) for i in rowData]
+
+		columnHeaders = ["", "", "", "Notes", "Amount", "Total"]	
+		fileName = 'CashFlows_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
+
+		excelBuilder = ExcelBuilder()
+		excelBuilder.setRows(rows)
+		excelBuilder.setColumnHeaders(columnHeaders)
+		excelBuilder.setStartingPoint(2, 0)
+		excelBuilder.setFileName(fileName)
+		excelBuilder.setTableColumnWidth(6000)
+		excelBuilder.setSheetName("Cash Flows")
+		excelBuilder.buildSheet()
+		excelBuilder.sheet.col(0).width = 4000
+		excelBuilder.sheet.col(1).width = 4000
+		excelBuilder.sheet.col(3).width = 2500
+		excelBuilder.sheet.col(4).width = 2500
+		excelBuilder.sheet.col(5).width = 2500
+
+		excelBuilder.build()
 
 	def save(self):
 		pass

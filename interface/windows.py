@@ -606,7 +606,7 @@ class ExcelBuilder(object):
 
 	def buildSheet(self):
 		"""Adds the sheet to the workbook"""
-		sheet = self.book.add_sheet(self.sheetName)
+		self.sheet = sheet = self.book.add_sheet(self.sheetName)
 		headerStyle = easyxf('font: bold 1;')
 		deletedStyle = easyxf('font: color red;')
 		# starting location of the table
