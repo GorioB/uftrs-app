@@ -1,6 +1,7 @@
 from Tkinter import *
 from ttk import *
 from helpbox import createHelpBox
+from lib.floattostr import *
 class TextFieldBox(Frame,object):
 	def __init__(self,parent,label="Label",toolTip=None,readonly=False,text="",height=3,textType="text",**kwargs):
 		Frame.__init__(self,parent,**kwargs)
@@ -71,7 +72,8 @@ class TextFieldBox(Frame,object):
 
 		if self.textType=="number":
 			try:
-				value=float(value)
+				value=strToFloat(value)
+				return strToFloat(self.textField.get('1.0','end').strip("\n"))
 			except:
 				return 0
 		return self.textField.get('1.0','end').strip('\n')

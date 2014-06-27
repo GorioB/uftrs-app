@@ -14,6 +14,7 @@ except:
 import datetime
 import shutil #for moving files
 import os
+from lib.floattostr import *
 def newExistsInTree(tree):
 	return [i for i in tree.get_children() if tree.item(i,"text")=="New"]
 
@@ -70,6 +71,8 @@ class CashReceiptsWindow(Frame,object):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column('#0',width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y)
 		xscroll.pack(side=TOP,fill=X)
@@ -80,7 +83,7 @@ class CashReceiptsWindow(Frame,object):
 		leftLowestFrame = Frame(leftFrameLower)
 		leftLowestFrame.pack(fill=X,expand=0)
 
-		self.totalLabel=totalLabel=Label(leftLowestFrame,text="Total: ",relief=SUNKEN,width=20)
+		self.totalLabel=totalLabel=Label(leftLowestFrame,text="Total Cash Receipts: ",relief=SUNKEN,width=50)
 		totalLabel.pack(fill=None,expand=0,side=RIGHT)
 
 		#populateTree
@@ -115,7 +118,8 @@ class CashReceiptsWindow(Frame,object):
 
 		self.fields['amount'] = TextFieldBox(upperRight.interior,label="Amount",readonly=False,height=1,textType="number")
 
-		self.fields['payor'] = TextFieldBox(upperRight.interior,label="Payor's Name",readonly=False,toolTip = "Name of the individual who actually gave the cash.")
+		self.fields['payor'] = AutocompleteBox(upperRight.interior,label="Payor's Name",toolTip = "Name of the individual who actually gave the cash.")
+		self.fields['payor'].initComboBox(self.app.listOptions("CR_Payor"))
 
 		self.fields['receiptNumber'] = TextFieldBox(upperRight.interior,label="Acknowledgement Receipt #",readonly=False)
 
@@ -156,11 +160,14 @@ class CashReceiptsWindow(Frame,object):
 				dataFields.append(vars(i)[j].content)
 			dataFields[0]=secsToString(dataFields[0])
 			dataFields[1]=secsToDay(dataFields[1])
+			if 'amount' in self.fieldList:
+				dataFields[self.fieldList.index('amount')]=floatToStr(dataFields[self.fieldList.index('amount')])
+
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
-		self.totalLabel.config(text="Total: "+str(total))
+		self.totalLabel.config(text="Total Cash Receipts: "+floatToStr(total))
 		self.total = total
 
 
@@ -187,7 +194,7 @@ class CashReceiptsWindow(Frame,object):
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				category = self.fields['category'].text,
 				nature = self.fields['nature'].text,
-				amount = self.fields['amount'].text,
+				amount = (self.fields['amount'].text),
 				payor = self.fields['payor'].text,
 				receiptNumber = self.fields['receiptNumber'].text,
 				notes = self.fields['notes'].text)
@@ -196,7 +203,7 @@ class CashReceiptsWindow(Frame,object):
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				category=self.fields['category'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				payor=self.fields['payor'].text,
 				receiptNumber = self.fields['receiptNumber'].text,
 				notes=self.fields['notes'].text)
@@ -205,6 +212,8 @@ class CashReceiptsWindow(Frame,object):
 		#combobox stuff
 		self.app.addOption("Nature", self.fields['nature'].text)
 		self.fields['nature'].comboBox.config(values = self.app.listOptions("Nature"))
+		self.app.addOption("CR_Payor",self.fields['payor'].text)
+		self.fields['payor'].comboBox.config(values=self.app.listOptions("CR_Payor"))
 		self.newEntry()
 
 	def newEntry(self):
@@ -288,6 +297,8 @@ class CashDisbursmentsWindow(Frame,object):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
@@ -296,7 +307,7 @@ class CashDisbursmentsWindow(Frame,object):
 
 	def initTotalTag(self):
 		#portable,optional
-		self.totalLabel = totalLabel = Label(self.totalFrame,text="Total: ",relief=SUNKEN,width=20)
+		self.totalLabel = totalLabel = Label(self.totalFrame,text="Total Cash Disbursments: ",relief=SUNKEN,width=50)
 		totalLabel.pack(fill=None,expand=0,side=RIGHT)
 
 	def initSaveDelete(self):
@@ -322,8 +333,9 @@ class CashDisbursmentsWindow(Frame,object):
 			label="Category",toolTip="[Council and Other Projects]: Cash outflows from all projects undertaken by the council.\n[Operation and Maintenance Expenses]: Cash outflows from recurring expenses of operation and upkeep of the council.\n[Long Term Investments]: Cash outflows for assets intended for use and ownership beyond the current academic year.\n[Other Outflows]: Cash outflows other than those incurred for council projects, operations and maintenance and long term investments")
 		self.fields['category'].initDropDown(options)
 
-		self.fields['event']=TextFieldBox(self.fieldsFrame.interior,
+		self.fields['event']=AutocompleteBox(self.fieldsFrame.interior,
 			label="Event",toolTip="Specify event if applicable.")
+		self.fields['event'].initComboBox(self.app.listOptions("CD_Event"))
 
 		self.fields['purpose']=TextFieldBox(self.fieldsFrame.interior,
 			label="Purpose",toolTip="What the cash was used for.")
@@ -336,8 +348,9 @@ class CashDisbursmentsWindow(Frame,object):
 			label="Amount",readonly=False,height=1,textType="number",
 			toolTip="Actual amount given to liquidating person/payee regardless if actual expenditure differs")
 
-		self.fields['liquidatingPerson'] = TextFieldBox(self.fieldsFrame.interior,
+		self.fields['liquidatingPerson'] = AutocompleteBox(self.fieldsFrame.interior,
 			label="Liquidating Person/Payee",toolTip="Name of the individual who actually received the cash.")
+		self.fields['liquidatingPerson'].initComboBox(self.app.listOptions("CD_Payee"))
 
 		self.fields['docNo'] = TextFieldBox(self.fieldsFrame.interior,
 			label="Document Number",toolTip="Put all receipt numbers here, if any. If cash is disbursed before the expenditure, indicate in the notes column that this is so.")
@@ -395,11 +408,15 @@ class CashDisbursmentsWindow(Frame,object):
 				dataFields.append(vars(i)[j].content)
 			dataFields[0]=secsToString(dataFields[0])
 			dataFields[1]=secsToDay(dataFields[1])
+
+			if 'amount' in self.fieldList:
+				dataFields[self.fieldList.index('amount')]=floatToStr(dataFields[self.fieldList.index('amount')])
+
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
-		self.totalLabel.config(text="Total: "+str(total))
+		self.totalLabel.config(text="Total Cash Disbursments: "+floatToStr(total))
 		self.total=total
 
 	def populateTree(self,*a):
@@ -437,7 +454,7 @@ class CashDisbursmentsWindow(Frame,object):
 				event=self.fields['event'].text,
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text)
@@ -447,7 +464,7 @@ class CashDisbursmentsWindow(Frame,object):
 				event=self.fields['event'].text,
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text)
@@ -455,6 +472,12 @@ class CashDisbursmentsWindow(Frame,object):
 
 		self.app.addOption("CD_Nature",self.fields['nature'].text)
 		self.fields['nature'].comboBox.config(values=self.app.listOptions("CD_Nature"))
+		self.app.addOption("CD_Event",self.fields['event'].text)
+		self.app.addOption("CD_Payee",self.fields['liquidatingPerson'].text)
+		self.fields['event'].comboBox.config(values=self.app.listOptions("CD_Event"))
+		self.fields['liquidatingPerson'].comboBox.config(values=self.app.listOptions("CD_Payee"))
+
+		self.newButtonCallback()
 
 	def delete(self):
 		#nonportable
@@ -474,6 +497,8 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
@@ -499,8 +524,9 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 			label="Amount",readonly=False,height=1,textType="number",
 			toolTip="Amount of actual expenditure")
 
-		self.fields['liquidatingPerson'] = TextFieldBox(self.fieldsFrame.interior,
+		self.fields['liquidatingPerson'] = AutocompleteBox(self.fieldsFrame.interior,
 			label="Liquidating Person/Payee",toolTip="Name of the individual who actually received the cash.")
+		self.fields['liquidatingPerson'].initComboBox(self.app.listOptions("OME_Payee"))
 
 		self.fields['receiptNumber'] = TextFieldBox(self.fieldsFrame.interior,
 			label="Receipt number",toolTip="Put all receipt numbers here.")
@@ -538,7 +564,7 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				receiptNumber=self.fields['receiptNumber'].text,
 				notes=self.fields['notes'].text)
@@ -547,7 +573,7 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				receiptNumber=self.fields['receiptNumber'].text,
 				notes=self.fields['notes'].text)
@@ -555,6 +581,10 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 
 		self.app.addOption("OME_Nature",self.fields['nature'].text)
 		self.fields['nature'].comboBox.config(values=self.app.listOptions("OME_Nature"))
+		self.app.addOption("OME_Payee",self.fields['liquidatingPerson'.text])
+		self.fields['liquidatingPerson'].comboBox.config(values=self.app.listOptions("OME_Payee"))
+
+		self.newButtonCallback()
 
 	def delete(self):
 		if self.selectedpk!="New":

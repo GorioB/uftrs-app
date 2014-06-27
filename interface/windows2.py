@@ -9,6 +9,7 @@ from interface.readingBox import ReadingBox
 from lib.timeFuncs import *
 import datetime
 from lib.models import *
+from lib.floattostr import *
 class EmptyBox(object):
 	def __init__(self):
 		self.text=""
@@ -33,6 +34,8 @@ class OALWindow(CashDisbursmentsWindow):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=0,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
@@ -158,6 +161,10 @@ class OALWindow(CashDisbursmentsWindow):
 			for j in self.fieldList:
 				dataFields.append(vars(i)[j].content)
 			dataFields[0]=secsToString(dataFields[0])
+
+			if 'amount' in self.fieldList:
+				dataFields[self.fieldList.index('amount')]=floatToStr(dataFields[self.fieldList.index('amount')])
+
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
 			else:
@@ -198,6 +205,7 @@ class OALWindow(CashDisbursmentsWindow):
 			self.app.addOption("OAL_Category",self.fields[cn]['category'].text)
 			self.fields[cn]['category'].comboBox.config(values=self.app.listOptions("OAL_Category"))
 
+		self.newButtonCallback()
 
 	def delete(self):
 		if self.selectedpk!="New":
@@ -216,6 +224,8 @@ class COCPWindow(CashDisbursmentsWindow):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
@@ -255,11 +265,12 @@ class COCPWindow(CashDisbursmentsWindow):
 		self.fields['amount']=TextFieldBox(self.fieldsFrame.interior,
 			label="Amount",toolTip="Amount of actual expenditure",height=1,textType="number")
 
-		self.fields['liquidatingPerson']=TextFieldBox(self.fieldsFrame.interior,
+		self.fields['liquidatingPerson']=AutocompleteBox(self.fieldsFrame.interior,
 			label="Liquidating Person/Payee's Name",toolTip="Name of the individual who actually received the cash for the expenditure")
+		self.fields['liquidatingPerson'].initComboBox(self.app.listOptions("COCP_Payee"))
 
 		self.fields['docNo']=TextFieldBox(self.fieldsFrame.interior,
-			label="Document Number",toolTip="Put all receipt numbers here")
+			label="Reference Number",toolTip="Put all receipt numbers here")
 
 		self.fields['notes']=TextFieldBox(self.fieldsFrame.interior,
 			label="Notes",toolTip="Any added notes about the transaction")
@@ -281,6 +292,10 @@ class COCPWindow(CashDisbursmentsWindow):
 				dataFields.append(vars(i)[j].content)
 			dataFields[1]=secsToString(dataFields[1])
 			dataFields[2]=secsToDay(dataFields[2])
+
+			if 'amount' in self.fieldList:
+				dataFields[self.fieldList.index('amount')]=floatToStr(dataFields[self.fieldList.index('amount')])
+
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
 			else:
@@ -307,7 +322,7 @@ class COCPWindow(CashDisbursmentsWindow):
 				flowDirection=self.fields['flowDirection'].text,
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text,
@@ -319,7 +334,7 @@ class COCPWindow(CashDisbursmentsWindow):
 				flowDirection=self.fields['flowDirection'].text,
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text)
@@ -327,6 +342,11 @@ class COCPWindow(CashDisbursmentsWindow):
 
 		self.app.addOption("COCP_Event",self.fields['event'].text)
 		self.fields['event'].comboBox.config(values=self.app.listOptions("COCP_Event"))
+		self.app.addOption("COCP_Payee",self.fields['liquidatingPerson'].text)
+		self.fields['liquidatingPerson'].comboBox.config(values=self.app.listOptions("COCP_Payee"))
+
+		self.newButtonCallback()
+
 	def delete(self):
 		if self.selectedpk!="New":
 			print self.app.deleteNote("COCPNote",self.selectedpk)
@@ -344,6 +364,8 @@ class LTIWindow(CashDisbursmentsWindow):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
@@ -372,11 +394,12 @@ class LTIWindow(CashDisbursmentsWindow):
 		self.fields['amount']=TextFieldBox(self.fieldsFrame.interior,
 			label="Amount",toolTip="Amount of actual expenditure",height=1,textType="number")
 
-		self.fields['liquidatingPerson']=TextFieldBox(self.fieldsFrame.interior,
+		self.fields['liquidatingPerson']=AutocompleteBox(self.fieldsFrame.interior,
 			label="Liquidating Person/Payee's Name",toolTip="Name of the individual who actually received the cash for the expenditure")
+		self.fields['liquidatingPerson'].initComboBox(self.app.listOptions("LTI_Payee"))
 
 		self.fields['docNo']=TextFieldBox(self.fieldsFrame.interior,
-			label="Document Number",toolTip="Put all receipt numbers here")
+			label="Reference Number",toolTip="Put all receipt numbers here")
 
 		self.fields['notes']=TextFieldBox(self.fieldsFrame.interior,
 			label="Notes",toolTip="Any added notes about the transaction")
@@ -402,11 +425,15 @@ class LTIWindow(CashDisbursmentsWindow):
 				dataFields.append(vars(i)[j].content)
 			dataFields[1]=secsToString(dataFields[1])
 			dataFields[2]=secsToDay(dataFields[2])
+
+			if 'amount' in self.fieldList:
+				dataFields[self.fieldList.index('amount')]=floatToStr(dataFields[self.fieldList.index('amount')])
+
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
-		self.totalLabel.config(text="Total: "+str(total))
+		self.totalLabel.config(text="Total Long Term Investments: "+floatToStr(total))
 		self.total=total
 	def populateTree(self,*a):
 		self.fieldList=['noteNumber','timestamp','dateOfTransaction','purpose','nature','amount','liquidatingPerson','docNo','notes','remarks']
@@ -431,7 +458,7 @@ class LTIWindow(CashDisbursmentsWindow):
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text,
@@ -441,7 +468,7 @@ class LTIWindow(CashDisbursmentsWindow):
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text)
@@ -449,6 +476,11 @@ class LTIWindow(CashDisbursmentsWindow):
 
 		self.app.addOption("LTI_Nature",self.fields['nature'].text)
 		self.fields['nature'].comboBox.config(values=self.app.listOptions("LTI_Nature"))
+		self.app.addOption("LTI_Payee",self.fields['liquidatingPerson'].text)
+		self.fields['liquidatingPerson'].comboBox.config(values=self.app.listOptions("LTI_Payee"))
+
+		self.newButtonCallback()
+
 	def delete(self):
 		if self.selectedpk!="New":
 			print self.app.deleteNote("LTINote",self.selectedpk)
@@ -477,11 +509,12 @@ class OOWindow(LTIWindow):
 		self.fields['amount']=TextFieldBox(self.fieldsFrame.interior,
 			label="Amount",toolTip="Amount of actual expenditure",height=1,textType="number")
 
-		self.fields['liquidatingPerson']=TextFieldBox(self.fieldsFrame.interior,
+		self.fields['liquidatingPerson']=AutocompleteBox(self.fieldsFrame.interior,
 			label="Liquidating Person/Payee's Name",toolTip="Name of the individual who actually received the cash for the expenditure")
+		self.fields['liquidatingPerson'].initComboBox(self.app.listOptions("OO_Payee"))
 
 		self.fields['docNo']=TextFieldBox(self.fieldsFrame.interior,
-			label="Document Number",toolTip="Put all receipt numbers here")
+			label="Reference Number",toolTip="Put all receipt numbers here")
 
 		self.fields['notes']=TextFieldBox(self.fieldsFrame.interior,
 			label="Notes",toolTip="Any added notes about the transaction")
@@ -513,7 +546,7 @@ class OOWindow(LTIWindow):
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text,
@@ -523,7 +556,7 @@ class OOWindow(LTIWindow):
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
-				amount=self.fields['amount'].text,
+				amount=(self.fields['amount'].text),
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text)
@@ -531,7 +564,11 @@ class OOWindow(LTIWindow):
 
 		self.app.addOption("OO_Nature",self.fields['nature'].text)
 		self.fields['nature'].comboBox.config(values=self.app.listOption("OO_Nature"))
-	
+		self.app.addOption("OO_Payee",self.fields['liquidatingPerson'].text)
+		self.fields['liquidatingPerson'].comboBox.config(values=self.app.listOption("OO_Payee"))
+
+		self.newButtonCallback()
+
 	def delete(self):
 		if self.selectedpk!="New":
 			print self.app.deleteNote("OONote",self.selectedpk)
@@ -549,6 +586,8 @@ class ODNWindow(CashDisbursmentsWindow):
 			tree.heading(i,text=i)
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
+		if "Amount" in colList:
+			tree.column("Amount",anchor=E)
 		tree.configure(yscroll=yscroll.set,xscroll=xscroll.set)
 		yscroll.pack(side=RIGHT,fill=Y,expand=0)
 		xscroll.pack(side=TOP,fill=X,expand=0)
@@ -595,6 +634,10 @@ class ODNWindow(CashDisbursmentsWindow):
 			for j in self.fieldList:
 				dataFields.append(vars(i)[j].content)
 			dataFields[1]=secsToString(dataFields[1])
+
+			if 'amount' in self.fieldList:
+				dataFields[self.fieldList.index('amount')]=floatToStr(dataFields[self.fieldList.index('amount')])
+
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
 			else:
@@ -621,6 +664,8 @@ class ODNWindow(CashDisbursmentsWindow):
 			self.selectedpk=self.app.newNote("ODNote",self.app.getNoteNumber("ODNote"),
 				description=self.fields['description'].text)
 		self.populateTree()
+
+		self.newButtonCallback()
 
 
 	def delete(self):
