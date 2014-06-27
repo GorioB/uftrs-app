@@ -173,12 +173,15 @@ class CashReceiptsWindow(Frame,object):
 
 	def exportToExcel(self):
 		"""Exports the data displayed on the treebox to excel"""
+		excelBuilder = ExcelBuilder()
+		self.addSheet(excelBuilder)
+		excelBuilder.build()
 
+	def addSheet(self, excelBuilder):
 		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
 		columnHeaders = ["Timestamp","Date of Transaction","Category","Nature","Amount","Payor's Name","Acknowledgement Receipt #","Notes","Remarks"]
 		fileName = 'CashReceipt_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
 
-		excelBuilder = ExcelBuilder()
 		excelBuilder.setRows(rows)
 		excelBuilder.setColumnHeaders(columnHeaders)
 		excelBuilder.setStartingPoint(2, 0)
@@ -186,7 +189,7 @@ class CashReceiptsWindow(Frame,object):
 		excelBuilder.setTableColumnWidth(5000)
 		excelBuilder.setSheetName("Cash Receipts")
 		excelBuilder.buildSheet()
-		excelBuilder.build()
+
 
 	def save(self):
 		if self.selectedpk!="New":
@@ -429,12 +432,15 @@ class CashDisbursmentsWindow(Frame,object):
 
 	def exportToExcel(self):
 		"""Exports the data displayed on the treebox to excel"""
+		excelBuilder = ExcelBuilder()
+		self.addSheet(excelBuilder)
+		excelBuilder.build()
 
+	def addSheet(self, excelBuilder):
 		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
 		columnHeaders = self.colList
 		fileName = 'CashDisbursements_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
 
-		excelBuilder = ExcelBuilder()
 		excelBuilder.setRows(rows)
 		excelBuilder.setColumnHeaders(columnHeaders)
 		excelBuilder.setStartingPoint(2, 0)
@@ -442,7 +448,7 @@ class CashDisbursmentsWindow(Frame,object):
 		excelBuilder.setTableColumnWidth(5000)
 		excelBuilder.setSheetName("Cash Disbursements")
 		excelBuilder.buildSheet()
-		excelBuilder.build()
+		
 
 
 	def save(self):
@@ -543,20 +549,23 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 
 	def exportToExcel(self):
 		"""Exports the data displayed on the treebox to excel"""
+		excelBuilder = ExcelBuilder()
+		self.addSheet(excelBuilder)
+		excelBuilder.build()
 
+	def addSheet(self, excelBuilder):
 		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
 		columnHeaders = self.colList
 		fileName = 'OperationMaint_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
 
-		excelBuilder = ExcelBuilder()
 		excelBuilder.setRows(rows)
 		excelBuilder.setColumnHeaders(columnHeaders)
 		excelBuilder.setStartingPoint(2, 0)
 		excelBuilder.setFileName(fileName)
 		excelBuilder.setTableColumnWidth(5000)
-		excelBuilder.setSheetName("Operation and Maintenance Expense")
+		excelBuilder.setSheetName("Oper. and Maint. Expense")
 		excelBuilder.buildSheet()
-		excelBuilder.build()
+
 
 	def save(self):
 		if self.selectedpk!="New":
