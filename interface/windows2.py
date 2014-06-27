@@ -325,7 +325,7 @@ class COCPWindow(CashDisbursmentsWindow):
 		excelBuilder.setColumnHeaders(columnHeaders)
 		excelBuilder.setStartingPoint(2, 0)
 		excelBuilder.setTableColumnWidth(5000)
-		excelBuilder.setSheetName("Council and Other Projects")
+		excelBuilder.setSheetName("Notes- Council & Other Projects")
 		excelBuilder.buildSheet()
 
 	def save(self):
@@ -463,7 +463,7 @@ class LTIWindow(CashDisbursmentsWindow):
 		excelBuilder.setColumnHeaders(columnHeaders)
 		excelBuilder.setStartingPoint(2, 0)
 		excelBuilder.setTableColumnWidth(5000)
-		excelBuilder.setSheetName("Long Term Investments")
+		excelBuilder.setSheetName("Notes- Long Term Investments")
 		excelBuilder.buildSheet()
 
 	def save(self):
@@ -551,7 +551,7 @@ class OOWindow(LTIWindow):
 		excelBuilder.setColumnHeaders(columnHeaders)
 		excelBuilder.setStartingPoint(2, 0)
 		excelBuilder.setTableColumnWidth(5000)
-		excelBuilder.setSheetName("Other Outflows")
+		excelBuilder.setSheetName("Notes- Other Outflows")
 		excelBuilder.buildSheet()
 
 	def save(self):
@@ -666,7 +666,7 @@ class ODNWindow(CashDisbursmentsWindow):
 		excelBuilder.setColumnHeaders(columnHeaders)
 		excelBuilder.setStartingPoint(2, 0)
 		excelBuilder.setTableColumnWidth(5000)
-		excelBuilder.setSheetName("Other Descriptive Notes")
+		excelBuilder.setSheetName("Notes- Other Descriptive Notes")
 		excelBuilder.buildSheet()
 
 	def save(self):
