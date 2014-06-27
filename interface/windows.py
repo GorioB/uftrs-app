@@ -74,7 +74,7 @@ class CashReceiptsWindow(Frame,object):
 
 		newButton = Button(leftFrameUpperest,text="New",command=self.newEntry,style="NEWButton.TButton")
 		newButton.pack(fill=None,expand=0,side=LEFT)
-		self.tree = tree = Treeview(leftFrameUpper,selectmode="browse",show='headings')
+		self.tree = tree = Treeview(leftFrameUpper,selectmode="browse")
 		tree.bind("<<TreeviewSelect>>",self.getSelection)
 		yscroll = Scrollbar(leftFrameUpper,orient="vertical",command=tree.yview)
 		xscroll=Scrollbar(leftFrameLower,orient="horizontal",command=tree.xview)
