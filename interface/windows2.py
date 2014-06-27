@@ -10,6 +10,17 @@ from lib.timeFuncs import *
 import datetime
 from lib.models import *
 from lib.floattostr import *
+def treeview_sort_column(tv, col, reverse):
+    l = [(tv.set(k, col), k) for k in tv.get_children('')]
+    l.sort(reverse=reverse)
+
+    # rearrange items in sorted positions
+    for index, (val, k) in enumerate(l):
+        tv.move(k, '', index)
+
+    # reverse sort next time
+    tv.heading(col, command=lambda: \
+               treeview_sort_column(tv, col, not reverse))
 class EmptyBox(object):
 	def __init__(self):
 		self.text=""
@@ -31,7 +42,7 @@ class OALWindow(CashDisbursmentsWindow):
 		self.colList = colList=["Timestamp","Type","Category","Details","Remarks"]
 		tree['columns']=colList
 		for i in colList:
-			tree.heading(i,text=i)
+			tree.heading(i,text=i,command=lambda _i=i:treeview_sort_column(tree,_i,False))
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=0,anchor=W)
 		if "Amount" in colList:
@@ -224,7 +235,7 @@ class COCPWindow(CashDisbursmentsWindow):
 		self.colList = colList = ["Note #","Timestamp","Date of Transaction","Event/Project","Inflow/Outflow","Purpose","Nature","Amount","Liquidating Person/Payee's Name","Official Receipt #","Notes","Remarks"]
 		tree['columns']=colList
 		for i in colList:
-			tree.heading(i,text=i)
+			tree.heading(i,text=i,command=lambda _i=i:treeview_sort_column(tree,_i,False))
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
 		if "Amount" in colList:
@@ -364,7 +375,7 @@ class LTIWindow(CashDisbursmentsWindow):
 		self.colList = colList=["Note #","Timestamp","Date of Transaction","Purpose","Nature","Amount","Liquidating Person/Payee's Name","Official Receipt #","Notes","Remarks"]
 		tree['columns']=colList
 		for i in colList:
-			tree.heading(i,text=i)
+			tree.heading(i,text=i,command=lambda _i=i:treeview_sort_column(tree,_i,False))
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
 		if "Amount" in colList:
@@ -586,7 +597,7 @@ class ODNWindow(CashDisbursmentsWindow):
 		self.colList = colList = ["Note #","Timestamp","Description","Remarks"]
 		tree['columns']=colList
 		for i in colList:
-			tree.heading(i,text=i)
+			tree.heading(i,text=i,command=lambda _i=i:treeview_sort_column(tree,_i,False))
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
 		if "Amount" in colList:

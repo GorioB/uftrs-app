@@ -1,0 +1,26 @@
+June 28, 2014
+
+	- Fixed cashflows breaking when several entries have the same nature
+
+	- Added logo
+
+	- Changed datebox to allow manual input
+
+	- ExportToExcel on Notes tab now working
+
+	- Cashflows tab now works more properly
+
+	- Saving automatically starts a new entry
+
+	- Person fields and event fields now have memory
+
+	- Numbers now displayed with commas, and are right-aligned in most cases
+
+	- Columns can be arranged alphabetically
+
+	TODO:
+		- Cashflows still only a display, no date-selection functions yet
+
+		- Displayed date still YYYYMMDD
+
+		- Still no satement

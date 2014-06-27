@@ -15,6 +15,19 @@ import datetime
 import shutil #for moving files
 import os
 from lib.floattostr import *
+
+def treeview_sort_column(tv, col, reverse):
+	print [(k,col) for k in tv.get_children('')]
+	l = [(tv.set(k, col), k) for k in tv.get_children('')]
+	l.sort(reverse=reverse)
+
+	# rearrange items in sorted positions
+	for index, (val, k) in enumerate(l):
+		tv.move(k, '', index)
+
+	# reverse sort next time
+	tv.heading(col, command=lambda: \
+		treeview_sort_column(tv, col, not reverse))
 def newExistsInTree(tree):
 	return [i for i in tree.get_children() if tree.item(i,"text")=="New"]
 
@@ -61,15 +74,17 @@ class CashReceiptsWindow(Frame,object):
 
 		newButton = Button(leftFrameUpperest,text="New",command=self.newEntry,style="NEWButton.TButton")
 		newButton.pack(fill=None,expand=0,side=LEFT)
-		self.tree = tree = Treeview(leftFrameUpper,selectmode="browse")
+		self.tree = tree = Treeview(leftFrameUpper,selectmode="browse",show='headings')
 		tree.bind("<<TreeviewSelect>>",self.getSelection)
 		yscroll = Scrollbar(leftFrameUpper,orient="vertical",command=tree.yview)
 		xscroll=Scrollbar(leftFrameLower,orient="horizontal",command=tree.xview)
 		colList = ["Timestamp","Date of Transaction","Category","Nature","Amount","Payor's Name","Acknowledgement Receipt #","Notes","Remarks"]
 		tree['columns']= colList
-		for i in colList:
-			tree.heading(i,text=i)
-			tree.column(i,anchor=W,width=60)
+		for col in colList:
+			print col
+			tree.heading(col,text=col,command=lambda _col=col: \
+				treeview_sort_column(tree,_col,False))
+			tree.column(col,anchor=W,width=60)
 		tree.column('#0',width=3,anchor=W)
 		if "Amount" in colList:
 			tree.column("Amount",anchor=E)
@@ -297,7 +312,7 @@ class CashDisbursmentsWindow(Frame,object):
 			"Purpose","Nature","Amount","Liquidating Person/Payee","Document #","Notes","Remarks"]
 		tree['columns']=colList
 		for i in colList:
-			tree.heading(i,text=i)
+			tree.heading(i,text=i,command=lambda _i=i:treeview_sort_column(tree,_i,False))
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
 		if "Amount" in colList:
@@ -500,7 +515,7 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 		self.colList = colList = ["Timestamp","Date of Transaction","Purpose","Nature","Amount","Liquidating Person/Payee","Receipt Number","Notes","Remarks"]
 		tree['columns']=colList
 		for i in colList:
-			tree.heading(i,text=i)
+			tree.heading(i,text=i,command=lambda _i=i:treeview_sort_column(tree,_i,False))
 			tree.column(i,anchor=W,width=60)
 		tree.column("#0",width=3,anchor=W)
 		if "Amount" in colList:
