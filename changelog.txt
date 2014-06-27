@@ -6,7 +6,9 @@ June 28, 2014
 
 	- Changed datebox to allow manual input
 
-	- ExportToExcel on Notes tab now working
+	- ExportToExcel on all tabs now working
+
+	- Added "Export All Pages to Excel" option
 
 	- Cashflows tab now works more properly
 
@@ -23,4 +25,4 @@ June 28, 2014
 
 		- Displayed date still YYYYMMDD
 
-		- Still no satement
+		- Still no statement
