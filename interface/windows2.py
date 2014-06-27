@@ -287,23 +287,6 @@ class COCPWindow(CashDisbursmentsWindow):
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
 		self.fields['nature'].comboBox.config(values=["Council Budget",]+self.app.listOptions("Nature"))
 
-	def exportToExcel(self):
-		"""Exports the data displayed on the treebox to excel"""
-
-		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
-		columnHeaders = self.colList
-		fileName = 'OAL_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.xls'
-
-		excelBuilder = ExcelBuilder()
-		excelBuilder.setRows(rows)
-		excelBuilder.setColumnHeaders(columnHeaders)
-		excelBuilder.setStartingPoint(2, 0)
-		excelBuilder.setFileName(fileName)
-		excelBuilder.setTableColumnWidth(7000)
-		excelBuilder.setSheetName("")
-		excelBuilder.buildSheet()
-		excelBuilder.build()
-
 	def addSheet(self, excelBuilder):
 		"""Called by the Notes tab's exportToExcel method"""
 		rows = [(self.tree.item(i,"values"), self.tree.item(i, "tags")) for i in self.tree.get_children()]
@@ -429,10 +412,6 @@ class LTIWindow(CashDisbursmentsWindow):
 		self.fieldList=['noteNumber','timestamp','dateOfTransaction','purpose','nature','amount','liquidatingPerson','docNo','notes','remarks']
 		showDeleted=self.deletedVar.get()
 		self._populateTree(self.app._listGeneral(LTINote,showDeleted=showDeleted))
-
-	def exportToExcel(self):
-		pass
-
 
 	def addSheet(self, excelBuilder):
 		"""Called by the Notes tab's exportToExcel method"""
@@ -620,9 +599,6 @@ class ODNWindow(CashDisbursmentsWindow):
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
-
-	def exportToExcel(self):
-		pass
 
 	def addSheet(self, excelBuilder):
 		"""Called by the Notes tab's exportToExcel method"""
