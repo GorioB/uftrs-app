@@ -1,6 +1,43 @@
 from docx import Document
 from docx.shared import Inches
 import os
+
+class DocBuilder(object):
+	"""docstring for DocBuilder"""
+	def __init__(self):
+		self.document = Document()
+
+	def createTable(self, rowData, columnHeaders):
+		"""Expects rowData to be a list of list of strings and columnHeaders to be a list of strings"""
+		self.table = self.document.add_table(rows=1, cols=0)
+
+		# Contains the column objects whose widths can be set later on
+		self.columns = []
+
+		# Write the table headers
+		i = 0
+		for header in columnHeaders:
+			self.columns.append(self.table.add_column())
+			self.table.cell(0, i).text = header
+			i += 1
+
+		# Write the table data
+		for data in rowData:
+			rowCells = self.table.add_row().cells
+			for i in xrange(0, len(data)):
+				rowCells[i].text = data[i]
+
+		# Set column widths to be even by default; can be set otherwise afterwards
+		width = Inches(6/len(self.columns))
+		for column in self.columns:
+			column.width = width
+
+	def save(self, fileName):
+		"""Saves the document"""
+		self.document.save(fileName)
+
+
+
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -60,4 +97,18 @@ def createDummyDocument():
 	document.save('demo.docx')
 
 if __name__ == "__main__":
-	createDummyDocument()
+	docBuilder = DocBuilder()
+
+	columns = ["Item", "Quantity", "Remarks"]
+	rowData = []
+	rowData.append(["Orange", "5", "Yummy"])
+	rowData.append(["Apple", "2"])
+
+	docBuilder.createTable(rowData, columns)
+	docBuilder.columns[0].width = Inches(1)
+	docBuilder.columns[1].width = Inches(1)
+	docBuilder.columns[2].width = Inches(4)
+
+	docBuilder.save("docbuildertest.docx")
+
+
