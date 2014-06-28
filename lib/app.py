@@ -259,8 +259,10 @@ class App(object):
 		noteTypes={'ODNote':ODNote,'LTINote':LTINote,'COCPNote':COCPNote,'OONote':OONote}
 		a = getEntry(pk,noteTypes[notetype])
 		a.delete()
+		cashFlows = self._getCashFlow(noteTypes[notetype],pk)
+		for i in cashFlows:
+			i.delete()
 		notes = [i for i in self.listNotes(showDeleted=False) if i.noteNumber.content==a.noteNumber.content]
-		print notes
 		if not notes:
 			relatedCashFlows = [i for i in listEntries(CashFlow) if a.noteNumber.content in i.note.content]
 			for i in relatedCashFlows:

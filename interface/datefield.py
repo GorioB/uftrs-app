@@ -51,7 +51,9 @@ class CalendarBox(Frame,object):
 
 		# months=("January","February","March","April","May","June","July","August",
 		# 	"September","October","November","December")
-		months = range(1,13)
+		#months = range(1,13)
+		self.months = months = ("","January","February","March","April","May","June","July","August",
+			"Semptember","October","November","December")
 		self._monthField = SuperComboBox(fLower,values=months,justify=CENTER,state='readonly')
 		self._monthField.pack(side=LEFT,fill=X,expand=1)
 
@@ -60,7 +62,7 @@ class CalendarBox(Frame,object):
 		self._dayField.pack(side=LEFT,fill=X,expand=1)
 
 		self._yearField.set(datetime.datetime.now().year)
-		self._monthField.set(datetime.datetime.now().month)
+		self._monthField.set(months[datetime.datetime.now().month])
 		self._dayField.set(datetime.datetime.now().day)
 
 		#toolTip
@@ -95,23 +97,28 @@ class CalendarBox(Frame,object):
 		
 	def calPressed(self,event):
 		date= self._ttkcal.selection
-		self.text = (str(date.year)+"-"+str(date.month)+"-"+str(date.day))
+		self.text = (str(date.year)+"-"+str(self.months[date.month])+"-"+str(date.day))
 		#self._calButton.config(text=str(date.year)+"-"+str(date.month)+"-"+str(date.day))
 		self._calWindow.destroy()
 		self._calendarCreated-=1
 
 	@property
 	def text(self):
-	    return str(self._yearField.get())+"-"+str(self._monthField.get())+"-"+str(self._dayField.get())
+	    return str(self._yearField.get())+"-"+str(self.months.index(self._monthField.get()))+"-"+str(self._dayField.get())
 	@text.setter
 	def text(self, value):
 		year,month,day=("","","")
 		if len(value.split("-"))==3:
 			year,month,day = value.split("-")
 		self._yearField.set(year)
-		self._monthField.set(month)
+		if month=="":
+			month = 0
+		self._monthField.set(self.months[int(month)])
 		self._dayField.set(day)
 	
+	def bind(self,evt,cb):
+		for i in [self._monthField,self._dayField,self._yearField]:
+			i.bind(evt,cb)
 
 if __name__=="__main__":
 	root=Tk()
