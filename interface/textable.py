@@ -2,24 +2,27 @@ from Tkinter import *
 from ttk import *
 
 class TextTable(Frame,object):
-	def __init__(self,parent,aligns=None,**kwargs):
+	def __init__(self,parent,aligns=None,weights=None,**kwargs):
 		Frame.__init__(self,parent,**kwargs)
 		self.aligns = aligns
 		if not self.aligns:
 			self.aligns = ["left","left","left","left"]
+		if not weights:
+			weights=[1,1,1,1]
 		self.frames=["one","two","three","four"]
-		for i in range(0,len(self.frames)):
-			self.frames[i]=Frame(self)
-			self.frames[i].pack(side=LEFT,expand=1,fill=BOTH)
+		# for i in range(0,len(self.frames)):
+		# 	self.frames[i]=Frame(self)
+		# 	self.frames[i].grid(side=LEFT,expand=1,fill=BOTH)
 
 		self.textBoxes=[]
-		for i in self.frames:
-			self.textBoxes.append(Text(i,bd=0,width=0,state='disabled'))
-			self.textBoxes[-1].pack(side=LEFT,expand=1,fill=BOTH)
+		for i in range(0,len(self.frames)):
+			self.textBoxes.append(Text(self,bd=0,width=0,state='disabled'))
+			self.textBoxes[-1].grid(row=0,column=i,sticky=W+E+N+S)
 			self.textBoxes[-1].tag_configure("right",justify="right")
 			self.textBoxes[-1].tag_configure("center",justify="center")
 			self.textBoxes[-1].tag_configure("left",justify="left")
-
+			self.grid_columnconfigure(i,weight=weights[i])
+		self.grid_rowconfigure(0,weight=1)
 	def fixAligns(self):
 		for i in range(0,len(self.textBoxes)):
 			self.textBoxes[i]['state']='normal'
@@ -48,7 +51,7 @@ class TextTable(Frame,object):
 if __name__=="__main__":
 	root = Tk()
 	root.geometry("600x500")
-	app = TextTable(root,aligns=['left','center','right','right'])
+	app = TextTable(root,aligns=['left','center','right','right'],weights=[3,1,1,1])
 	app.pack(side=LEFT,expand=1,fill=BOTH)
 	app.addRow(['Council Mandated Funds','','',''])
 	app.addRow(['    Organizational Fees','1','15,000',''])
