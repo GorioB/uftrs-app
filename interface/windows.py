@@ -4,6 +4,7 @@ from ScrolledFrame import VerticalScrolledFrame
 from interface.textfield import *
 from interface.datefield import *
 from interface.autocomplete import *
+from interface.helpbox import *
 from lib.timeFuncs import *
 import sys
 try:
@@ -15,7 +16,18 @@ import datetime
 import shutil #for moving files
 import os
 from lib.floattostr import *
-
+def checkFields(fields):
+	keys = fields.keys()
+	if 'notes' in keys:
+		keys.remove("notes")
+	if 'remarks' in keys:
+		keys.remove('remarks')
+	if 'timestamp' in keys:
+		keys.remove('timestamp')
+	for i in keys:
+		if fields[i].text=="":
+			createHelpBox("Please fill all fields (Notes and Remarks optional).")
+			return 1
 def treeview_sort_column(tv, col, reverse):
 	print [(k,col) for k in tv.get_children('')]
 	l = [(tv.set(k, col), k) for k in tv.get_children('')]
@@ -143,6 +155,7 @@ class CashReceiptsWindow(Frame,object):
 		self.fields['remarks'] = TextFieldBox(upperRight.interior,label="Remarks",readonly=True)
 
 		for i in self.fields:
+			self.fields[i].bind("<Return>",self.save)
 			self.fields[i].pack(side=TOP,fill=X,expand=1)
 
 	def getSelection(self,event):
@@ -206,7 +219,9 @@ class CashReceiptsWindow(Frame,object):
 		excelBuilder.buildSheet()
 
 
-	def save(self):
+	def save(self,*a):
+		if checkFields(self.fields):
+			return 1
 		if self.selectedpk!="New":
 			self.selectedpk = self.app.editCashReceipt(self.selectedpk,
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
@@ -380,6 +395,7 @@ class CashDisbursmentsWindow(Frame,object):
 			label="Remarks",readonly=True)
 
 		for i in self.fields:
+			self.fields[i].bind("<Return>",self.save)
 			self.fields[i].pack(side=TOP,fill=X,expand=1)
 
 
@@ -466,8 +482,10 @@ class CashDisbursmentsWindow(Frame,object):
 		
 
 
-	def save(self):
+	def save(self,*a):
 		#nonportable
+		if checkFields(self.fields):
+			return 1
 		if self.selectedpk!="New":
 			self.selectedpk = self.app.editCashDisbursment(self.selectedpk,
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
@@ -557,6 +575,8 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 
 		self.fields['remarks'] = TextFieldBox(self.fieldsFrame.interior,label="Remarks",readonly=True)
 
+		for i in self.fields:
+			self.fields[i].bind("<Return>",self.save)
 	def populateTree(self,*a):
 		self.fieldList=['timestamp','dateOfTransaction','purpose','nature','amount','liquidatingPerson','receiptNumber','notes','remarks']
 		showDeleted=self.deletedVar.get()
@@ -582,7 +602,9 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 		excelBuilder.buildSheet()
 
 
-	def save(self):
+	def save(self,*a):
+		if checkFields(self.fields):
+			return 1
 		if self.selectedpk!="New":
 			self.selectedpk = self.app.editOME(self.selectedpk,
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),

@@ -1,6 +1,7 @@
 from Tkinter import *
 from ttk import *
 from helpbox import createHelpBox
+from supercombobox import *
 
 class AutocompleteBox(Frame,object):
 	def __init__(self,parent,label="Label",toolTip=None,text="",**kwargs):
@@ -62,7 +63,7 @@ class AutocompleteBox(Frame,object):
 		self.comboBox.pack(fill=BOTH, expand=1)
 
 	def initDropDown(self, options=["cat", "dog", "pig"]):
-		self.comboBox = Combobox(self.fLower, values=options, height=-1,state="readonly")
+		self.comboBox = SuperComboBox(self.fLower, values=options, height=-1,state="readonly")
 		self.comboBox.pack(fill=BOTH, expand=1)
 
 
@@ -80,6 +81,9 @@ class AutocompleteBox(Frame,object):
 
 	def leaveHelp(self,event):
 		self.fHighLow.pack_forget()
+
+	def bind(self,event,cb):
+		self.comboBox.bind(event,cb)
 	
 if __name__=="__main__":
 	root = Tk()

@@ -66,6 +66,14 @@ class TextFieldBox(Frame,object):
 
 	def createHelpBox(self):
 		createHelpBox(self.toolTip)
+
+	def bind(self,event,callback):
+		def cb(*a):
+			callback()
+			return "break"
+		self.textField.bind(event,cb)
+
+
 	@property
 	def text(self):
 		value = self.textField.get('1.0','end').strip('\n')

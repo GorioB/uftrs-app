@@ -20,9 +20,23 @@ June 28, 2014
 
 	- Columns can be arranged alphabetically
 
-	TODO:
-		- Cashflows still only a display, no date-selection functions yet
+June 29, 2014
 
-		- Displayed date still YYYYMMDD
+	- Changed date to use Month names
 
-		- Still no statement
+	- Enter-to-submit implemented
+
+	- Required fields implemented
+
+	- Dropdown autocompleting implemented for most read-only dropdowns
+
+	- Changed "Reference number" to "reference document" in notes
+
+	- Fixed note deletion bug
+
+TODO:
+	CashFlows date filtering
+	Improve tree visibility
+	Preview of notes
+	Differentiate between deleted and edited
+	Font consistency

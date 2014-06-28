@@ -92,6 +92,7 @@ class OALWindow(CashDisbursmentsWindow):
 			)
 
 		for i in self.fields[cn]:
+			self.fields[cn][i].bind("<Return>",self.save)
 			self.fields[cn][i].pack(side=TOP,fill=X,expand=1)
 		helpfulMessage.pack(fill=BOTH,expand=1)
 
@@ -108,6 +109,7 @@ class OALWindow(CashDisbursmentsWindow):
 			text="Please indicate the item in question, the amount, the source of the item, and other pertinent data.\n\t(e.g. Received X-deals from Company DEF. 200 black ballpens were received in good condition on October 20, 2013. These are expected to be given away as freebies during the general registration next semester.)\n\t(e.g. Received a brand-new projector from Company GHI in accordance with the sponsorship agreement entered into last August 24, 2013. The projector was received in good condition on September 12, 2013.)")
 
 		for i in [i for i in self.fields[cn] if i!="category"]:
+			self.fields[cn][i].bind("<Return>",self.save)
 			self.fields[cn][i].pack(side=TOP,fill=X,expand=1)
 		helpfulMessage2.pack(fill=BOTH,expand=1)
 
@@ -126,6 +128,7 @@ class OALWindow(CashDisbursmentsWindow):
 			text="Please indicate the item in question, the amount, the source of the item, and other pertinent data.")
 
 		for i in self.fields[cn]:
+			self.fields[cn][i].bind("<Return>",self.save)
 			self.fields[cn][i].pack(side=TOP,fill=X,expand=1)
 		helpfulMessage3.pack(side=TOP,fill=X,expand=1)
 
@@ -201,8 +204,10 @@ class OALWindow(CashDisbursmentsWindow):
 		excelBuilder.buildSheet()
 
 
-	def save(self):
+	def save(self,*a):
 		cn=[i for i in self.fieldsIdent if self.fieldsIdent[i]==self.fieldsNotebook.select()][0]
+		if checkFields(self.fields[cn]):
+			return 1
 		if self.selectedpk!="New":
 			self.selectedpk=self.app.editOAL(self.selectedpk,
 				OALType=cn,
@@ -284,13 +289,16 @@ class COCPWindow(CashDisbursmentsWindow):
 		self.fields['liquidatingPerson'].initComboBox(self.app.listOptions("COCP_Payee"))
 
 		self.fields['docNo']=TextFieldBox(self.fieldsFrame.interior,
-			label="Reference Number",toolTip="Put all receipt numbers here")
+			label="Reference Document",toolTip="Put all receipt numbers here")
 
 		self.fields['notes']=TextFieldBox(self.fieldsFrame.interior,
 			label="Notes",toolTip="Any added notes about the transaction")
 
 		self.fields['remarks']=TextFieldBox(self.fieldsFrame.interior,
 			label="Remarks",readonly=True)
+
+		for i in self.fields:
+			self.fields[i].bind("<Return>",self.save)
 	def _populateTree(self,entryList):
 		pass
 
@@ -328,7 +336,9 @@ class COCPWindow(CashDisbursmentsWindow):
 		excelBuilder.setSheetName("Notes- Council & Other Projects")
 		excelBuilder.buildSheet()
 
-	def save(self):
+	def save(self,*a):
+		if checkFields(self.fields):
+			return 1
 		if self.selectedpk!="New":
 			self.selectedpk = self.app.editNote("COCPNote",self.selectedpk,
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
@@ -413,13 +423,16 @@ class LTIWindow(CashDisbursmentsWindow):
 		self.fields['liquidatingPerson'].initComboBox(self.app.listOptions("LTI_Payee"))
 
 		self.fields['docNo']=TextFieldBox(self.fieldsFrame.interior,
-			label="Reference Number",toolTip="Put all receipt numbers here")
+			label="Reference Document",toolTip="Put all receipt numbers here")
 
 		self.fields['notes']=TextFieldBox(self.fieldsFrame.interior,
 			label="Notes",toolTip="Any added notes about the transaction")
 	
 		self.fields['remarks']=TextFieldBox(self.fieldsFrame.interior,
 			label="Remarks",readonly=True)
+
+		for i in self.fields:
+			self.fields[i].bind("<Return>",self.save)
 	# def _populateTree(self,entryList):
 	# 	pass
 
@@ -466,7 +479,9 @@ class LTIWindow(CashDisbursmentsWindow):
 		excelBuilder.setSheetName("Notes- Long Term Investments")
 		excelBuilder.buildSheet()
 
-	def save(self):
+	def save(self,*a):
+		if checkFields(self.fields):
+			return 1
 		if self.selectedpk!="New":
 			self.selectedpk=self.app.editNote("LTINote",self.selectedpk,
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
@@ -528,7 +543,7 @@ class OOWindow(LTIWindow):
 		self.fields['liquidatingPerson'].initComboBox(self.app.listOptions("OO_Payee"))
 
 		self.fields['docNo']=TextFieldBox(self.fieldsFrame.interior,
-			label="Reference Number",toolTip="Put all receipt numbers here")
+			label="Reference Document",toolTip="Put all receipt numbers here")
 
 		self.fields['notes']=TextFieldBox(self.fieldsFrame.interior,
 			label="Notes",toolTip="Any added notes about the transaction")
@@ -536,6 +551,8 @@ class OOWindow(LTIWindow):
 		self.fields['remarks']=TextFieldBox(self.fieldsFrame.interior,
 			label="Remarks",readonly=True)
 
+		for i in self.fields:
+			self.fields[i].bind("<Return>",self.save)
 	def populateTree(self,*a):
 		self.fieldList=['noteNumber','timestamp','dateOfTransaction','purpose','nature','amount','liquidatingPerson','docNo','notes','remarks']
 		showDeleted=self.deletedVar.get()
@@ -554,7 +571,9 @@ class OOWindow(LTIWindow):
 		excelBuilder.setSheetName("Notes- Other Outflows")
 		excelBuilder.buildSheet()
 
-	def save(self):
+	def save(self,*a):
+		if checkFields(self.fields):
+			return 1
 		if self.selectedpk!="New":
 			self.selectedpk = self.app.editNote("OONote",self.selectedpk,
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
@@ -625,6 +644,9 @@ class ODNWindow(CashDisbursmentsWindow):
 		self.fields['remarks'] = TextFieldBox(self.fieldsFrame.interior,
 			label="Remarks",readonly=True)
 
+		for i in self.fields:
+			self.fields[i].bind("<Return>",self.save)
+
 	def getSelection(self,event):
 		item = self.tree.selection()[0]
 		values = self.tree.item(item,'values')
@@ -669,7 +691,9 @@ class ODNWindow(CashDisbursmentsWindow):
 		excelBuilder.setSheetName("Notes- Other Descriptive Notes")
 		excelBuilder.buildSheet()
 
-	def save(self):
+	def save(self,*a):
+		if checkFields(self.fields):
+			return 1
 		if self.selectedpk!="New":
 			self.selectedpk=self.app.editNote("ODNote",self.selectedpk,
 				description=self.fields['description'].text,
