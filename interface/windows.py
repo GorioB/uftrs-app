@@ -24,6 +24,8 @@ def checkFields(fields):
 		keys.remove('remarks')
 	if 'timestamp' in keys:
 		keys.remove('timestamp')
+	if 'noteNumber' in keys:
+		keys.remove('noteNumber')
 	for i in keys:
 		if fields[i].text=="":
 			createHelpBox("Please fill all fields (Notes and Remarks optional).")
@@ -420,6 +422,7 @@ class CashDisbursmentsWindow(Frame,object):
 		for i in range(0,len(self.fieldList)):
 			self.fields[self.fieldList[i]].text=values[i]
 
+		print "DATE OF TRANS",self.fields['dateOfTransaction'].text
 		if self.fields['dateOfTransaction'].text=="":
 			self.fields['dateOfTransaction'].text=secsToDay(getEpochTime())
 		self.selectedpk=self.tree.item(item,"text")

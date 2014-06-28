@@ -104,7 +104,9 @@ class CalendarBox(Frame,object):
 
 	@property
 	def text(self):
-	    return str(self._yearField.get())+"-"+str(self.months.index(self._monthField.get()))+"-"+str(self._dayField.get())
+		if self._yearField.get()=="" or self._monthField.get()=="" or self._dayField.get()=="":
+			return ""
+		return str(self._yearField.get())+"-"+str(self.months.index(self._monthField.get()))+"-"+str(self._dayField.get())
 	@text.setter
 	def text(self, value):
 		year,month,day=("","","")
