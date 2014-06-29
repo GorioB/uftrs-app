@@ -7,10 +7,10 @@ class TextTable(Frame,object):
 		Frame.__init__(self,parent,**kwargs)
 		self.aligns = aligns
 		if not self.aligns:
-			self.aligns = ["left","left","left","left"]
+			self.aligns = ["left","left","left","left","left","left"]
 		if not weights:
 			weights=[1,1,1,1]
-		self.frames=["one","two","three","four"]
+		self.frames=["one","two","three","four","five","six"]
 		# for i in range(0,len(self.frames)):
 		# 	self.frames[i]=Frame(self)
 		# 	self.frames[i].grid(side=LEFT,expand=1,fill=BOTH)
@@ -74,10 +74,10 @@ class TextTable(Frame,object):
 if __name__=="__main__":
 	root = Tk()
 	root.geometry("600x500")
-	app = TextTable(root,aligns=['left','center','right','right'],weights=[3,1,1,1])
+	app = TextTable(root,aligns=['left','center','center','right','center','right'],weights=[3,1,0,1,0,1])
 	app.pack(side=LEFT,expand=1,fill=BOTH)
-	app.addRow(['Council Mandated Funds','','',''],uls=[1,1,1,1],bolds=[1,0,1,0])
-	app.addRow(['    Organizational Fees','1','15,000',''],uls=[0,1,0,1])
+	app.addRow(['Council Mandated Funds','','','','',''],uls=[1,1,1,1,1,1],bolds=[1,0,1,0,1,0])
+	app.addRow(['    Organizational Fees','1','P','15,000','',''],uls=[0,1,0,1,1,1])
 	app.mainloop()
 
 

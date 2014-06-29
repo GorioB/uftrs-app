@@ -75,7 +75,7 @@ class MainProgram(Frame,object):
 		self.notes['Cash Flows'].pack()
 
 		self.notes['Statement of Cash Flows'] = StatementWindow(self.notes['Statement of Cash Flows'],self.app,deletedVar=self.showDeleted)
-		self.notes['Statement of Cash Flows'].pack(fill=BOTH,expand=1)
+		self.notes['Statement of Cash Flows'].pack(fill=BOTH,expand=1,side=TOP)
 
 		self.notebook.bind("<<NotebookTabChanged>>",self.refreshPage)
 

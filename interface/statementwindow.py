@@ -3,6 +3,7 @@ from ttk import *
 from tkFont import Font
 from textable import TextTable
 from lib.floattostr import *
+from ScrolledFrame import VerticalScrolledFrame
 
 def tab(n=1):
 	return "    "*n
@@ -14,17 +15,20 @@ class StatementWindow(Frame,object):
 		self.initUI()
 
 	def initUI(self):
-		self.headerField = Text(self,bd=0,width=0,state='disabled',height=3)
+		self.mainFrame = VerticalScrolledFrame(self)
+		self.mainFrame.pack(fill=BOTH,expand=1,side=TOP)
+		self.mainFrame = self.mainFrame.interior
+		self.headerField = Text(self.mainFrame,bd=0,width=0,state='disabled',height=3)
 		self.headerField.tag_configure("center",justify="center")
 		f = Font(self.headerField,self.headerField.cget('font'))
 		f.configure(weight='bold')
 		self.headerField.configure(font=f)
-		self.headerField.pack(fill=X,expand=1)
+		self.headerField.pack(fill=X,expand=1,side=TOP)
 
-		self.cashFlowsText = TextTable(self,
-			aligns=['left','center','right','right'],
-			weights=[2,1,1,1])
-		self.cashFlowsText.pack(fill=BOTH,expand=1)
+		self.cashFlowsText = TextTable(self.mainFrame,
+			aligns=['left','left','center','right','center','right'],
+			weights=[5,5,0,2,0,2])
+		self.cashFlowsText.pack(fill=BOTH,expand=1,side=TOP)
 
 	def populateTree(self):
 		self.lines=[]
@@ -34,12 +38,12 @@ class StatementWindow(Frame,object):
 		self.headerField.tag_add('center','1.0','end')
 		self.headerField['state']='disabled'
 
-		self.lines.append([['CASH INFLOWS','Note','',''],[],[1,0,0,0]])
+		self.lines.append([['CASH INFLOWS','Note','','','',''],[],[1,0,0,0,0,0]])
 		cashFlowList = self.app.listCashflows(showDeleted=False)
 		inflowList = [i for i in cashFlowList if i.source.content.split(":")[0]=="CashReceipt"]
 		totalInflows=0
 
-		self.lines.append([['Council Mandated Funds','','',''],[],[]])
+		self.lines.append([['Council Mandated Funds','','','','',''],[],[]])
 		cmfList = [i for i in inflowList if i.getContents().category.content=="Council Mandated Funds"]
 		print cmfList
 		lines,partialTotal = self.getInflows(cmfList)
@@ -79,16 +83,20 @@ class StatementWindow(Frame,object):
 			amount = partialTotalsList[i][0]
 			notes = partialTotalsList[i][1]
 			total+=amount
-			tempLines.append([[tab()+name,notes,floatToStr(amount),''],[],[]])
+			tempLines.append([[tab()+name,notes,'',floatToStr(amount),'',''],[],[]])
 
+		if tempLines:
+			tempLines[0][0][2]="P"
+			tempLines[-1][1]=[0,0,0,1,0,0]
 		# tempLines[0][0][2]="P"+tempLines[0][0][2]
 		# tempLines[-1][1]=[0,0,1,0]
-		tempLines.append([[tab(2)+"Total",'','',''],[],[]])
+		tempLines.append([[tab(2)+"Total",'','','','',floatToStr(total)],[0,0,0,0,0,1],[]])
 		return tempLines
 
 	def commitLines(self,lines):
 		self.cashFlowsText.clear()
 		for i in lines:
+			print i
 			self.cashFlowsText.addRow(i[0],uls=i[1],bolds=i[2])
 
 
