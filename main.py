@@ -4,6 +4,7 @@ from Tkinter import *
 from ttk import *
 from interface import windows2, windows
 from interface import cashflowswindow
+from interface.statementwindow import StatementWindow
 import os
 import datetime
 def resource_path(relative_path):
@@ -72,6 +73,10 @@ class MainProgram(Frame,object):
 
 		self.notes['Cash Flows'] = cashflowswindow.CashFlowsWindow(self.notes['Cash Flows'],self.app,deletedVar=self.showDeleted)
 		self.notes['Cash Flows'].pack()
+
+		self.notes['Statement of Cash Flows'] = StatementWindow(self.notes['Statement of Cash Flows'],self.app,deletedVar=self.showDeleted)
+		self.notes['Statement of Cash Flows'].pack(fill=BOTH,expand=1)
+
 		self.notebook.bind("<<NotebookTabChanged>>",self.refreshPage)
 
 	#callbacks
