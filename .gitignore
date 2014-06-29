@@ -2,6 +2,7 @@
 venv
 *.sqlite3
 *.xls
+*.docx
 build
 dist
 *.spec
