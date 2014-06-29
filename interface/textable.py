@@ -76,14 +76,8 @@ if __name__=="__main__":
 	root.geometry("600x500")
 	app = TextTable(root,aligns=['left','center','right','right'],weights=[3,1,1,1])
 	app.pack(side=LEFT,expand=1,fill=BOTH)
-<<<<<<< Updated upstream
 	app.addRow(['Council Mandated Funds','','',''],uls=[1,1,1,1],bolds=[1,0,1,0])
 	app.addRow(['    Organizational Fees','1','15,000',''],uls=[0,1,0,1])
-=======
-	app.addRow(['Council Mandated Funds','','',''])
-	app.addRow(['    Organizational Fees','1','15,000',''])
-	app.clear()
->>>>>>> Stashed changes
 	app.mainloop()
 
 
