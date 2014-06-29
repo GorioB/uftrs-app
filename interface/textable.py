@@ -1,5 +1,6 @@
 from Tkinter import *
 from ttk import *
+from tkFont import Font
 
 class TextTable(Frame,object):
 	def __init__(self,parent,aligns=None,weights=None,**kwargs):
@@ -21,20 +22,40 @@ class TextTable(Frame,object):
 			self.textBoxes[-1].tag_configure("right",justify="right")
 			self.textBoxes[-1].tag_configure("center",justify="center")
 			self.textBoxes[-1].tag_configure("left",justify="left")
+			self.textBoxes[-1].tag_configure("underline",underline=True)
 			self.grid_columnconfigure(i,weight=weights[i])
 		self.grid_rowconfigure(0,weight=1)
+		self.boldFont = Font(self.textBoxes[0],self.textBoxes[0].cget('font'))
+		self.boldFont.configure(weight='bold')
+		for i in self.textBoxes:
+			i.tag_configure("bold",font=self.boldFont)
+
+
 	def fixAligns(self):
 		for i in range(0,len(self.textBoxes)):
 			self.textBoxes[i]['state']='normal'
 			self.textBoxes[i].tag_add(self.aligns[i],'1.0','end')
 			self.textBoxes[i]['state']='disabled'
 
-	def addRow(self,values):
+	def addRow(self,values,uls=None,bolds=None):
+
 		for i in range(0,len(self.textBoxes)):
 			self.textBoxes[i]['state']='normal'
 			self.textBoxes[i].insert(self.textBoxes[i].index("end"),values[i]+"\n")
 			self.textBoxes[i]['state']='disabled'
 
+		if uls:
+			for i in range(0,len(uls)):
+				if uls[i]:
+					self.textBoxes[i]['state']='normal'
+					self.textBoxes[i].tag_add("underline",'end - 2 line','end -2 line lineend')
+					self.textBoxes[i]['state']='disabled'
+		if bolds:
+			for i in range(0,len(bolds)):
+				if bolds[i]:
+					self.textBoxes[i]['state']='normal'
+					self.textBoxes[i].tag_add("bold","end -2 line",'end -2 line lineend')
+					self.textBoxes[i]['state']='disabled'
 		self.fixAligns()
 
 	def clear(self):
@@ -55,8 +76,8 @@ if __name__=="__main__":
 	root.geometry("600x500")
 	app = TextTable(root,aligns=['left','center','right','right'],weights=[3,1,1,1])
 	app.pack(side=LEFT,expand=1,fill=BOTH)
-	app.addRow(['Council Mandated Funds','','',''])
-	app.addRow(['    Organizational Fees','1','15,000',''])
+	app.addRow(['Council Mandated Funds','','',''],uls=[1,1,1,1],bolds=[1,0,1,0])
+	app.addRow(['    Organizational Fees','1','15,000',''],uls=[0,1,0,1])
 	app.mainloop()
 
 
