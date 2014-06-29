@@ -1,5 +1,6 @@
 from docx import Document
 from docx.shared import Inches
+from docx.enum.text import WD_UNDERLINE
 import os
 
 class DocBuilder(object):
@@ -7,25 +8,30 @@ class DocBuilder(object):
 	def __init__(self):
 		self.document = Document()
 
-	def createTable(self, rowData, columnHeaders):
-		"""Expects rowData to be a list of list of strings and columnHeaders to be a list of strings"""
-		self.table = self.document.add_table(rows=1, cols=0)
+	def createTable(self, numberOfColumns, rowData):
+		"""Expects rowData to be a list of list of Cell objects"""
+		self.table = self.document.add_table(rows=0, cols=0)
 
 		# Contains the column objects whose widths can be set later on
 		self.columns = []
 
 		# Write the table headers
-		i = 0
-		for header in columnHeaders:
+		for x in xrange(numberOfColumns):
 			self.columns.append(self.table.add_column())
-			self.table.cell(0, i).text = header
-			i += 1
 
 		# Write the table data
 		for data in rowData:
 			rowCells = self.table.add_row().cells
 			for i in xrange(0, len(data)):
-				rowCells[i].text = data[i]
+				cellData = data[i]
+				cell = rowCells[i]
+				cell.text = cellData.text
+				if 'underline' in cellData.tags:
+					cell.paragraphs[0].runs[0].underline = True
+				if 'double_underline' in cellData.tags:
+					cell.paragraphs[0].runs[0].underline = WD_UNDERLINE.DOUBLE
+				if 'bold' in cellData.tags:
+					cell.paragraphs[0].runs[0].bold = True
 
 		# Set column widths to be even by default; can be set otherwise afterwards
 		width = Inches(6/len(self.columns))
@@ -36,6 +42,14 @@ class DocBuilder(object):
 		"""Saves the document"""
 		self.document.save(fileName)
 
+class CellData(object):
+	"""Represents a cell in a docx table, where self.text is the cell text, 
+	and self.tags is a list of strings to specify the format of that text e.g. "underlined" """
+	def __init__(self, text, *args):
+		self.tags = []
+		for i, value in enumerate(args):
+			self.tags.append(value)
+		self.text = text
 
 
 def resource_path(relative_path):
@@ -99,12 +113,11 @@ def createDummyDocument():
 if __name__ == "__main__":
 	docBuilder = DocBuilder()
 
-	columns = ["Item", "Quantity", "Remarks"]
 	rowData = []
-	rowData.append(["Orange", "5", "Yummy"])
-	rowData.append(["Apple", "2"])
+	rowData.append([CellData("Orange"), CellData("5"), CellData("Yummy", "underline")])
+	rowData.append([CellData("Apple"), CellData("2"), CellData("They're red.", "underline", "bold")])
 
-	docBuilder.createTable(rowData, columns)
+	docBuilder.createTable(3, rowData)
 	docBuilder.columns[0].width = Inches(1)
 	docBuilder.columns[1].width = Inches(1)
 	docBuilder.columns[2].width = Inches(4)
