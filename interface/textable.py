@@ -39,7 +39,9 @@ class TextTable(Frame,object):
 
 	def clear(self):
 		for i in self.textBoxes:
+			i['state']='normal'
 			i.delete("1.0","end")
+			i['state']='disabled'
 
 	def getLine(self,index):
 		vals = []
