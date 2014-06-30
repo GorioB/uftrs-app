@@ -144,6 +144,17 @@ class DropDownMenu(object):
 		conn.close()
 		return [i[0] for i in options]
 
+	@staticmethod
+	def getIdentifiers():
+		"""Returns the list of identifiers (list of strings)"""
+		conn = sqlite3.connect(DB_NAME)
+		cursor = conn.cursor()
+		cursor.execute("SELECT identifier FROM dropdown")
+		data = cursor.fetchall()
+		conn.close()
+		identifiers = [i[0] for i in data]
+		return list(set(identifiers))
+
 	def addOption(self, option):
 		"""Adds an option to the list of options"""
 		if self._optionExists(option):
@@ -181,3 +192,5 @@ class DropDownMenu(object):
 		conn.close()
 		return user!=None
 
+if __name__ == "__main__":
+	print DropDownMenu.getIdentifiers()

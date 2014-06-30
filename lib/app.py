@@ -35,6 +35,9 @@ class App(object):
 		"""Returns a list of options (list of strings) for the given identifier e.g. 'payors'"""
 		return db2.DropDownMenu(identifier).getOptions()
 
+	def listDropDownIdentifiers(self):
+		return db2.DropDownMenu.getIdentifiers()
+
 	def searchOption(self, identifier, option):
 		"""Returns a list of options (list of strings) that can complete the passed option"""
 		return db2.DropDownMenu(identifier).searchOption(option)
