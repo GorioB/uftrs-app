@@ -34,6 +34,14 @@ June 29, 2014
 
 	- Fixed note deletion bug
 
+July 1, 2014
+	
+	- Added date filtering to Cashflow window
+
+	- Started Statement window, WIP
+
+	- Fixed discovered date bug (Calendar crashes)
+
 TODO:
 	CashFlows date filtering
 	Improve tree visibility
