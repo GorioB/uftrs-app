@@ -114,8 +114,8 @@ class CalendarBox(Frame,object):
 			year,month,day = value.split("-")
 		self._yearField.set(year)
 		if month=="":
-			month = 0
-		self._monthField.set(self.months[int(month)])
+			month = "January"
+		self._monthField.set(month)
 		self._dayField.set(day)
 	
 	def bind(self,evt,cb):
