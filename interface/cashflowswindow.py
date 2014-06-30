@@ -8,6 +8,7 @@ from lib.timeFuncs import *
 from buttonbox import ButtonBox
 from lib.floattostr import *
 from lib.timeFuncs import *
+import datetime
 
 class CashFlowsWindow(CashDisbursmentsWindow):
 	def generateNewButton(self):
@@ -224,9 +225,13 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 
 	def revertMagic(self):
 		tFrame = self.app.timeFrame
-
-		self.mFields['startDate'].text=secsToDay(tFrame[0])
-		self.mFields['endDate'].text=secsToDay(tFrame[1])
+		if tFrame!=(0,-1):
+			self.mFields['startDate'].text=secsToDay(tFrame[0])
+			self.mFields['endDate'].text=secsToDay(tFrame[1])
+		else:
+			dt = datetime.datetime.now()
+			self.mFields['startDate'].text=str(dt.year)+"-"+str(dt.month)+"-"+str(dt.day)
+			self.mFields['endDate'].text=str(dt.year)+"-"+str(dt.month)+"-"+str(dt.day)
 
 	def save(self):
 		pass
