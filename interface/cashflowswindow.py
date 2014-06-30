@@ -121,6 +121,12 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 					partialTotals[category][name].append(notes)
 
 		for i in partialTotals:
+			for j in partialTotals[i]:
+				notes = partialTotals[i][j][1]
+				notes = notes.split(",")
+				partialTotals[i][j][1]=self.filterNotes(notes)
+
+		for i in partialTotals:
 			partialTotalKeys = [key for key in partialTotals[i].keys()]
 			partialTotalKeys.sort()
 			for j in partialTotalKeys:
@@ -131,6 +137,7 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 			categoryTotal = reduce(lambda x,y:x+y,[d[0] for d in partialTotals[i].values()]+[0,])
 			self.tree.item(i,values=("","",floatToStr(categoryTotal),""))
 		outflowList = [i for i in cashFlowList if i.source.content.split(":")[0] in ("OME","COCPNote","LTINote","OONote")]
+		outflowList = self.filterDOT(outflowList)
 		totalOutflows=0
 		#change for when updated to db-stored variables
 		partialOutflows={"otheroutflows":{},"operationandmaintenanceexpenses":{},"councilandothercollegeprojects":{},"longterminvestments":{}}
@@ -220,11 +227,23 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 
 		self.mFields['startDate'].text=secsToDay(tFrame[0])
 		self.mFields['endDate'].text=secsToDay(tFrame[1])
+
 	def save(self):
 		pass
+
 	def filterDOT(self,flowList):
 		start,end = self.app.timeFrame
 		f = [i for i in flowList if int(i.getContents().dateOfTransaction.content)>int(start)]
 		return [i for i in f if int(i.getContents().dateOfTransaction.content)<int(end)]
+	
+	def filterNotes(self,notes):
+		start,end = self.app.timeFrame
+		if notes:
+			for i in notes:
+				noteParents = [note for note in self.app.listNotes(False) if note.noteNumber.content==i]
+				nonODN = [note for note in noteParents if note.identifier!="ODNote"]
+				return ','.join(list(set([note.noteNumber.content for note in nonODN if int(note.dateOfTransaction.content)>int(start) and int(note.dateOfTransaction.content)<int(end)])))
+		else:
+			return ""
 	def delete(self):
 		pass

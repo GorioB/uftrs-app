@@ -104,7 +104,6 @@ class StatementWindow(Frame,object):
 	def commitLines(self,lines):
 		self.cashFlowsText.clear()
 		for i in lines:
-			print i
 			self.cashFlowsText.addRow(i[0],uls=i[1],bolds=i[2])
 
 

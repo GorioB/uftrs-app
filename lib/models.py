@@ -67,6 +67,7 @@ class LTINote(DataEntry):
 	noteNumber=TextField()
 
 class ODNote(DataEntry):
+	includeInStatement=TextField()
 	description=TextField()
 	noteNumber=TextField()
 

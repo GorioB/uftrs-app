@@ -100,7 +100,6 @@ class App(object):
 				cf.save()
 			else:
 				cfList = listEntries(CashFlow)
-				print cfList
 				if cfList:
 					inflowHit = [i for i in cfList if i.getContents().nature.content==note.nature.content]
 					for i in inflowHit:
@@ -276,7 +275,6 @@ class App(object):
 				i.save()
 	@property
 	def timeFrame(self):
-		print [i.label.content for i in listEntries(AppProperty)]
 		tFrame = [i for i in listEntries(AppProperty) if i.label.content=="timeStart"]+[i for i in listEntries(AppProperty) if i.label.content=="timeEnd"]
 		if len(tFrame)==2:
 			return (int(tFrame[0].value.content),int(tFrame[1].value.content))
