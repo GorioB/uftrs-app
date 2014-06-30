@@ -228,7 +228,7 @@ class OALWindow(CashDisbursmentsWindow):
 
 	def delete(self):
 		if self.selectedpk!="New":
-			print self.app.deleteOAL(self.selectedpk)
+			self.app.deleteOAL(self.selectedpk)
 		self.populateTree()
 
 class COCPWindow(CashDisbursmentsWindow):
@@ -373,7 +373,7 @@ class COCPWindow(CashDisbursmentsWindow):
 
 	def delete(self):
 		if self.selectedpk!="New":
-			print self.app.deleteNote("COCPNote",self.selectedpk)
+			self.app.deleteNote("COCPNote",self.selectedpk)
 		self.populateTree()
 
 class LTIWindow(CashDisbursmentsWindow):
@@ -512,7 +512,7 @@ class LTIWindow(CashDisbursmentsWindow):
 
 	def delete(self):
 		if self.selectedpk!="New":
-			print self.app.deleteNote("LTINote",self.selectedpk)
+			self.app.deleteNote("LTINote",self.selectedpk)
 		self.populateTree()
 
 class OOWindow(LTIWindow):
@@ -604,7 +604,7 @@ class OOWindow(LTIWindow):
 
 	def delete(self):
 		if self.selectedpk!="New":
-			print self.app.deleteNote("OONote",self.selectedpk)
+			self.app.deleteNote("OONote",self.selectedpk)
 		self.populateTree()
 
 class ODNWindow(CashDisbursmentsWindow):
@@ -654,8 +654,7 @@ class ODNWindow(CashDisbursmentsWindow):
 			self.fields[self.fieldList[i]].text=values[i]
 
 		self.selectedpk=self.tree.item(item,"text")
-		print self.selectedpk
-
+		
 	def _populateTree(self,entryList):
 		pass
 

@@ -276,13 +276,30 @@ class App(object):
 				i.save()
 	@property
 	def timeFrame(self):
+		print [i.label.content for i in listEntries(AppProperty)]
 		tFrame = [i for i in listEntries(AppProperty) if i.label.content=="timeStart"]+[i for i in listEntries(AppProperty) if i.label.content=="timeEnd"]
 		if len(tFrame)==2:
 			return (int(tFrame[0].value.content),int(tFrame[1].value.content))
 		else:
 			return (0,-1)
+		return 0
 
 	@timeFrame.setter
 	def timeFrame(self,timeRange):
-		tStart = AppProperty(label="timeStart",value=timeRange[0]).save()
-		tEnd = AppProperty(label="timeEnd",value=timeRange[1]).save()
+		tStart = self.getProperty("timeStart")
+		tEnd = self.getProperty("timeEnd")
+		startPK=0
+		endPK=0
+		if tStart!=1:
+			startPK = tStart.pk.content
+		if tEnd!=1:
+			endPK = tEnd.pk.content
+		tStart = AppProperty(pk=startPK,label="timeStart",value=timeRange[0]).save()
+		tEnd = AppProperty(pk=endPK,label="timeEnd",value=timeRange[1]).save()
+
+	def getProperty(self,label):
+		propList = [i for i in listEntries(AppProperty) if i.label.content==label]
+		if propList:
+			return propList[0]
+		else:
+			return 1

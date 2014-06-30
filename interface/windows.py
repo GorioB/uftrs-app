@@ -31,7 +31,6 @@ def checkFields(fields):
 			createHelpBox("Please fill all fields (Notes and Remarks optional).")
 			return 1
 def treeview_sort_column(tv, col, reverse):
-	print [(k,col) for k in tv.get_children('')]
 	l = [(tv.set(k, col), k) for k in tv.get_children('')]
 	l.sort(reverse=reverse)
 
@@ -95,7 +94,6 @@ class CashReceiptsWindow(Frame,object):
 		colList = ["Timestamp","Date of Transaction","Category","Nature","Amount","Payor's Name","Acknowledgement Receipt #","Notes","Remarks"]
 		tree['columns']= colList
 		for col in colList:
-			print col
 			tree.heading(col,text=col,command=lambda _col=col: \
 				treeview_sort_column(tree,_col,False))
 			tree.column(col,anchor=W,width=60)
@@ -170,7 +168,6 @@ class CashReceiptsWindow(Frame,object):
 		if self.fields['dateOfTransaction'].text=="":
 			self.fields['dateOfTransaction'].text=secsToDay(getEpochTime())
 		self.selectedpk=self.tree.item(item,"text")
-		print self.selectedpk
 
 	def populateTree(self,*a):
 		showDeleted = self.deletedVar.get()
@@ -260,11 +257,10 @@ class CashReceiptsWindow(Frame,object):
 			dummyEntry = dummyEntry[0]
 		self.tree.selection_set(dummyEntry)
 		self.selectedpk="New"
-		print self.selectedpk
 
 	def delete(self):
 		if self.selectedpk!="New":
-			print self.app.deleteCashReceipt(self.selectedpk)
+			self.app.deleteCashReceipt(self.selectedpk)
 		self.populateTree()
 
 #Refer to CashDisbursmentsWinow for creating pages. Override nonportable functions
@@ -410,23 +406,18 @@ class CashDisbursmentsWindow(Frame,object):
 			dummyEntry=dummyEntry[0]
 		self.tree.selection_set(dummyEntry)
 		self.selectedpk="New"
-		print self.selectedpk
 
 
 	def getSelection(self,event):
 		#semiportable -> must have dateOfTransaction
 		item=self.tree.selection()[0]
 		values=self.tree.item(item,'values')
-		print self.tree.item(item,"values")
-		print self.fieldList
 		for i in range(0,len(self.fieldList)):
 			self.fields[self.fieldList[i]].text=values[i]
 
-		print "DATE OF TRANS",self.fields['dateOfTransaction'].text
 		if self.fields['dateOfTransaction'].text=="":
 			self.fields['dateOfTransaction'].text=secsToDay(getEpochTime())
 		self.selectedpk=self.tree.item(item,"text")
-		print self.selectedpk
 
 	def _populateTree(self,entryList):
 		#semiportable -> doesn't work if no total
@@ -524,7 +515,7 @@ class CashDisbursmentsWindow(Frame,object):
 	def delete(self):
 		#nonportable
 		if self.selectedpk!="New":
-			print self.app.deleteCashDisbursment(self.selectedpk)
+			self.app.deleteCashDisbursment(self.selectedpk)
 		self.populateTree()
 
 class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
@@ -637,7 +628,7 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 
 	def delete(self):
 		if self.selectedpk!="New":
-			print self.app.deleteOME(self.selectedpk)
+			self.app.deleteOME(self.selectedpk)
 		self.populateTree()
 
 class ExcelBuilder(object):

@@ -97,7 +97,7 @@ class CalendarBox(Frame,object):
 		
 	def calPressed(self,event):
 		date= self._ttkcal.selection
-		self.text = (str(date.year)+"-"+str(self.months[date.month])+"-"+str(date.day))
+		self.text = (str(date.year)+"-"+str(date.month)+"-"+str(date.day))
 		#self._calButton.config(text=str(date.year)+"-"+str(date.month)+"-"+str(date.day))
 		self._calWindow.destroy()
 		self._calendarCreated-=1
@@ -114,8 +114,8 @@ class CalendarBox(Frame,object):
 			year,month,day = value.split("-")
 		self._yearField.set(year)
 		if month=="":
-			month = "January"
-		self._monthField.set(month)
+			month = 0
+		self._monthField.set(self.months[int(month)])
 		self._dayField.set(day)
 	
 	def bind(self,evt,cb):

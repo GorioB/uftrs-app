@@ -7,6 +7,7 @@ from textfield import *
 from lib.timeFuncs import *
 from buttonbox import ButtonBox
 from lib.floattostr import *
+from lib.timeFuncs import *
 
 class CashFlowsWindow(CashDisbursmentsWindow):
 	def generateNewButton(self):
@@ -54,24 +55,23 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 	def initFields(self):
 		self.magicFields = Frame(self.fieldsFrame.interior)
 		self.magicFields.pack(fill=X,expand=1)
+		self.normalFields = Frame(self.fieldsFrame.interior)
+		self.normalFields.pack(fill=X,expand=1)
+		self.saveRevertFrame = Frame(self.magicFields)
+		self.saveRevertFrame.pack(side=BOTTOM,fill=X,expand=1)
 
+		self.mSaveButton = Button(self.saveRevertFrame,text="Save",command=self.saveMagic,
+			style="SAVEButton.TButton")
+		self.mRevertButton = Button(self.saveRevertFrame,text="Revert",command=self.revertMagic)
+
+		self.mSaveButton.pack(side=LEFT,fill=X,expand=1)
+		self.mRevertButton.pack(side=RIGHT,fill=X,expand=1)
 		self.mFields={}
-		self.calendarFrame = Frame(self.magicFields)
-		self.calendarFrame.pack(fill=X,expand=1)
-		self.mFields['startDate']=CalendarBox(self.calendarFrame,
+		self.mFields['startDate']=CalendarBox(self.magicFields,
 			label="Start Date")
-		self.mFields['endDate']=CalendarBox(self.calendarFrame,label="End Date")
-		self.mFields['startDate'].pack(side=LEFT,fill=X,expand=1)
-		self.mFields['endDate'].pack(side=RIGHT,fill=X,expand=1)
-
-		self.balanceFrame = Frame(self.magicFields)
-		self.balanceFrame.pack(fill=X,expand=1)
-		self.mFields['beginningBalance']=ButtonBox(self.balanceFrame,"Beginning Balance",
-			"",None)
-		self.mFields['endingBalance']=ButtonBox(self.balanceFrame,"Ending Balance","",None)
-		self.mFields['beginningBalance'].pack(side=LEFT,fill=X,expand=1)
-		self.mFields['endingBalance'].pack(side=LEFT,fill=X,expand=1)
-
+		self.mFields['endDate']=CalendarBox(self.magicFields,label="End Date")
+		self.mFields['startDate'].pack(side=TOP,fill=X,expand=1)
+		self.mFields['endDate'].pack(side=TOP,fill=X,expand=1)
 
 
 	def newButtonCallback(self):
@@ -84,6 +84,7 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		pass
 
 	def populateTree(self,*a):
+		self.revertMagic()
 		#clear trees... FOR NOW
 		for i in self.inflow_categories:
 			cat = i.lower().replace(" ","")
@@ -100,6 +101,7 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		showDeleted = self.deletedVar.get()
 		cashFlowList = self.app.listCashflows(showDeleted=False)
 		inflowList = [i for i in cashFlowList if i.source.content.split(":")[0]=="CashReceipt"]
+		inflowList = self.filterDOT(inflowList)
 		for i in inflowList:
 			name = i.getContents().nature.content
 			amount = i.getContents().amount.content
@@ -138,7 +140,6 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 			amount = i.getContents().amount.content
 			notes = i.note.content
 			category = i.source.content.split(":")[0]
-			print category
 			if category=="COCPNote":
 				name = i.getContents().event.content
 			try:
@@ -209,9 +210,21 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		excelBuilder.sheet.col(5).width = 2500
 
 
+	def saveMagic(self):
+		timeFrame = (stringToSecs(self.mFields['startDate'].text+":0:0:0"),stringToSecs(self.mFields['endDate'].text+":0:0:0"))
+		self.app.timeFrame = timeFrame
+		self.populateTree()
 
+	def revertMagic(self):
+		tFrame = self.app.timeFrame
+
+		self.mFields['startDate'].text=secsToDay(tFrame[0])
+		self.mFields['endDate'].text=secsToDay(tFrame[1])
 	def save(self):
 		pass
-
+	def filterDOT(self,flowList):
+		start,end = self.app.timeFrame
+		f = [i for i in flowList if int(i.getContents().dateOfTransaction.content)>int(start)]
+		return [i for i in f if int(i.getContents().dateOfTransaction.content)<int(end)]
 	def delete(self):
 		pass
