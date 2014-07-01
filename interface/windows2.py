@@ -256,8 +256,9 @@ class COCPWindow(CashDisbursmentsWindow):
 
 	def initFields(self):
 		self.fields={}
-		self.fields['noteNumber'] = TextFieldBox(self.fieldsFrame.interior,
-			label="Note #",readonly=False,height=1)
+		self.fields['noteNumber'] = AutocompleteBox(self.fieldsFrame.interior,
+			label="Note #")
+		self.fields['noteNumber'].initComboBox(self.app.listOptions("NoteNumber"))
 
 		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
 			label="Timestamp",readonly=True,height=1)
@@ -368,7 +369,8 @@ class COCPWindow(CashDisbursmentsWindow):
 		self.fields['event'].comboBox.config(values=self.app.listOptions("COCP_Event"))
 		self.app.addOption("COCP_Payee",self.fields['liquidatingPerson'].text)
 		self.fields['liquidatingPerson'].comboBox.config(values=self.app.listOptions("COCP_Payee"))
-
+		self.app.addOption("NoteNumber",self.fields['noteNumber'].text)
+		self.fields['noteNumber'].comboBox.config(values=self.app.listOptions("NoteNumber"))
 		self.newButtonCallback()
 
 	def delete(self):
@@ -398,8 +400,9 @@ class LTIWindow(CashDisbursmentsWindow):
 
 	def initFields(self):
 		self.fields={}
-		self.fields['noteNumber'] = TextFieldBox(self.fieldsFrame.interior,
-			label="Note #",readonly=False,height=1)
+		self.fields['noteNumber'] = AutocompleteBox(self.fieldsFrame.interior,
+			label="Note #")
+		self.fields['noteNumber'].initComboBox(self.app.listOptions("NoteNumber"))
 
 		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
 			label="Timestamp",readonly=True,height=1)
@@ -507,7 +510,8 @@ class LTIWindow(CashDisbursmentsWindow):
 		self.fields['nature'].comboBox.config(values=self.app.listOptions("LTI_Nature"))
 		self.app.addOption("LTI_Payee",self.fields['liquidatingPerson'].text)
 		self.fields['liquidatingPerson'].comboBox.config(values=self.app.listOptions("LTI_Payee"))
-
+		self.app.addOption("NoteNumber",self.fields['noteNumber'].text)
+		self.fields['noteNumber'].comboBox.config(values=self.app.listOptions("NoteNumber"))
 		self.newButtonCallback()
 
 	def delete(self):
@@ -518,8 +522,9 @@ class LTIWindow(CashDisbursmentsWindow):
 class OOWindow(LTIWindow):
 	def initFields(self):
 		self.fields={}
-		self.fields['noteNumber'] = TextFieldBox(self.fieldsFrame.interior,
-			label="Note #",readonly=False,height=1)
+		self.fields['noteNumber'] = AutocompleteBox(self.fieldsFrame.interior,
+			label="Note #")
+		self.fields['noteNumber'].initComboBox(self.app.listOptions("NoteNumber"))
 
 		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
 			label="Timestamp",readonly=True,height=1)
@@ -599,7 +604,8 @@ class OOWindow(LTIWindow):
 		self.fields['nature'].comboBox.config(values=self.app.listOption("OO_Nature"))
 		self.app.addOption("OO_Payee",self.fields['liquidatingPerson'].text)
 		self.fields['liquidatingPerson'].comboBox.config(values=self.app.listOption("OO_Payee"))
-
+		self.app.addOption("NoteNumber",self.fields['noteNumber'].text)
+		self.fields['noteNumber'].comboBox.config(values=self.app.listOptions("NoteNumber"))
 		self.newButtonCallback()
 
 	def delete(self):
@@ -632,8 +638,9 @@ class ODNWindow(CashDisbursmentsWindow):
 
 	def initFields(self):
 		self.fields={}
-		self.fields['noteNumber'] = TextFieldBox(self.fieldsFrame.interior,
-			label="Note #",readonly=False,height=1)
+		self.fields['noteNumber'] = AutocompleteBox(self.fieldsFrame.interior,
+			label="Note #")
+		self.fields['noteNumber'].initComboBox(self.app.listOptions("NoteNumber"))
 
 		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
 			label="Timestamp",readonly=True,height=1)
@@ -700,6 +707,8 @@ class ODNWindow(CashDisbursmentsWindow):
 		else:
 			self.selectedpk=self.app.newNote("ODNote",self.fields['noteNumber'].text,
 				description=self.fields['description'].text)
+		self.app.addOption("NoteNumber",self.fields['noteNumber'].text)
+		self.fields['noteNumber'].comboBox.config(values=self.app.listOptions("NoteNumber"))
 		self.populateTree()
 
 		self.newButtonCallback()
