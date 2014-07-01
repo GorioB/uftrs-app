@@ -225,7 +225,7 @@ class App(object):
 		return self._listGeneral(OME,showDeleted)
 
 	def listNotes(self,showDeleted=False):
-		return self._listGeneral(COCPNote,showDeleted)+self._listGeneral(OONote,showDeleted)+self._listGeneral(OONote,showDeleted)+self._listGeneral(ODNote,showDeleted)
+		return self._listGeneral(COCPNote,showDeleted)+self._listGeneral(LTINote,showDeleted)+self._listGeneral(OONote,showDeleted)+self._listGeneral(ODNote,showDeleted)
 
 	def listCashflows(self,showDeleted=False):
 		return self._listGeneral(CashFlow,showDeleted)

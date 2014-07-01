@@ -9,6 +9,7 @@ from buttonbox import ButtonBox
 from lib.floattostr import *
 from lib.timeFuncs import *
 import datetime
+from noteseditbox import NotesEditBox
 
 class CashFlowsWindow(CashDisbursmentsWindow):
 	def generateNewButton(self):
@@ -75,17 +76,62 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		self.mFields['endDate'].pack(side=TOP,fill=X,expand=1)
 
 
+		self.notesEditFrame = NotesEditBox(self.fieldsFrame.interior,[],"",self.addNote,self.removeNote)
+		self.notesEditFrame.pack(fill=X,expand=1)
+
+
 	def newButtonCallback(self):
 		pass
 
 	def getSelection(self,event):
-		pass
+		item = self.tree.selection()[0]
+		values = self.tree.item(item,"values")
+		if values[0]!="":
+			self.notesEditFrame.labels = values[0]
+		else:
+			self.notesEditFrame.labels=""
 
 	def _populateTree(self,entrylist):
 		pass
-
+	def addNote(self):
+		item = self.tree.selection()[0]
+		category = self.tree.item(item,"text")
+		self.notesEditFrame.labels = self.notesEditFrame.labels+","+self.notesEditFrame.dropDown.get()
+		possibleInflows = [i for i in self.app.listCashflows(False) if i.source.content.split(":")[0] =="CashReceipt"]
+		possibleInflows = [i for i in possibleInflows if i.getContents().nature.content==category]
+		for i in possibleInflows:
+			self.app.editCashflow(i.pk.content,note=self.notesEditFrame.labels)
+		possibleOutflows = [i for i in self.app.listCashflows(False) if i.source.content.split(":")[0] in ("OME","LTINote","OONote")]
+		possibleOutflows = [i for i in possibleOutflows if i.getContents().nature.content==category]
+		possibleCOCPs = [i for i in self.app.listCashflows(False) if i.source.content.split(":")[0]=="COCPNote"]
+		possibleCOCPs = [i for i in possibleCOCPs if i.getContents().event.content==category]
+		possibleOutflows+=possibleCOCPs
+		for i in possibleOutflows:
+			self.app.editCashflow(i.pk.content,note=self.notesEditFrame.labels)
+		self.populateTree()
+	def removeNote(self):
+		item = self.tree.selection()[0]
+		notes = self.notesEditFrame.labels
+		notes = notes.split(",")
+		notes.remove(self.notesEditFrame.dropDown.get())
+		notes = ','.join(notes)
+		self.notesEditFrame.labels = notes
+		category = self.tree.item(item,"text")
+		possibleInflows = [i for i in self.app.listCashflows(False) if i.source.content.split(":")[0]=="CashReceipt"]
+		possibleInflows = [i for i in possibleInflows if i.getContents().nature.content==category]
+		for i in possibleInflows:
+			self.app.editCashflow(i.pk.content,note=self.notesEditFrame.labels)
+		possibleOutflows = [i for i in self.app.listCashflows(False) if i.source.content.split(":")[0] in ("OME","LTINote","OONote")]
+		possibleOutflows = [i for i in possibleOutflows if i.getContents().nature.content==category]
+		possibleCOCPs = [i for i in self.app.listCashflows(False) if i.source.content.split(":")[0]=="COCPNote"]
+		possibleCOCPs = [i for i in possibleCOCPs if i.getContents().event.content==category]
+		possibleOutflows+=possibleCOCPs
+		for i in possibleOutflows:
+			self.app.editCashflow(i.pk.content,note=self.notesEditFrame.labels)
+		self.populateTree()
 	def populateTree(self,*a):
 		self.revertMagic()
+		self.notesEditFrame.elements = list(set([i.noteNumber.content for i in self.app.listNotes()]))
 		#clear trees... FOR NOW
 		for i in self.inflow_categories:
 			cat = i.lower().replace(" ","")
@@ -242,7 +288,6 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		return [i for i in f if int(i.getContents().dateOfTransaction.content)<int(end)]
 	
 	def filterNotes(self,notes):
-		print notes
 		start,end = self.app.timeFrame
 		rvList = []
 		if notes:
@@ -250,10 +295,7 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 				noteParents = [note for note in self.app.listNotes(False) if note.noteNumber.content==i]
 				nonODN = [note for note in noteParents if note.identifier!="ODNote"]
 				rvList+=[note.noteNumber.content for note in noteParents if note.identifier=="ODNote"]
-				for i in nonODN:
-					print i.noteNumber.content
 				rvList+=(list(set([note.noteNumber.content for note in nonODN if int(note.dateOfTransaction.content)>int(start) and int(note.dateOfTransaction.content)<int(end)])))
-				#print notes,noteParents,nonODN,rv
 			return ','.join(list(set(rvList)))
 		else:
 			return ""
