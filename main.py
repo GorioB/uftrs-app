@@ -107,6 +107,7 @@ if __name__=="__main__":
 	root = Tk()
 	app = MainProgram(root)
 	if os.path.exists(os.path.join("assets","logo.gif")):
+		print "Image detected"
 		img = PhotoImage(file=resource_path(os.path.join("assets","logo.gif")))
 		root.tk.call('wm','iconphoto',root._w,img)
 	app.mainloop()

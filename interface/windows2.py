@@ -257,7 +257,7 @@ class COCPWindow(CashDisbursmentsWindow):
 	def initFields(self):
 		self.fields={}
 		self.fields['noteNumber'] = TextFieldBox(self.fieldsFrame.interior,
-			label="Note #",readonly=True,height=1)
+			label="Note #",readonly=False,height=1)
 
 		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
 			label="Timestamp",readonly=True,height=1)
@@ -350,9 +350,9 @@ class COCPWindow(CashDisbursmentsWindow):
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text,
-				noteNumber=str(self.app.getNoteNumber(self.fields['event'].text)))
+				noteNumber=self.fields['noteNumber'].text)
 		else:
-			self.selectedpk=self.app.newNote("COCPNote",str(self.app.getNoteNumber(self.fields['event'].text)),
+			self.selectedpk=self.app.newNote("COCPNote",self.fields['noteNumber'].text,
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				event=self.fields['event'].text,
 				flowDirection=self.fields['flowDirection'].text,
@@ -399,7 +399,7 @@ class LTIWindow(CashDisbursmentsWindow):
 	def initFields(self):
 		self.fields={}
 		self.fields['noteNumber'] = TextFieldBox(self.fieldsFrame.interior,
-			label="Note #",readonly=True,height=1)
+			label="Note #",readonly=False,height=1)
 
 		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
 			label="Timestamp",readonly=True,height=1)
@@ -491,9 +491,9 @@ class LTIWindow(CashDisbursmentsWindow):
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text,
-				noteNumber=str(self.app.getNoteNumber("LTINote")))
+				noteNumber=self.fields['noteNumber'].text)
 		else:
-			self.selectedpk=self.app.newNote("LTINote",str(self.app.getNoteNumber("LTINote")),
+			self.selectedpk=self.app.newNote("LTINote",self.fields['noteNumber'].text,
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
@@ -519,7 +519,7 @@ class OOWindow(LTIWindow):
 	def initFields(self):
 		self.fields={}
 		self.fields['noteNumber'] = TextFieldBox(self.fieldsFrame.interior,
-			label="Note #",readonly=True,height=1)
+			label="Note #",readonly=False,height=1)
 
 		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
 			label="Timestamp",readonly=True,height=1)
@@ -583,9 +583,9 @@ class OOWindow(LTIWindow):
 				liquidatingPerson=self.fields['liquidatingPerson'].text,
 				docNo=self.fields['docNo'].text,
 				notes=self.fields['notes'].text,
-				noteNumber=str(self.app.getNoteNumber("OONote")))
+				noteNumber=self.fields['noteNumber'].text)
 		else:
-			self.selectedpk=self.app.newNote("OONote",str(self.app.getNoteNumber("OONote")),
+			self.selectedpk=self.app.newNote("OONote",self.fields['noteNumber'].text,
 				dateOfTransaction=stringToSecs(self.fields['dateOfTransaction'].text+":0:0:0"),
 				purpose=self.fields['purpose'].text,
 				nature=self.fields['nature'].text,
@@ -633,7 +633,7 @@ class ODNWindow(CashDisbursmentsWindow):
 	def initFields(self):
 		self.fields={}
 		self.fields['noteNumber'] = TextFieldBox(self.fieldsFrame.interior,
-			label="Note #",readonly=True,height=1)
+			label="Note #",readonly=False,height=1)
 
 		self.fields['timestamp']=TextFieldBox(self.fieldsFrame.interior,
 			label="Timestamp",readonly=True,height=1)
@@ -696,9 +696,9 @@ class ODNWindow(CashDisbursmentsWindow):
 		if self.selectedpk!="New":
 			self.selectedpk=self.app.editNote("ODNote",self.selectedpk,
 				description=self.fields['description'].text,
-				noteNumber=self.app.getNoteNumber("ODNote"))
+				noteNumber=self.fields['noteNumber'].text)
 		else:
-			self.selectedpk=self.app.newNote("ODNote",self.app.getNoteNumber("ODNote"),
+			self.selectedpk=self.app.newNote("ODNote",self.fields['noteNumber'].text,
 				description=self.fields['description'].text)
 		self.populateTree()
 

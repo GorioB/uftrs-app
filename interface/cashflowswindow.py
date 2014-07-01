@@ -242,12 +242,19 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		return [i for i in f if int(i.getContents().dateOfTransaction.content)<int(end)]
 	
 	def filterNotes(self,notes):
+		print notes
 		start,end = self.app.timeFrame
+		rvList = []
 		if notes:
 			for i in notes:
 				noteParents = [note for note in self.app.listNotes(False) if note.noteNumber.content==i]
 				nonODN = [note for note in noteParents if note.identifier!="ODNote"]
-				return ','.join(list(set([note.noteNumber.content for note in nonODN if int(note.dateOfTransaction.content)>int(start) and int(note.dateOfTransaction.content)<int(end)])))
+				rvList+=[note.noteNumber.content for note in noteParents if note.identifier=="ODNote"]
+				for i in nonODN:
+					print i.noteNumber.content
+				rvList+=(list(set([note.noteNumber.content for note in nonODN if int(note.dateOfTransaction.content)>int(start) and int(note.dateOfTransaction.content)<int(end)])))
+				#print notes,noteParents,nonODN,rv
+			return ','.join(list(set(rvList)))
 		else:
 			return ""
 	def delete(self):
