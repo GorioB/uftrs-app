@@ -42,8 +42,15 @@ July 1, 2014
 
 	- Fixed discovered date bug (Calendar crashes)
 
+July 2, 2014 - UPDATE REQUIRES DB RESET (delete old db file)
+
+	- can filter Cashflows by date
+
+	- Notes preview - WIP
+
+	- Statement - WIP. Some fields working.
+
 TODO:
-	CashFlows date filtering
 	Improve tree visibility
 	Preview of notes
 	Differentiate between deleted and edited
