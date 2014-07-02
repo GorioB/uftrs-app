@@ -10,6 +10,9 @@ from lib.timeFuncs import *
 import datetime
 from lib.models import *
 from lib.floattostr import *
+from checkbuttonbox import *
+from lib.db import *
+from interface.previewnotes import *
 def treeview_sort_column(tv, col, reverse):
     l = [(tv.set(k, col), k) for k in tv.get_children('')]
     l.sort(reverse=reverse)
@@ -23,7 +26,7 @@ def treeview_sort_column(tv, col, reverse):
                treeview_sort_column(tv, col, not reverse))
 class EmptyBox(object):
 	def __init__(self):
-		self.text=""
+		self.text="N/A"
 def notebookLockTabs(noteBook,tabIndex):
 	others = [i for i in noteBook.tabs() if i!=tabIndex]
 	for i in others:
@@ -39,7 +42,7 @@ class OALWindow(CashDisbursmentsWindow):
 		tree.bind("<<TreeviewSelect>>",self.getSelection)
 		yscroll = Scrollbar(self.treeFrame,orient="vertical",command=tree.yview)
 		xscroll = Scrollbar(self.xScrollFrame,orient="horizontal",command=tree.xview)
-		self.colList = colList=["Timestamp","Type","Category","Details","Remarks"]
+		self.colList = colList=["Timestamp","Include","Type","Category","Details","Remarks"]
 		tree['columns']=colList
 		for i in colList:
 			tree.heading(i,text=i,command=lambda _i=i:treeview_sort_column(tree,_i,False))
@@ -79,7 +82,8 @@ class OALWindow(CashDisbursmentsWindow):
 		cn='accountsOutstanding'
 		self.fields[cn]['timestamp']=TextFieldBox(self.accountsOutstandingFrame,
 			label="Timestamp",readonly=True,height=1)
-
+		self.fields[cn]['include']=CheckButtonBox(self.accountsOutstandingFrame)
+		self.fields[cn]['include'].pack(fill=X,expand=1)
 		self.fields[cn]['category']=AutocompleteBox(self.accountsOutstandingFrame,
 			label="Category")
 		options=["Payable","Receivable"] #Don't overwrite
@@ -101,6 +105,8 @@ class OALWindow(CashDisbursmentsWindow):
 
 		self.fields[cn]['timestamp'] = TextFieldBox(self.inventoriesAndOtherAssetsFrame,
 			label="Timestamp",readonly=True,height=1)
+		self.fields[cn]['include'] = CheckButtonBox(self.inventoriesAndOtherAssetsFrame)
+		self.fields[cn]['include'].pack(fill=X,expand=1)
 
 		self.fields[cn]['category']=EmptyBox()
 		self.fields[cn]['details']=TextFieldBox(self.inventoriesAndOtherAssetsFrame,
@@ -117,6 +123,8 @@ class OALWindow(CashDisbursmentsWindow):
 		cn='others'
 		self.fields[cn]['timestamp']=TextFieldBox(self.othersFrame,
 			label="Timestamp",readonly=True,height=1)
+		self.fields[cn]['include']=CheckButtonBox(self.othersFrame)
+		self.fields[cn]['include'].pack(fill=X,expand=1)
 
 		self.fields[cn]['category']=AutocompleteBox(self.othersFrame,
 			label="Category")
@@ -144,7 +152,7 @@ class OALWindow(CashDisbursmentsWindow):
 	def getSelection(self,event):
 		item=self.tree.selection()[0]
 		values=self.tree.item(item,'values')
-		cn = values[1]
+		cn = values[2]
 		if cn=='':
 			for i in self.fields:
 				for j in self.fields[i]:
@@ -153,7 +161,7 @@ class OALWindow(CashDisbursmentsWindow):
 		notebookUnlockTabs(self.fieldsNotebook)
 		self.fieldsNotebook.select(self.fieldsIdent[cn])
 		
-		fieldIndices={'timestamp':0,'OALType':1,'category':2,'details':3,'remarks':4}
+		fieldIndices={'timestamp':0,'include':1,'OALType':2,'category':3,'details':4,'remarks':5}
 		for i in self.fields[cn]:
 			self.fields[cn][i].text=values[fieldIndices[i]]
 
@@ -166,7 +174,7 @@ class OALWindow(CashDisbursmentsWindow):
 
 	def populateTree(self,*a):
 		[self.tree.delete(item) for item in self.tree.get_children()]
-		self.fieldList=['timestamp','OALType','category','details','remarks']
+		self.fieldList=['timestamp','includeInStatement','OALType','category','details','remarks']
 		showDeleted=self.deletedVar.get()
 		entryList = self.app.listOALs(showDeleted=showDeleted)
 		for i in entryList:
@@ -209,15 +217,19 @@ class OALWindow(CashDisbursmentsWindow):
 		if checkFields(self.fields[cn]):
 			return 1
 		if self.selectedpk!="New":
-			self.selectedpk=self.app.editOAL(self.selectedpk,
-				OALType=cn,
-				category=self.fields[cn]['category'].text,
-				details=self.fields[cn]['details'].text)
+			old = self.app.getOAL(self.selectedpk)
+			if old.OALType.content!=cn or old.category.content!=self.fields[cn]['category'].text or old.details.content!=self.fields[cn]['details'].text:
+				self.selectedpk=self.app.editOAL(self.selectedpk,
+					OALType=cn,
+					category=self.fields[cn]['category'].text,
+					details=self.fields[cn]['details'].text)
+			self.app.toggleOAL(self.selectedpk,self.fields[cn]['include'].text)
 		else:
 			self.selectedpk=self.app.newOAL(
 				OALType=cn,
 				category=self.fields[cn]['category'].text,
-				details=self.fields[cn]['details'].text)
+				details=self.fields[cn]['details'].text,
+				includeInStatement=self.fields[cn]['include'].text)
 		self.populateTree()
 
 		if cn=="others":
@@ -727,7 +739,7 @@ class NotesWindow(Frame,object):
 		self.notes={}
 		self.app=app
 		self.deletedVar=deletedVar
-		for i in ["Council and Other College Projects","Long Term Investments","Other Outflows","Other Descriptive Notes"]:
+		for i in ["Council and Other College Projects","Long Term Investments","Other Outflows","Other Descriptive Notes","Preview"]:
 			self.notes[i]=Frame(self.nb)
 			self.nb.add(self.notes[i],text=i)
 		self.nb.pack(fill=BOTH,expand=1)
@@ -744,6 +756,9 @@ class NotesWindow(Frame,object):
 
 		self.notes['Other Descriptive Notes'] = ODNWindow(self.notes['Other Descriptive Notes'],self.app,deletedVar=self.deletedVar)
 		self.notes['Other Descriptive Notes'].pack()
+
+		self.notes['Preview'] = PreviewPage(self.notes['Preview'],self.app,deletedVar=self.deletedVar)
+		self.notes['Preview'].pack()
 		self.nb.bind("<<NotebookTabChanged>>",self.refreshPage)
 	def populateTree(self,*a):
 		self.refreshPage()

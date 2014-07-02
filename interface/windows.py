@@ -621,7 +621,7 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 
 		self.app.addOption("OME_Nature",self.fields['nature'].text)
 		self.fields['nature'].comboBox.config(values=self.app.listOptions("OME_Nature"))
-		self.app.addOption("OME_Payee",self.fields['liquidatingPerson'.text])
+		self.app.addOption("OME_Payee",self.fields['liquidatingPerson'].text)
 		self.fields['liquidatingPerson'].comboBox.config(values=self.app.listOptions("OME_Payee"))
 
 		self.newButtonCallback()

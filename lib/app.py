@@ -165,7 +165,6 @@ class App(object):
 			return cashFlow.save()
 
 		return newpk
-
 	def editCashDisbursment(self,pk,**kwargs):
 		oldpk,newpk = self._editEntry(CashDisbursment,pk,**kwargs)
 		return newpk
@@ -173,6 +172,11 @@ class App(object):
 	def editOAL(self,pk,**kwargs):
 		oldpk,newpk = self._editEntry(OAL,pk,**kwargs)
 		return newpk
+
+	def toggleOAL(self,pk,tog):
+		oal = getEntry(pk,OAL)
+		oal.includeInStatement.content=tog
+		oal.save()
 
 	def editOME(self,pk,**kwargs):
 		oldpk,newpk = self._editEntry(OME,pk,**kwargs)
@@ -301,3 +305,24 @@ class App(object):
 			return propList[0]
 		else:
 			return 1
+
+	def getOAL(self,pk):
+		return getEntry(pk,OAL)
+
+	@property
+	def councilName(self):
+		cn = [i for i in listEntries(AppProperty) if i.label.content=="councilName"]
+		if cn:
+			return cn[0].value.content
+		else:
+			return ""
+
+	@councilName.setter
+	def councilName(self, value):
+		cn = self.getProperty("councilName")
+		if cn!=1:
+			pk=cn.pk.content
+		else:
+			pk=0
+
+		AppProperty(pk=pk,label="councilName",value=value).save()

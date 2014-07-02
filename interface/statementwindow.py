@@ -4,7 +4,8 @@ from tkFont import Font
 from textable import TextTable
 from lib.floattostr import *
 from ScrolledFrame import VerticalScrolledFrame
-
+from lib.timeFuncs import *
+MONTHS=["","January","February","March","April","May","June","July","August","September","October","November","December"]
 def tab(n=1):
 	return "    "*n
 class StatementWindow(Frame,object):
@@ -32,12 +33,16 @@ class StatementWindow(Frame,object):
 		self.cashFlowsText.pack(expand=1,fill=BOTH,side=TOP)
 
 	def populateTree(self):
+		tEnd = secsToDay(self.app.timeFrame[-1]).split("-")
+		month = MONTHS[int(tEnd[1])]
+		year = tEnd[0]
+		day = tEnd[2]
 		self.lines=[]
 		self.headerField['state']='normal'
 		self.headerField.delete('1.0','end')
-		self.headerField.insert('1.0',"UP School of Dinosaurs Student Council\nStatement of Cash Flows\nFor the Semester Ended Octber 31,2013")
+		self.headerField.insert('1.0',self.app.councilName+"\nStatement of Cash Flows\nFor the Semester Ended "+month+" "+day+", "+year)
 		self.headerField.tag_add('center','1.0','end')
-		self.headerField['state']='disabled'
+		#self.headerField['state']='disabled'
 
 		self.lines.append([['CASH INFLOWS','Note','','','',''],[],[1,0,0,0,0,0]])
 		cashFlowList = self.app.listCashflows(showDeleted=False)

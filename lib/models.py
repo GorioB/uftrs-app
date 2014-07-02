@@ -24,6 +24,7 @@ class OAL(DataEntry):
 	OALType = TextField()
 	category = TextField()
 	details = TextField()
+	includeInStatement=TextField()
 
 class OME(DataEntry):
 	dateOfTransaction = IntegerField()

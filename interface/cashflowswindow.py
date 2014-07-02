@@ -74,7 +74,8 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		self.mFields['endDate']=CalendarBox(self.magicFields,label="End Date")
 		self.mFields['startDate'].pack(side=TOP,fill=X,expand=1)
 		self.mFields['endDate'].pack(side=TOP,fill=X,expand=1)
-
+		self.mFields['collegeName']=TextFieldBox(self.magicFields,label="Council Name")
+		self.mFields['collegeName'].pack(side=TOP,fill=X,expand=1)
 
 		self.notesEditFrame = NotesEditBox(self.fieldsFrame.interior,[],"",self.addNote,self.removeNote)
 		self.notesEditFrame.pack(fill=X,expand=1)
@@ -267,6 +268,7 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 	def saveMagic(self):
 		timeFrame = (stringToSecs(self.mFields['startDate'].text+":0:0:0"),stringToSecs(self.mFields['endDate'].text+":0:0:0"))
 		self.app.timeFrame = timeFrame
+		self.app.councilName = self.mFields['collegeName'].text
 		self.populateTree()
 
 	def revertMagic(self):
@@ -278,7 +280,8 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 			dt = datetime.datetime.now()
 			self.mFields['startDate'].text=str(dt.year)+"-"+str(dt.month)+"-"+str(dt.day)
 			self.mFields['endDate'].text=str(dt.year)+"-"+str(dt.month)+"-"+str(dt.day)
-
+		self.mFields['collegeName'].text = self.app.councilName
+		
 	def save(self):
 		pass
 
