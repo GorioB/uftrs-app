@@ -4,7 +4,9 @@ from supercombobox import SuperComboBox
 
 class NotesEditBox(Frame,object):
 	def __init__(self,parent,elements,existing,addCallback,deleteCallback):
-		Frame.__init__(self,parent)
+		Frame.__init__(self,parent,relief='groove')
+		self.nameLabel  = Label(self,text="Notes: ")
+		self.nameLabel.pack(fill=X,expand=1,side=TOP)
 		self.existingLabel = Label(self,text=existing,relief='sunken',anchor="center")
 		self.existingLabel.pack(fill=X,expand=1,side=TOP)
 

@@ -338,7 +338,7 @@ class CashDisbursmentsWindow(Frame,object):
 
 	def initTotalTag(self):
 		#portable,optional
-		self.totalLabel = totalLabel = Label(self.totalFrame,text="Total Cash Disbursments: ",relief=SUNKEN,width=50)
+		self.totalLabel = totalLabel = Label(self.totalFrame,text="Total Cash Disbursements: ",relief=SUNKEN,width=50)
 		totalLabel.pack(fill=None,expand=0,side=RIGHT)
 
 	def initSaveDelete(self):

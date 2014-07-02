@@ -108,7 +108,9 @@ class OALWindow(CashDisbursmentsWindow):
 		self.fields[cn]['include'] = CheckButtonBox(self.inventoriesAndOtherAssetsFrame)
 		self.fields[cn]['include'].pack(fill=X,expand=1)
 
-		self.fields[cn]['category']=EmptyBox()
+		self.fields[cn]['category']=AutocompleteBox(self.inventoriesAndOtherAssetsFrame,
+			label="Category")
+		self.fields[cn]['category'].initDropDown(['Inventory','Other Material Asset'])
 		self.fields[cn]['details']=TextFieldBox(self.inventoriesAndOtherAssetsFrame,
 			label="Description",height=5)
 		helpfulMessage2 = ReadingBox(self.inventoriesAndOtherAssetsFrame,

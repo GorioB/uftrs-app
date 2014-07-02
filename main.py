@@ -49,7 +49,7 @@ class MainProgram(Frame,object):
 		#notebook
 		self.notebook = Notebook(self.parent)
 		self.notes={}
-		for i in ["Cash Receipts","Cash Disbursments","Cash Flows",
+		for i in ["Cash Receipts","Cash Disbursements","Cash Flows",
 			"Other Assets and Liabilities","Notes",
 			"Operation and Maintenance Expense","Statement of Cash Flows"]:
 			self.notes[i]=Frame(self.notebook)
@@ -60,8 +60,8 @@ class MainProgram(Frame,object):
 		#CashReceiptsWindow
 		self.notes['Cash Receipts']=windows.CashReceiptsWindow(self.notes['Cash Receipts'],self.app,deletedVar = self.showDeleted)
 		self.notes['Cash Receipts'].pack()
-		self.notes['Cash Disbursments']=windows.CashDisbursmentsWindow(self.notes['Cash Disbursments'],self.app,deletedVar=self.showDeleted)
-		self.notes['Cash Disbursments'].pack()
+		self.notes['Cash Disbursements']=windows.CashDisbursmentsWindow(self.notes['Cash Disbursements'],self.app,deletedVar=self.showDeleted)
+		self.notes['Cash Disbursements'].pack()
 		self.notes['Operation and Maintenance Expense']=windows.OperationMaintenanceExpensesWindow(self.notes['Operation and Maintenance Expense'],self.app,deletedVar=self.showDeleted)
 		self.notes['Operation and Maintenance Expense'].pack()
 
