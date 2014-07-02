@@ -28,7 +28,7 @@ class MainProgram(Frame,object):
 
 	def initUI(self):
 		#Window settings
-		self.parent.title("UFTRS Accounting System")
+		self.parent.title("UFTRS Program")
 		self.parent.geometry("800x500")
 		self.parent.state("zoomed")
 		menubar = Menu(self.parent)

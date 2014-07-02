@@ -23,7 +23,7 @@ class LogIn(Frame,object):
 		self.pack()
 
 		# Window settings
-		self.parent.title("UFTRS Accounting System")
+		self.parent.title("UFTRS Program")
 		self.parent.geometry("360x400")
 		#self.parent.state("zoomed")
 		menubar = Menu(self.parent)
