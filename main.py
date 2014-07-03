@@ -94,7 +94,7 @@ class MainProgram(Frame,object):
 
 	def exportEverything(self):
 		excelBuilder = windows.ExcelBuilder()
-		for i in ["Cash Receipts","Cash Disbursments","Cash Flows","Other Assets and Liabilities","Notes",
+		for i in ["Cash Receipts","Cash Disbursements","Cash Flows","Other Assets and Liabilities","Notes",
 			"Operation and Maintenance Expense"]:
 			self.notes[i].addSheet(excelBuilder)
 
