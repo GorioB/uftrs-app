@@ -95,6 +95,10 @@ class App(object):
 			note = COCPNote(noteNumber=noteNumber,**kwargs)
 			if note.save(): return 1
 			flowDirection=kwargs['flowDirection']
+			sameEventNotes = [i for i in self._listGeneral(COCPNote) if i.event.content==kwargs['event']]
+			for i in sameEventNotes:
+				i.noteNumber.content=noteNumber
+				i.save()
 			if flowDirection=="Outflow":
 				cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 				cf.save()
@@ -192,11 +196,24 @@ class App(object):
 		if 'noteNumber' in kwargs.keys():
 			note = getEntry(pk,modelOptions[notetype])
 			oldNoteNumber = note.noteNumber.content
-			cashFlowList = [i for i in listEntries(CashFlow) if oldNoteNumber in i.note.content]
-			for i in cashFlowList:
-				i.note.set(i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
-				#i.addField("TEXT",note=i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
-				i.save()
+			if notetype=="COCPNote":
+				event = note.event.content
+				sameEventNotes = [i for i in self._listGeneral(COCPNote) if i.event.content==event]
+				for i in sameEventNotes:
+					i.noteNumber.content=kwargs['noteNumber']
+					i.save()
+				cashFlowList = [i for i in listEntries(CashFlow) if oldNoteNumber in i.note.content]
+				for i in cashFlowList:
+					i.note.set(i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
+					i.save()
+			else:
+				numbersList = [i for i in self.listNotes(False) if i.noteNumber.content==oldNoteNumber]
+				if len(numbersList)==1:
+					cashFlowList = [i for i in listEntries(CashFlow) if oldNoteNumber in i.note.content]
+					for i in cashFlowList:
+						i.note.set(i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
+						#i.addField("TEXT",note=i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
+						i.save()
 		oldpk,newpk = self._editEntry(modelOptions[notetype],pk,**kwargs)
 		cashFlowList = [i for i in listEntries(CashFlow) if i.source.content==notetype+":"+str(oldpk)]
 		for i in cashFlowList:

@@ -5,6 +5,8 @@ from textable import TextTable
 from lib.floattostr import *
 from ScrolledFrame import VerticalScrolledFrame
 from lib.timeFuncs import *
+from cashflowswindow import filterDOT
+
 MONTHS=["","January","February","March","April","May","June","July","August","September","October","November","December"]
 def tab(n=1):
 	return "    "*n
@@ -53,13 +55,32 @@ class StatementWindow(Frame,object):
 		#replace with db stuff
 		inflowTypeList = ['Council Mandated Funds','General Sponsorship Inflows','Income Generating Projects','Other Inflows']
 		for inflowType in inflowTypeList:
-			self.lines.append([[inflowType,'','','','',''],[],[]])
-			partialList = [i for i in inflowList if i.getContents().category.content==inflowType]
+			partialList = filterDOT(self.app,[i for i in inflowList if i.getContents().category.content==inflowType])
 			lines,partialTotal = self.getInflows(partialList)
+			print lines
+			if lines!=[]:
+				self.lines.append([[inflowType,'','','','',''],[],[]])
 			self.lines=self.lines+lines
 			totalInflows+=partialTotal
 
 		self.lines.append([[tab(3)+"Total Inflows",'','','','P',floatToStr(totalInflows)],[0,0,0,0,0,1],[]])
+
+		self.lines.append([['CASH OUTFLOWS','Note','','','',''],[],[1,0,0,0,0,0]])
+		outflowList = [i for i in cashFlowList if i.source.content.split(":")[0] in ("OME","COCPNote","LTINote","OONote")]
+		totalOutflows=0
+		self.firstOutflow=0
+		self.firstOutflowTotal=0
+		outflowNames ={"COCPNote":"Council and Other College Projects","LTINote":"Long Term Investment","OAL":"Other Assets and Liabilities","OONote":"Other Outflows"}
+		for outflowType in ("COCPNote","LTINote","OAL","OONote"):
+			partialList = filterDOT(self.app,[i for i in outflowList if i.source.content.split(":")[0]==outflowType])
+			lines,partialTotal = self.getInflows(partialList)
+			if lines!=[]:
+				self.lines.append([[outflowNames[outflowType],'','','','',''],[],[]])
+			self.lines=self.lines+lines
+			totalOutflows+=partialTotal
+
+		self.lines.append([[tab(3)+"Total Outflows",'','','','P',floatToStr(totalOutflows)],[0,0,0,0,0,1],[]])
+
 		self.commitLines(self.lines)
 	def getInflows(self,flowList):
 		partialTotals={}
@@ -68,6 +89,9 @@ class StatementWindow(Frame,object):
 			name = i.getContents().nature.content
 			amount = i.getContents().amount.content
 			notes = i.note.content
+			category = i.source.content.split(":")[0]
+			if category=="COCPNote":
+				name=i.getContents().event.content
 			try:
 				amount = float(amount)
 			except:
@@ -100,10 +124,10 @@ class StatementWindow(Frame,object):
 			tempLines[-1][1]=[0,0,0,1,0,0]
 		# tempLines[0][0][2]="P"+tempLines[0][0][2]
 		# tempLines[-1][1]=[0,0,1,0]
-		tempLines.append([[tab(2)+"Total",'','','','',floatToStr(total)],[0,0,0,0,0,1],[]])
-		if not self.firstInflowTotal:
-			self.firstInflowTotal=1
-			tempLines[-1][0][4]="P"
+			tempLines.append([[tab(2)+"Total",'','','','',floatToStr(total)],[0,0,0,0,0,1],[]])
+			if not self.firstInflowTotal:
+				self.firstInflowTotal=1
+				tempLines[-1][0][4]="P"
 		return tempLines
 
 	def commitLines(self,lines):

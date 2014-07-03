@@ -13,17 +13,22 @@ from lib.floattostr import *
 from checkbuttonbox import *
 from lib.db import *
 from interface.previewnotes import *
+from lib.floattostr import *
 def treeview_sort_column(tv, col, reverse):
-    l = [(tv.set(k, col), k) for k in tv.get_children('')]
-    l.sort(reverse=reverse)
+	l = [(tv.set(k, col), k) for k in tv.get_children('')]
+	if col=="Amount":
+		l = sorted(l,reverse=reverse,key=lambda n: \
+			strToFloat(n[0]))
+	else:
+		l.sort(reverse=reverse)
 
-    # rearrange items in sorted positions
-    for index, (val, k) in enumerate(l):
-        tv.move(k, '', index)
+	# rearrange items in sorted positions
+	for index, (val, k) in enumerate(l):
+		tv.move(k, '', index)
 
-    # reverse sort next time
-    tv.heading(col, command=lambda: \
-               treeview_sort_column(tv, col, not reverse))
+	# reverse sort next time
+	tv.heading(col, command=lambda: \
+		treeview_sort_column(tv, col, not reverse))
 class EmptyBox(object):
 	def __init__(self):
 		self.text="N/A"
@@ -153,9 +158,12 @@ class OALWindow(CashDisbursmentsWindow):
 
 	def getSelection(self,event):
 		item=self.tree.selection()[0]
+		self.selectedpk=self.tree.item(item,"text")
+
 		values=self.tree.item(item,'values')
-		cn = values[2]
-		if cn=='':
+		humanToCode={"":"","Accounts Outstanding":"accountsOutstanding","Others":"others","Inventories and Other Assets":"inventoriesAndOtherAssets"}
+		cn = humanToCode[values[2]]
+		if self.selectedpk=="New":
 			for i in self.fields:
 				for j in self.fields[i]:
 					self.fields[i][j].text =""
@@ -167,7 +175,6 @@ class OALWindow(CashDisbursmentsWindow):
 		for i in self.fields[cn]:
 			self.fields[cn][i].text=values[fieldIndices[i]]
 
-		self.selectedpk=self.tree.item(item,"text")
 		if self.selectedpk!="New":
 			notebookLockTabs(self.fieldsNotebook,self.fieldsIdent[cn])
 
@@ -179,12 +186,14 @@ class OALWindow(CashDisbursmentsWindow):
 		self.fieldList=['timestamp','includeInStatement','OALType','category','details','remarks']
 		showDeleted=self.deletedVar.get()
 		entryList = self.app.listOALs(showDeleted=showDeleted)
+		codeToHuman = {"accountsOutstanding":"Accounts Outstanding","others":"Others","inventoriesAndOtherAssets":"Inventories and Other Assets"}
 		for i in entryList:
 			dataFields=[]
 			pk=i.pk.content
 			for j in self.fieldList:
 				dataFields.append(vars(i)[j].content)
 			dataFields[0]=secsToString(dataFields[0])
+			dataFields[2]=codeToHuman[dataFields[2]]
 
 			if 'amount' in self.fieldList:
 				dataFields[self.fieldList.index('amount')]=floatToStr(dataFields[self.fieldList.index('amount')])

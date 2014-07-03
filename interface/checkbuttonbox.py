@@ -14,7 +14,9 @@ class CheckButtonBox(Frame,object):
 	    return self._var.get()
 	@text.setter
 	def text(self, value):
-	    self._var.set(value)
+		if value=="":
+			value="False"
+		self._var.set(value)
 	
 if __name__=="__main__":
 	root = Tk()

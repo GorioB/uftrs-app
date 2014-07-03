@@ -149,7 +149,7 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		showDeleted = self.deletedVar.get()
 		cashFlowList = self.app.listCashflows(showDeleted=False)
 		inflowList = [i for i in cashFlowList if i.source.content.split(":")[0]=="CashReceipt"]
-		inflowList = self.filterDOT(inflowList)
+		inflowList = filterDOT(self.app,inflowList)
 		for i in inflowList:
 			name = i.getContents().nature.content
 			amount = i.getContents().amount.content
@@ -185,7 +185,7 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 			categoryTotal = reduce(lambda x,y:x+y,[d[0] for d in partialTotals[i].values()]+[0,])
 			self.tree.item(i,values=("","",floatToStr(categoryTotal),""))
 		outflowList = [i for i in cashFlowList if i.source.content.split(":")[0] in ("OME","COCPNote","LTINote","OONote")]
-		outflowList = self.filterDOT(outflowList)
+		outflowList = filterDOT(self.app,outflowList)
 		totalOutflows=0
 		#change for when updated to db-stored variables
 		partialOutflows={"otheroutflows":{},"operationandmaintenanceexpenses":{},"councilandothercollegeprojects":{},"longterminvestments":{}}
@@ -284,11 +284,6 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		
 	def save(self):
 		pass
-
-	def filterDOT(self,flowList):
-		start,end = self.app.timeFrame
-		f = [i for i in flowList if int(i.getContents().dateOfTransaction.content)>int(start)]
-		return [i for i in f if int(i.getContents().dateOfTransaction.content)<int(end)]
 	
 	def filterNotes(self,notes):
 		start,end = self.app.timeFrame
@@ -304,3 +299,8 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 			return ""
 	def delete(self):
 		pass
+
+def filterDOT(app,flowList):
+	start,end = app.timeFrame
+	f = [i for i in flowList if int(i.getContents().dateOfTransaction.content)>=int(start)]
+	return [i for i in f if int(i.getContents().dateOfTransaction.content)<=int(end)]
