@@ -50,8 +50,17 @@ July 2, 2014 - UPDATE REQUIRES DB RESET (delete old db file)
 
 	- Statement - WIP. Some fields working.
 
-TODO:
-	Improve tree visibility
-	Preview of notes
-	Differentiate between deleted and edited
-	Font consistency
+July 4, 2014
+
+	- Cash Flows range inclusive of start and end points
+
+	- Arrange by amount works numerically
+
+	- Fixed export all bug caused by correcting the typo in disbursements
+
+	- Notes now force same-event notes to have the same number
+
+	- Fixed OAL category to human form
+
+	- Fixed blank checkboxes being seen as empty inputs
+
