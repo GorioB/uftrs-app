@@ -97,8 +97,13 @@ class App(object):
 			flowDirection=kwargs['flowDirection']
 			sameEventNotes = [i for i in self._listGeneral(COCPNote) if i.event.content==kwargs['event']]
 			for i in sameEventNotes:
+				pointingCashFlows = [j for j in self.listCashflows(False) if i.noteNumber.content in j.note.content]
+				for k in pointingCashFlows:
+					k.note.set(k.note.content.replace(i.noteNumber.content,noteNumber))
+					k.save()
 				i.noteNumber.content=noteNumber
 				i.save()
+
 			if flowDirection=="Outflow":
 				cf = CashFlow(source=note.identifier+":"+str(note.pk.content),note=noteNumber)
 				cf.save()
