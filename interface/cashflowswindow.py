@@ -74,8 +74,12 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		self.mFields['endDate']=CalendarBox(self.magicFields,label="End Date")
 		self.mFields['startDate'].pack(side=TOP,fill=X,expand=1)
 		self.mFields['endDate'].pack(side=TOP,fill=X,expand=1)
-		self.mFields['collegeName']=TextFieldBox(self.magicFields,label="Council Name")
+		self.mFields['collegeName']=TextFieldBox(self.magicFields,label="Council Name",height=1)
 		self.mFields['collegeName'].pack(side=TOP,fill=X,expand=1)
+		self.mFields['cashOnHand']=TextFieldBox(self.magicFields,label="Cash On Hand",height=1)
+		self.mFields['cashOnHand'].pack(side=TOP,fill=X,expand=1)
+		self.mFields['cashInBank'] = TextFieldBox(self.magicFields,label='Cash In Bank',height=1)
+		self.mFields['cashInBank'].pack(side=TOP,fill=X,expand=1)
 
 		self.notesEditFrame = NotesEditBox(self.fieldsFrame.interior,[],"",self.addNote,self.removeNote)
 		self.notesEditFrame.pack(fill=X,expand=1)
@@ -97,7 +101,7 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 	def addNote(self):
 		item = self.tree.selection()[0]
 		category = self.tree.item(item,"text")
-		self.notesEditFrame.labels = self.notesEditFrame.labels+","+self.notesEditFrame.dropDown.get()
+		self.notesEditFrame.labels = (self.notesEditFrame.labels+","+self.notesEditFrame.dropDown.get()).strip(",")
 		possibleInflows = [i for i in self.app.listCashflows(False) if i.source.content.split(":")[0] =="CashReceipt"]
 		possibleInflows = [i for i in possibleInflows if i.getContents().nature.content==category]
 		for i in possibleInflows:
@@ -269,6 +273,8 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		timeFrame = (stringToSecs(self.mFields['startDate'].text+":0:0:0"),stringToSecs(self.mFields['endDate'].text+":0:0:0"))
 		self.app.timeFrame = timeFrame
 		self.app.councilName = self.mFields['collegeName'].text
+		self.app.cashInBank = self.mFields['cashInBank'].text
+		self.app.cashOnHand = self.mFields['cashOnHand'].text
 		self.populateTree()
 
 	def revertMagic(self):
@@ -281,6 +287,8 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 			self.mFields['startDate'].text=str(dt.year)+"-"+str(dt.month)+"-"+str(dt.day)
 			self.mFields['endDate'].text=str(dt.year)+"-"+str(dt.month)+"-"+str(dt.day)
 		self.mFields['collegeName'].text = self.app.councilName
+		self.mFields['cashInBank'].text=self.app.cashInBank
+		self.mFields['cashOnHand'].text=self.app.cashOnHand
 		
 	def save(self):
 		pass

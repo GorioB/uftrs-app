@@ -15,8 +15,11 @@ class VerticalScrolledFrame(Frame):
         vscrollbar = Scrollbar(self, orient=VERTICAL)
         vscrollbar.pack(fill=Y, side=RIGHT, expand=FALSE)
         canvas = Canvas(self, bd=0, highlightthickness=0,
-                        yscrollcommand=vscrollbar.set)
+                        yscrollcommand=vscrollbar.set,
+                        # bg="Blue"
+                        )
         canvas.pack(side=LEFT, fill=BOTH, expand=TRUE)
+        canvas.pack_propagate(0)
         vscrollbar.config(command=canvas.yview)
 
         # reset the view
@@ -24,7 +27,9 @@ class VerticalScrolledFrame(Frame):
         canvas.yview_moveto(0)
 
         # create a frame inside the canvas which will be scrolled with it
-        self.interior = interior = Frame(canvas)
+        self.interior = interior = Frame(canvas,
+            # bg="Red"
+            )
         interior_id = canvas.create_window(0, 0, window=interior,
                                            anchor=NW)
 
@@ -46,3 +51,12 @@ class VerticalScrolledFrame(Frame):
         canvas.bind('<Configure>', _configure_canvas)
 
         return
+
+if __name__=="__main__":
+    root = Tk()
+    root.geometry("600x500")
+    app = VerticalScrolledFrame(root)
+    app.pack(fill=BOTH,expand=1)
+    text = Label(app.interior,text="Hi\nhi")
+    text.pack(fill=BOTH,expand=1)
+    app.mainloop()

@@ -348,3 +348,56 @@ class App(object):
 			pk=0
 
 		AppProperty(pk=pk,label="councilName",value=value).save()
+
+	@property
+	def cashOnHand(self):
+		coh = self.getProperty("cashOnHand")
+		if coh==1:
+			return ""
+		return coh.value.content
+
+	@cashOnHand.setter
+	def cashOnHand(self, value):
+		coh = self.getProperty("cashOnHand")
+		if coh!=1:
+			pk=coh.pk.content
+		else:
+			pk=0
+
+		AppProperty(pk=pk,label="cashOnHand",value=value).save()
+
+	@property
+	def cashInBank(self):
+		cib = self.getProperty("cashInBank")
+		if cib==1:
+			return ""
+		return cib.value.content
+
+	@cashInBank.setter
+	def cashInBank(self, value):
+		cib = self.getProperty("cashInBank")
+		if cib!=1:
+			pk = cib.pk.content
+		else:
+			pk=0
+
+		AppProperty(pk=pk,label="cashInBank",value=value).save()
+	
+	@property
+	def balance(self):
+		balance = self.getProperty("balance")
+		if balance==1:
+			return (0,0)
+		else:
+			return (int(balance.value.content.split(":")[0]),int(balance.value.content.split(":")[1]))
+
+	@balance.setter
+	def balance(self, value):
+		#value should be in the format (secondsFromEpoch,integer value)
+		balance = self.getProperty("balance")
+		if balance!=1:
+			pk = balance.pk.content
+		else:
+			pk=0
+
+		AppProperty(pk=pk,label="balance",value=value).save()
