@@ -6,6 +6,9 @@ from lib.floattostr import *
 from ScrolledFrame import VerticalScrolledFrame
 from lib.timeFuncs import *
 from lib.app import *
+from interface.docbuilder import DocBuilder, CellData
+from docx.shared import Inches
+from cashflowswindow import filterDOT
 from lib.getStartingBalance import *
 from lib.getOAL import *
 from enumerateNotes import *
@@ -204,7 +207,62 @@ class StatementWindow(Frame,object):
 
 
 	def exportCallback(self):
-		pass
+		docBuilder = DocBuilder()
+
+		# Write the 1st line of the header
+		headerText = self.headerField.get(2.0, "2.end")
+		docBuilder.createHeading(headerText, "center")
+
+		# Write the 2nd line of the header
+		headerText = self.headerField.get(3.0, "3.end")
+		docBuilder.createHeading(headerText, "center")
+
+		# Write the first table
+		self._export_CreateTable(docBuilder)
+
+		fileName = 'StatementOfCashFlows_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.docx'
+		docBuilder.save(fileName)
+
+	def _export_CreateTable(self, docBuilder):
+		"""Reads self.lines and creates a docx table from it"""
+		lines = list(self.lines)
+
+		# list of lists, where each entry is a list of CellData objects that represents a row
+		tableData = [] 
+
+		# iterate through the rows to construct tableData
+		for line in lines:
+			lineText = line[0]
+			if line[1]==[]: line[1] = [0, 0, 0, 0, 0, 0]
+			if line[2]==[]: line[2] = [0, 0, 0, 0, 0, 0]
+			isUnderlined = line[1]
+			isBold = line[2]
+
+			rowData = []
+			# iterate through the cells in a row to construct rowData
+			for i in xrange(6):
+				text = lineText[i]
+				cellData = CellData(text)
+				if (isUnderlined[i] == 1):
+					cellData.tags.append("underline")
+				if (isUnderlined[i] == 2):
+					cellData.tags.append("double_underline")
+				if (isBold[i] == 1):
+					cellData.tags.append("bold")
+				rowData.append(cellData)
+
+			tableData.append(rowData)
+
+		docBuilder.createTable(6, tableData)
+		
+		# manually set table column widths
+		docBuilder.columns[0].width = Inches(2.5)
+		docBuilder.columns[1].width = Inches(1)
+		docBuilder.columns[2].width = Inches(0.25)
+		docBuilder.columns[3].width = Inches(1)
+		docBuilder.columns[4].width = Inches(0.25)
+		docBuilder.columns[5].width = Inches(1)
+
 
 if __name__=="__main__":
 	root = Tk()

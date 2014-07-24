@@ -1,6 +1,7 @@
 from lib.app import App
 from lib.db2 import User, DropDownMenu
 from interface import textfield
+from interface.autocomplete import AutocompleteBox
 from Tkinter import *
 from ttk import *
 from main import *
@@ -39,7 +40,7 @@ class LogIn(Frame,object):
 	def initUI_FirstRun(self):
 		# Window settings
 		self.parent.title("UFTRS Accounting System")
-		self.parent.geometry("360x400")
+		self.parent.geometry("360x500")
 		#self.parent.state("zoomed")
 		self.frame = frame = Frame(self.parent)
 		self.frame.pack()
@@ -50,15 +51,23 @@ class LogIn(Frame,object):
 		Label(frame, text="Enter username").pack()
 		self.first_username = Entry(frame)
 		self.first_username.pack()
-		Label(frame, text="Enter email address").pack()
-		self.first_email = Entry(frame)
-		self.first_email.pack()
 		Label(frame, text="Enter password").pack()
 		self.first_pass = Entry(frame, show="*")
 		self.first_pass.pack()
 		Label(frame, text="Re-enter password").pack()
 		self.first_pass2 = Entry(frame, show="*")
 		self.first_pass2.pack()
+
+		Label(frame, text="""\nEnter a secret question for yourself (e.g. "What is your first pet's name?") and the answer to it. This secret question will be used for resetting your password in case you forget it.\n"""
+			, wraplength=350, justify=CENTER).pack()
+
+		Label(frame, text="Enter secret question").pack()
+		self.first_question = Entry(frame)
+		self.first_question.pack()
+		Label(frame, text="Enter secret answer").pack()
+		self.first_answer = Entry(frame)
+		self.first_answer.pack()
+
 		## Submit button and text notifier
 		Label(frame, text="").pack()
 		self.first_submit = Button(frame, text="Register Account", command=self.submitFirstUser)
@@ -81,17 +90,18 @@ class LogIn(Frame,object):
 	def submitFirstUser(self,*a):
 		user = User(self.first_username.get(), self.first_pass.get())
 		reEnteredPass = self.first_pass2.get()
-		email = self.first_email.get()
+		secretQ = self.first_question.get()
+		secretA = self.first_answer.get()
 
 		if user.password!=reEnteredPass:
 			self.first_notifier.config(text="Passwords don't match.", foreground='red')
 			return
-		elif user.username=="" or user.password=="" or reEnteredPass=="" or email=="":
+		elif user.username=="" or user.password=="" or reEnteredPass=="" or secretQ=="" or secretA=="":
 			self.first_notifier.config(text="Please fill up all fields.", foreground='red')
 			return
 
 		# Save the user into the database
-		user.saveUser(email, 1)
+		user.saveUser(secretQ, secretA, 1)
 
 		# Move on to login screen
 		self.frame.pack_forget()
@@ -99,10 +109,12 @@ class LogIn(Frame,object):
 		self.initUI()
 
 	def initUI(self):
+		self.parent.geometry("560x560")
+
 		# Notebook
 		self.notebook = Notebook(self.parent)
 		self.notes={}
-		for i in ["Log In", "Create Account", "Change Password"]:
+		for i in ["Log In", "Create Account", "Change Password", "Reset Forgotten Password"]:
 			self.notes[i]=Frame(self.notebook)
 			self.notebook.add(self.notes[i],text=i)
 		self.notebook.pack(fill=BOTH,expand=1)
@@ -147,17 +159,25 @@ class LogIn(Frame,object):
 		Label(createFrame, text="Re-enter new account's password").pack()
 		self.create_newPass2 = Entry(createFrame, show="*")
 		self.create_newPass2.pack()
-		Label(createFrame, text="Enter new account's email address").pack()
-		self.create_newMail = Entry(createFrame)
-		self.create_newMail.pack()
+
+		Label(createFrame, text="""\nEnter a secret question for your new account (e.g. "What is your first pet's name?") and the answer to it. This secret question will be used for resetting your password in case you forget it.\n"""
+			, wraplength=350, justify=CENTER).pack()
+
+		Label(createFrame, text="Enter new account's secret question").pack()
+		self.create_secretQ = Entry(createFrame)
+		self.create_secretQ.pack()
+		Label(createFrame, text="Enter new account's secret answer").pack()
+		self.create_secretA = Entry(createFrame)
+		self.create_secretA.pack()
+
 		## Submit button and text notifier
 		self.create_submit = Button(createFrame, text="Register New User", command=self.submitCreateUser)
 		self.create_submit.pack()
 		self.create_notifier = Label(createFrame)
 		self.create_notifier.pack()
 
-		#bind submitCreateUser to return event on last entry
-		self.create_newMail.bind("<Return>",self.submitCreateUser)
+		## bind submitCreateUser to return event on last entry
+		self.create_secretA.bind("<Return>",self.submitCreateUser)
 
 		# Change password widgets
 		changeFrame = self.notes["Change Password"]
@@ -180,9 +200,43 @@ class LogIn(Frame,object):
 		self.change_submit.pack()
 		self.change_notifier = Label(changeFrame)
 		self.change_notifier.pack()
-
-		#bind submitChangePass to last entry
+		## bind submitChangePass to last entry
 		self.change_newPass2.bind("<Return>",self.submitChangePass)
+
+
+
+		# Reset password widgets
+		resetFrame = self.notes["Reset Forgotten Password"]
+		Label(resetFrame, text="\nThis page lets you reset your account's password if you've forgotten it.\n").pack()
+		## Username selector
+		newFrame = Frame(resetFrame)
+		newFrame.pack()
+		self.reset_userSelector = AutocompleteBox(newFrame, label="Select your username")
+		self.reset_userSelector.initDropDown(User.listUsernames())
+		self.reset_userSelector.comboBox.bind('<<ComboboxSelected>>', self.handleResetUserSelect)
+		self.reset_userSelector.pack()
+
+		Label(resetFrame, text="\n").pack()
+		self.reset_secretQ = Label(resetFrame, wraplength=350, justify=CENTER)
+		self.reset_secretQ.pack()
+
+
+		Label(resetFrame, text="\nEnter answer").pack()
+		self.reset_answer = Entry(resetFrame)
+		self.reset_answer.pack()
+
+		Label(resetFrame, text="Enter new password").pack()
+		self.reset_newPass = Entry(resetFrame, show="*")
+		self.reset_newPass.pack()
+		Label(resetFrame, text="Re-enter new password").pack()
+		self.reset_newPass2 = Entry(resetFrame, show="*")
+		self.reset_newPass2.pack()
+
+		self.reset_submit = Button(resetFrame, text="Change password", command=self.submitResetPass)
+		self.reset_submit.pack()
+
+		self.reset_notifier = Label(resetFrame)
+		self.reset_notifier.pack()
 
 	# Callbacks
 	def submitLogIn(self,*a):
@@ -209,7 +263,8 @@ class LogIn(Frame,object):
 	def submitCreateUser(self,*a):
 		admin = User(self.create_adminUser.get(), self.create_adminPass.get())
 		newUser = User(self.create_newUser.get(), self.create_newPass.get())
-		newUserMail = self.create_newMail.get()
+		newUserSecretQ = self.create_secretQ.get()
+		newUserSecretA = self.create_secretA.get()
 		reEnteredPass = self.create_newPass2.get()
 
 		# Error checking: wrong admin username-password combo
@@ -222,7 +277,7 @@ class LogIn(Frame,object):
 			self.create_notifier.config(text=message, foreground='red')
 			return
 		# Error checking: blank fields in new user input fields
-		if newUser.username=="" or newUser.password=="" or newUserMail=="" or reEnteredPass=="":
+		if newUser.username=="" or newUser.password=="" or newUserSecretA=="" or newUserSecretQ=="" or reEnteredPass=="":
 			self.create_notifier.config(text='Please fill up all fields.', foreground='red')
 			return
 		# Error checking: username already taken
@@ -235,7 +290,7 @@ class LogIn(Frame,object):
 			self.create_notifier.config(text="Passwords don't match", foreground='red')
 			return
 
-		newUser.saveUser(newUserMail)
+		newUser.saveUser(newUserSecretQ, newUserSecretA)
 		self.create_notifier.config(text="New user created.", foreground='darkgreen')
 
 	def submitChangePass(self,*a):
@@ -261,7 +316,37 @@ class LogIn(Frame,object):
 			return
 
 		user.changePassword(newPass)
-		self.change_notifier.config(text="Password successfuly changed.", foreground='darkgreen')
+		self.change_notifier.config(text="Password successfully changed.", foreground='darkgreen')
+
+	def submitResetPass(self, *args):
+		username = self.reset_userSelector.text
+		answer = self.reset_answer.get()
+		newPass = self.reset_newPass.get()
+		newPass2 = self.reset_newPass2.get()
+
+		# Error checking: username doesn't exist
+		if not User.userExists(username):
+			self.reset_notifier.config(text="Username does not exist.", foreground='red')
+			return
+		# Error checking: wrong answer
+		elif not User.verifySecretAnswer(username, answer):
+			self.reset_notifier.config(text="Wrong answer.", foreground="red")
+			return
+		# Error checking: blank fields
+		elif username=="" or answer=="" or newPass=="" or newPass2=="":
+			self.reset_notifier.config(text="Please fill up all fields.", foreground="red")
+			return
+		elif newPass!=newPass2:
+			self.reset_notifier.config(text="New passwords don't match.", foreground="red")
+			return
+
+		user = User(username, "")
+		user.changePassword(newPass)
+		self.reset_notifier.config(text="Password successfully changed.", foreground='darkgreen')
+
+	def handleResetUserSelect(self, *args):
+		username = self.reset_userSelector.text
+		self.reset_secretQ.config(text="Question: " + User.getSecretQuestion(username))
 
 
 if __name__=="__main__":
