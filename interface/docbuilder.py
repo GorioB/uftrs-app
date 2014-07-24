@@ -8,7 +8,7 @@ import shutil
 class DocBuilder(object):
 	"""docstring for DocBuilder"""
 	def __init__(self):
-		self.document = Document()
+		self.document = Document(resource_path(os.path.join("assets","default.docx")))
 		self.EXPORT_DIRECTORY = 'StatementExports'
 
 		# Create export directory if it doesn't exist
