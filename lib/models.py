@@ -99,6 +99,6 @@ class BalanceInfo(DataEntry):
 	reason=TextField()
 
 if __name__=="__main__":
-	for i in [CashReceipt,CashDisbursment,OAL,OME,COCPNote,OONote,LTINote,ODNote,AppProperty,CashFlow]:
+	for i in [CashReceipt,CashDisbursment,OAL,OME,COCPNote,OONote,LTINote,ODNote,AppProperty,CashFlow,BalanceInfo]:
 		a = i()
 		a.createTable()	
