@@ -15,6 +15,7 @@ class NoteChunk(Frame,object):
 		self.mainFrame = Frame(self)
 		self.mainFrame.pack(fill=BOTH,expand=1,side=TOP)
 		self.blocks=[]
+		self.noteBlocks=[]
 
 	def update(self):
 		for i in self.blocks:

@@ -134,7 +134,8 @@ class StatementWindow(Frame,object):
 		self.popOAL()
 
 		self.noteChunk.update()
-	
+		self.noteBlocks = self.noteChunk.noteBlocks
+
 	def getInflows(self,flowList):
 		partialTotals={}
 		totalInflows=0
