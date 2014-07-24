@@ -17,7 +17,7 @@ class DocBuilder(object):
 
 	def createTable(self, numberOfColumns, tableData):
 		"""Expects tableData to be a list of list of Cell objects"""
-		self.table = self.document.add_table(rows=0, cols=0)
+		self.table = self.document.add_table(rows=0, cols=0, style=None)
 
 		# Contains the column objects whose widths can be set later on
 		self.columns = []

@@ -219,15 +219,45 @@ class StatementWindow(Frame,object):
 		headerText = self.headerField.get(3.0, "3.end")
 		docBuilder.createHeading(headerText, "center")
 
-		# Write the first table
-		self._export_CreateTable(docBuilder)
+		# Write the cash flows table
+		self._export_CreateTable(self.lines, docBuilder)
 
+		# Add some line breaks
+		docBuilder.document.add_paragraph()
+
+		# Write the OAL
+		oalText = self.oalText.get(1.0, END)
+		oalText = oalText.split("\n")
+		docBuilder.document.add_paragraph().add_run(oalText[1]).bold = True
+		for x in xrange(2, len(oalText)):
+			docBuilder.document.add_paragraph(oalText[x])
+
+		# Write the Notes header
+		docBuilder.document.add_paragraph().add_run("NOTES TO FINANCIAL STATEMENT").bold = True
+
+		# Write the Notes data
+		for noteBlock in self.noteBlocks:
+			if noteBlock.blockType == "text":
+				# Write the heading
+				newParagraph = docBuilder.document.add_paragraph()
+				newParagraph.add_run(noteBlock.payload[0]).bold = True
+				# Write the non-heading text
+				textData = noteBlock.payload[1].split("\n")
+				for line in textData:
+					docBuilder.document.add_paragraph(line)
+			elif noteBlock.blockType == "table":
+				self._export_CreateTable(noteBlock.payload, docBuilder, 5)
+
+		# TODO: signatures / statement of accountability
+
+		# Save the document
 		fileName = 'StatementOfCashFlows_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.docx'
 		docBuilder.save(fileName)
 
-	def _export_CreateTable(self, docBuilder):
+
+	def _export_CreateTable(self, lineData, docBuilder, numberOfColumns=6):
 		"""Reads self.lines and creates a docx table from it"""
-		lines = list(self.lines)
+		lines = list(lineData)
 
 		# list of lists, where each entry is a list of CellData objects that represents a row
 		tableData = [] 
@@ -235,14 +265,14 @@ class StatementWindow(Frame,object):
 		# iterate through the rows to construct tableData
 		for line in lines:
 			lineText = line[0]
-			if line[1]==[]: line[1] = [0, 0, 0, 0, 0, 0]
-			if line[2]==[]: line[2] = [0, 0, 0, 0, 0, 0]
+			if line[1]==[]: line[1] = [0 for x in xrange(numberOfColumns)]
+			if line[2]==[]: line[2] = [0 for x in xrange(numberOfColumns)]
 			isUnderlined = line[1]
 			isBold = line[2]
 
 			rowData = []
 			# iterate through the cells in a row to construct rowData
-			for i in xrange(6):
+			for i in xrange(numberOfColumns):
 				text = lineText[i]
 				cellData = CellData(text)
 				if (isUnderlined[i] == 1):
@@ -255,16 +285,22 @@ class StatementWindow(Frame,object):
 
 			tableData.append(rowData)
 
-		docBuilder.createTable(6, tableData)
+		docBuilder.createTable(numberOfColumns, tableData)
 		
 		# manually set table column widths
-		docBuilder.columns[0].width = Inches(2.5)
-		docBuilder.columns[1].width = Inches(1)
-		docBuilder.columns[2].width = Inches(0.25)
-		docBuilder.columns[3].width = Inches(1)
-		docBuilder.columns[4].width = Inches(0.25)
-		docBuilder.columns[5].width = Inches(1)
-
+		if (numberOfColumns == 6):
+			docBuilder.columns[0].width = Inches(2.5)
+			docBuilder.columns[1].width = Inches(1)
+			docBuilder.columns[2].width = Inches(0.25)
+			docBuilder.columns[3].width = Inches(1)
+			docBuilder.columns[4].width = Inches(0.25)
+			docBuilder.columns[5].width = Inches(1)
+		elif (numberOfColumns == 5):
+			docBuilder.columns[0].width = Inches(3.5)
+			docBuilder.columns[1].width = Inches(0.25)
+			docBuilder.columns[2].width = Inches(1)
+			docBuilder.columns[3].width = Inches(0.25)
+			docBuilder.columns[4].width = Inches(1)
 
 if __name__=="__main__":
 	root = Tk()
