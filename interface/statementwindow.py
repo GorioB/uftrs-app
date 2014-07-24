@@ -198,6 +198,24 @@ class StatementWindow(Frame,object):
 		self.oalText['state']='disabled'
 
 	def exportCallback(self):
+		docBuilder = DocBuilder()
+
+		# Write the 1st line of the header
+		headerText = self.headerField.get(2.0, "2.end")
+		docBuilder.createHeading(headerText, "center")
+
+		# Write the 2nd line of the header
+		headerText = self.headerField.get(3.0, "3.end")
+		docBuilder.createHeading(headerText, "center")
+
+		# Write the first table
+		self._export_CreateTable(docBuilder)
+
+		fileName = 'StatementOfCashFlows_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.docx'
+		docBuilder.save(fileName)
+
+	def _export_CreateTable(self, docBuilder):
+		"""Reads self.lines and creates a docx table from it"""
 		lines = list(self.lines)
 
 		# list of lists, where each entry is a list of CellData objects that represents a row
@@ -226,7 +244,6 @@ class StatementWindow(Frame,object):
 
 			tableData.append(rowData)
 
-		docBuilder = DocBuilder()
 		docBuilder.createTable(6, tableData)
 		
 		# manually set table column widths
@@ -236,9 +253,6 @@ class StatementWindow(Frame,object):
 		docBuilder.columns[3].width = Inches(1)
 		docBuilder.columns[4].width = Inches(0.25)
 		docBuilder.columns[5].width = Inches(1)
-
-		fileName = 'StatementOfCashFlows_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.docx'
-		docBuilder.save(fileName)
 
 
 if __name__=="__main__":

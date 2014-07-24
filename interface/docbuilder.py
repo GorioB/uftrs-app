@@ -1,6 +1,7 @@
 from docx import Document
 from docx.shared import Inches
 from docx.enum.text import WD_UNDERLINE
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 import os
 import shutil
 
@@ -43,6 +44,19 @@ class DocBuilder(object):
 		width = Inches(6/len(self.columns))
 		for column in self.columns:
 			column.width = width
+
+	def createHeading(self, text, align = "center"):
+		"""Possible values for align: "center" "left" "right" """
+		self.heading = self.document.add_heading(text)
+
+		if align == "center":
+			alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+		elif align == "left":
+			alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+		elif align == "right":
+			alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+			
+		self.heading.alignment = alignment
 
 	def save(self, fileName):
 		"""Saves the document"""
