@@ -45,7 +45,7 @@ class MainProgram(Frame,object):
 		preferencesMenu.add_command(label="Change Initial Balance",command=self.newBalanceWindow)
 		menubar.add_cascade(label="User",menu=usersMenu)
 		menubar.add_cascade(label="Options",menu=preferencesMenu)
-		menubar.add_command(label="About",command=self.about)
+		menubar.add_command(label="About",command=self.about,state='disabled')
 
 		#notebook
 		self.notebook = Notebook(self)

@@ -303,7 +303,7 @@ class App(object):
 	def getStatementNotes(self):
 		cashFlowList = self.listCashflows(showDeleted=False)
 		cashFlowList = filterDOT(self,cashFlowList)
-		noteNums = sorted(list(set(reduce(list.__add__,[i.note.content.split(",") for i in cashFlowList if i.note.content!='']))),key=lambda el: int(el))
+		noteNums = sorted(list(set(reduce(list.__add__,[i.note.content.split(",") for i in cashFlowList if i.note.content!=''],[]))),key=lambda el: int(el))
 		relevantNotes = [i for i in self.listNotes() if i.noteNumber.content in noteNums]
 		return relevantNotes
 
@@ -324,7 +324,7 @@ class App(object):
 		if len(tFrame)==2:
 			return (int(tFrame[0].value.content),int(tFrame[1].value.content))
 		else:
-			return (0,-1)
+			return (0,0)
 		return 0
 
 	@timeFrame.setter

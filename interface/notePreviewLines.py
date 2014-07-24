@@ -11,7 +11,7 @@ def getNotePreviewLines(notes):
 	notes = sorted(notes,key=lambda l:int(l.noteNumber.content))
 	noteBlocks = [[note for note in notes if note.noteNumber.content==nn] for nn in sorted(set([i.noteNumber.content for i in notes]),key=lambda p:int(p))]
 	
-	noteBlocksSegregated = reduce(list.__add__,[segregateBlocks(block) for block in noteBlocks])
+	noteBlocksSegregated = reduce(list.__add__,[segregateBlocks(block) for block in noteBlocks],[])
 	return [generateBlockInfo(g) for g in noteBlocksSegregated]
 
 def generateBlockInfo(block):
