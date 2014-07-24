@@ -263,6 +263,12 @@ class StatementWindow(Frame,object):
 		# Write the signatures
 		preparedBy = self.app.preparedBy.split("\n")
 		notedBy = self.app.notedBy.split("\n")
+		if len(preparedBy) < 3:
+			while len(preparedBy) < 3:
+				preparedBy.append("")
+		if len(notedBy) < 3:
+			while len(notedBy) < 3:
+				notedBy.append("")
 		tableData = []
 		tableData.append( [CellData("Prepared by:"), CellData("Noted by:")] )
 		tableData.append( [CellData(""), CellData("")] )
