@@ -5,6 +5,7 @@ from ttk import *
 from interface import windows2, windows
 from interface import cashflowswindow
 from interface.statementwindow import StatementWindow
+from login import LogIn
 import os
 import datetime
 def resource_path(relative_path):
@@ -36,7 +37,7 @@ class MainProgram(Frame,object):
 
 		#menu
 		usersMenu=Menu(menubar)
-		usersMenu.add_command(label="Create User")
+		usersMenu.add_command(label="Log Out", command=self.logOut)
 		preferencesMenu=Menu(menubar)
 		preferencesMenu.add_command(label="Export This Page to Excel",command=self.exportSelectedNote)
 		preferencesMenu.add_command(label="Export All Pages to Excel", command=self.exportEverything)
@@ -84,6 +85,14 @@ class MainProgram(Frame,object):
 		selectedpage = self.notebook.select()
 		tabName = self.notebook.tab(selectedpage,option="text")
 		self.notes[tabName].populateTree()
+
+	def logOut(self):
+		# Destroy notebook
+		self.notebook.pack_forget()
+		self.notebook.destroy()
+
+		# Move to login
+		mainProgram = LogIn(self.parent)
 
 	def about(self):
 		pass
