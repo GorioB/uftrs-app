@@ -25,6 +25,10 @@ class StatementWindow(Frame,object):
 		self.initUI()
 
 	def initUI(self):
+		self.printFrame = Frame(self)
+		self.printFrame.pack(fill=X,expand=0,side=TOP)
+		self.printButton = Button(self.printFrame,text="Export to docx",command=self.exportCallback)
+		self.printButton.pack(fill=NONE,expand=0,side=LEFT)
 		self.mainFrame = VerticalScrolledFrame(self)
 		self.mainFrame.pack(fill=BOTH,expand=1,side=TOP)
 		self.headerField = Text(self.mainFrame.interior,bd=0,width=0,state='disabled',height=3)
@@ -174,6 +178,8 @@ class StatementWindow(Frame,object):
 				lines[i-1][1]=[0,0,0,0,0,1]
 		return lines
 
+	def exportCallback(self):
+		pass
 
 if __name__=="__main__":
 	root = Tk()
