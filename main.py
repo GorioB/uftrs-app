@@ -5,7 +5,6 @@ from ttk import *
 from interface import windows2, windows
 from interface import cashflowswindow
 from interface.statementwindow import StatementWindow
-from login import LogIn
 import os
 import datetime
 def resource_path(relative_path):
@@ -48,7 +47,7 @@ class MainProgram(Frame,object):
 		menubar.add_command(label="About",command=self.about)
 
 		#notebook
-		self.notebook = Notebook(self.parent)
+		self.notebook = Notebook(self)
 		self.notes={}
 		for i in ["Cash Receipts","Cash Disbursements","Cash Flows",
 			"Other Assets and Liabilities","Notes",
@@ -88,11 +87,8 @@ class MainProgram(Frame,object):
 
 	def logOut(self):
 		# Destroy notebook
-		self.notebook.pack_forget()
-		self.notebook.destroy()
-
-		# Move to login
-		mainProgram = LogIn(self.parent)
+		self.pack_forget()
+		self.event_generate("<<Logout>>")
 
 	def about(self):
 		pass
@@ -115,6 +111,7 @@ class MainProgram(Frame,object):
 if __name__=="__main__":
 	root = Tk()
 	app = MainProgram(root)
+	app.pack(fill=BOTH,expand=1)
 	if os.path.exists(os.path.join("assets","logo.gif")):
 		print "Image detected"
 		img = PhotoImage(file=resource_path(os.path.join("assets","logo.gif")))

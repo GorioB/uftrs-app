@@ -192,12 +192,19 @@ class LogIn(Frame,object):
 		else:
 			# Destroy log in screen
 			self.notebook.pack_forget()
-			self.notebook.destroy()
 
 			# Move on to main program
 			self.parent.geometry("800x500")
-			mainProgram = MainProgram(self.parent)
+			self.mainProgram = mainProgram = MainProgram(self.parent)
+			mainProgram.pack(fill=BOTH,expand=1)
+			self.mainProgram.bind("<<Logout>>",self.logoutCB)
 			mainProgram.app._activeUser = user
+
+	def logoutCB(self,*e):
+		self.mainProgram.destroy()
+		self.notebook.pack(fill=BOTH,expand=1)
+		self.parent.geometry("360x400")
+		self.parent.state("normal")
 
 	def submitCreateUser(self,*a):
 		admin = User(self.create_adminUser.get(), self.create_adminPass.get())
