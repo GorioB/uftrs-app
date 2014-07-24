@@ -2,14 +2,20 @@ from docx import Document
 from docx.shared import Inches
 from docx.enum.text import WD_UNDERLINE
 import os
+import shutil
 
 class DocBuilder(object):
 	"""docstring for DocBuilder"""
 	def __init__(self):
 		self.document = Document()
+		self.EXPORT_DIRECTORY = 'StatementExports'
 
-	def createTable(self, numberOfColumns, rowData):
-		"""Expects rowData to be a list of list of Cell objects"""
+		# Create export directory if it doesn't exist
+		if not os.path.exists(self.EXPORT_DIRECTORY):
+			os.makedirs(self.EXPORT_DIRECTORY)
+
+	def createTable(self, numberOfColumns, tableData):
+		"""Expects tableData to be a list of list of Cell objects"""
 		self.table = self.document.add_table(rows=0, cols=0)
 
 		# Contains the column objects whose widths can be set later on
@@ -20,7 +26,7 @@ class DocBuilder(object):
 			self.columns.append(self.table.add_column())
 
 		# Write the table data
-		for data in rowData:
+		for data in tableData:
 			rowCells = self.table.add_row().cells
 			for i in xrange(0, len(data)):
 				cellData = data[i]
@@ -40,7 +46,10 @@ class DocBuilder(object):
 
 	def save(self, fileName):
 		"""Saves the document"""
+		self.fileName = fileName
 		self.document.save(fileName)
+		shutil.move(self.fileName, self.EXPORT_DIRECTORY+'/'+self.fileName)
+
 
 class CellData(object):
 	"""Represents a cell in a docx table, where self.text is the cell text, 
