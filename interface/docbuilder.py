@@ -45,9 +45,10 @@ class DocBuilder(object):
 		for column in self.columns:
 			column.width = width
 
-	def createHeading(self, text, align = "center"):
-		"""Possible values for align: "center" "left" "right" """
-		self.heading = self.document.add_heading(text)
+	def createParagraph(self, text, align = "center", bold = False):
+		"""Possible values for align: "center" "left" "right", returns the Paragraph object """
+		self.paragraph = self.document.add_paragraph()
+		self.paragraph.add_run(text).bold = bold
 
 		if align == "center":
 			alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
@@ -56,7 +57,8 @@ class DocBuilder(object):
 		elif align == "right":
 			alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 			
-		self.heading.alignment = alignment
+		self.paragraph.alignment = alignment
+		return self.paragraph
 
 	def save(self, fileName):
 		"""Saves the document"""

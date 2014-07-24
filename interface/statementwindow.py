@@ -212,13 +212,17 @@ class StatementWindow(Frame,object):
 	def exportCallback(self):
 		docBuilder = DocBuilder()
 
-		# Write the 1st line of the header
-		headerText = self.headerField.get(2.0, "2.end")
-		docBuilder.createHeading(headerText, "center")
+		# Write the 1st line of the header (council name)
+		headerText = self.headerField.get(1.0, "1.end")
+		docBuilder.createParagraph(headerText, "center", bold=True)
 
-		# Write the 2nd line of the header
+		# Write the 2nd line of the header (statement of cash flows)
+		headerText = self.headerField.get(2.0, "2.end")
+		docBuilder.createParagraph(headerText, "center", bold=True)
+
+		# Write the 3rd line of the header (semester)
 		headerText = self.headerField.get(3.0, "3.end")
-		docBuilder.createHeading(headerText, "center")
+		docBuilder.createParagraph(headerText, "center", bold=True)
 
 		# Write the cash flows table
 		self._export_CreateTable(self.lines, docBuilder)
@@ -262,11 +266,15 @@ class StatementWindow(Frame,object):
 		tableData = []
 		tableData.append( [CellData("Prepared by:"), CellData("Noted by:")] )
 		tableData.append( [CellData(""), CellData("")] )
+		tableData.append( [CellData(""), CellData("")] )
 		tableData.append( [CellData(preparedBy[0]), CellData(notedBy[0])] )
 		tableData.append( [CellData(preparedBy[1]), CellData(notedBy[1])] )
 		tableData.append( [CellData(preparedBy[2]), CellData(notedBy[2])] )
 		docBuilder.createTable(2, tableData)
 
+		# # Add signature images
+		# run = docBuilder.table.cell(2, 0).add_paragraph().add_run()
+		# run.add_picture('random.png', width=Inches(1))
 
 
 
