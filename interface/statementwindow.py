@@ -5,9 +5,10 @@ from textable import TextTable
 from lib.floattostr import *
 from ScrolledFrame import VerticalScrolledFrame
 from lib.timeFuncs import *
-from cashflowswindow import filterDOT
+from lib.app import *
 from lib.getStartingBalance import *
 from lib.getOAL import *
+from enumerateNotes import *
 
 MONTHS=["","January","February","March","April","May","June","July","August","September","October","November","December"]
 def tab(n=1):
@@ -48,6 +49,9 @@ class StatementWindow(Frame,object):
 		self.oalText = Text(self.mainFrame.interior,bd=0,width=0,state='disabled',height=0)
 		self.oalText.tag_configure("bold",font=f)
 		self.oalText.pack(fill=X,expand=0,side=TOP)
+
+		self.noteChunk=NoteChunk(self.mainFrame.interior,self.app)
+		self.noteChunk.pack(fill=BOTH,expand=1,side=TOP)
 
 	def populateTree(self):
 		tStart = secsToDay(self.app.timeFrame[0]).split("-")
@@ -124,6 +128,8 @@ class StatementWindow(Frame,object):
 		self.commitLines(self.lines)
 
 		self.popOAL()
+
+		self.noteChunk.update()
 	
 	def getInflows(self,flowList):
 		partialTotals={}
@@ -188,12 +194,14 @@ class StatementWindow(Frame,object):
 	def popOAL(self):
 		oalInfo = getOAL(self.app)
 		self.oalText['state']='normal'
+		self.oalText.delete('1.0','end')
 		if oalInfo!="":
 			self.oalText.insert(self.oalText.index("end"),"\nOTHER ASSETS AND LIABILITIES\n")
 			self.oalText.tag_add("bold",'1.0','end -1 line lineend')
 			self.oalText.insert(self.oalText.index("end"),oalInfo)
-			self.oalText.configure(height=int(self.oalText.index('end-1c').split('.')[0]))
+			self.oalText.configure(height=int(self.oalText.index('end-1c').split('.')[0])+3)
 		self.oalText['state']='disabled'
+
 
 	def exportCallback(self):
 		pass

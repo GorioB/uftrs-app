@@ -769,7 +769,7 @@ class NotesWindow(Frame,object):
 		self.notes['Other Descriptive Notes'].pack()
 
 		self.notes['Preview'] = PreviewPage(self.notes['Preview'],self.app,deletedVar=self.deletedVar)
-		self.notes['Preview'].pack()
+		self.notes['Preview'].pack(fill=BOTH,expand=1,side=TOP)
 		self.nb.bind("<<NotebookTabChanged>>",self.refreshPage)
 	def populateTree(self,*a):
 		self.refreshPage()

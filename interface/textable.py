@@ -3,7 +3,7 @@ from ttk import *
 from tkFont import Font
 
 class TextTable(Frame,object):
-	def __init__(self,parent,aligns=None,weights=None,**kwargs):
+	def __init__(self,parent,frames=None,aligns=None,weights=None,**kwargs):
 		Frame.__init__(self,parent,**kwargs)
 		self.numberOfRows=0
 		self.aligns = aligns
@@ -11,7 +11,10 @@ class TextTable(Frame,object):
 			self.aligns = ["left","left","left","left","left","left"]
 		if not weights:
 			weights=[1,1,1,1]
-		self.frames=["one","two","three","four","five","six"]
+		if frames==None:
+			self.frames=["one","two","three","four","five","six"]
+		else:
+			self.frames=frames
 		# for i in range(0,len(self.frames)):
 		# 	self.frames[i]=Frame(self)
 		# 	self.frames[i].grid(side=LEFT,expand=1,fill=BOTH)

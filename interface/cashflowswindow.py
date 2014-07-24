@@ -10,6 +10,7 @@ from lib.floattostr import *
 from lib.timeFuncs import *
 import datetime
 from noteseditbox import NotesEditBox
+from lib.app import *
 
 class CashFlowsWindow(CashDisbursmentsWindow):
 	def generateNewButton(self):
@@ -307,8 +308,3 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 			return ""
 	def delete(self):
 		pass
-
-def filterDOT(app,flowList):
-	start,end = app.timeFrame
-	f = [i for i in flowList if int(i.getContents().dateOfTransaction.content)>=int(start)]
-	return [i for i in f if int(i.getContents().dateOfTransaction.content)<=int(end)]

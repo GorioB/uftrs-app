@@ -212,9 +212,9 @@ class App(object):
 					i.note.set(i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
 					i.save()
 			else:
-				numbersList = [i for i in self.listNotes(False) if i.noteNumber.content==oldNoteNumber]
+				numbersList = [i for i in self.listNotes(False) if i.noteNumber.content==oldNoteNumber and i.identifier==notetype]
 				if len(numbersList)==1:
-					cashFlowList = [i for i in listEntries(CashFlow) if oldNoteNumber in i.note.content]
+					cashFlowList = [i for i in listEntries(CashFlow) if oldNoteNumber in i.note.content and notetype in i.source.content]
 					for i in cashFlowList:
 						i.note.set(i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
 						#i.addField("TEXT",note=i.note.content.replace(oldNoteNumber,kwargs['noteNumber']))
@@ -299,6 +299,15 @@ class App(object):
 					i.note.set("")
 				#i.addField("TEXT",note=i.note.content.replace(a.noteNumber.content,'').replace(",,",','))
 				i.save()
+
+	def getStatementNotes(self):
+		cashFlowList = self.listCashflows(showDeleted=False)
+		cashFlowList = filterDOT(self,cashFlowList)
+		noteNums = sorted(list(set(reduce(list.__add__,[i.note.content.split(",") for i in cashFlowList if i.note.content!='']))),key=lambda el: int(el))
+		relevantNotes = [i for i in self.listNotes() if i.noteNumber.content in noteNums]
+		return relevantNotes
+
+	#properties
 	@property
 	def timeFrame(self):
 		tFrame = [i for i in listEntries(AppProperty) if i.label.content=="timeStart"]+[i for i in listEntries(AppProperty) if i.label.content=="timeEnd"]
@@ -401,3 +410,8 @@ class App(object):
 			pk=0
 
 		AppProperty(pk=pk,label="balance",value=value).save()
+
+def filterDOT(app,flowList):
+	start,end = app.timeFrame
+	f = [i for i in flowList if int(i.getContents().dateOfTransaction.content)>=int(start)]
+	return [i for i in f if int(i.getContents().dateOfTransaction.content)<=int(end)]
