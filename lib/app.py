@@ -307,6 +307,16 @@ class App(object):
 		relevantNotes = [i for i in self.listNotes() if i.noteNumber.content in noteNums]
 		return relevantNotes
 
+	def getBalanceInfo(self):
+		bi = getEntry(BalanceInfo,1)
+		if bi:
+			return bi
+		return None
+
+	def updateBalanceInfo(self,**kwargs):
+		bi = BalanceInfo(pk=1,**kwargs)
+		bi.save()
+		return 1
 	#properties
 	@property
 	def timeFrame(self):
@@ -391,6 +401,40 @@ class App(object):
 			pk=0
 
 		AppProperty(pk=pk,label="cashInBank",value=value).save()
+
+	@property
+	def preparedBy(self):
+		cib = self.getProperty("preparedBy")
+		if cib==1:
+			return ""
+		return cib.value.content
+
+	@preparedBy.setter
+	def preparedBy(self, value):
+		cib = self.getProperty("preparedBy")
+		if cib!=1:
+			pk = cib.pk.content
+		else:
+			pk=0
+
+		AppProperty(pk=pk,label="preparedBy",value=value).save()
+
+	@property
+	def notedBy(self):
+		cib = self.getProperty("notedBy")
+		if cib==1:
+			return ""
+		return cib.value.content
+
+	@cashInBank.setter
+	def notedBy(self, value):
+		cib = self.getProperty("notedBy")
+		if cib!=1:
+			pk = cib.pk.content
+		else:
+			pk=0
+
+		AppProperty(pk=pk,label="notedBy",value=value).save()
 	
 	@property
 	def balance(self):

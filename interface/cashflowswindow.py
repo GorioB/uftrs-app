@@ -81,7 +81,10 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		self.mFields['cashOnHand'].pack(side=TOP,fill=X,expand=1)
 		self.mFields['cashInBank'] = TextFieldBox(self.magicFields,label='Cash In Bank',height=1)
 		self.mFields['cashInBank'].pack(side=TOP,fill=X,expand=1)
-
+		self.mFields['preparedBy'] = TextFieldBox(self.magicFields,label="Prepared By",height=3,toolTip="Format:\nName\nPosition\nStudent Council")
+		self.mFields['preparedBy'].pack(side=TOP,fill=X,expand=1)
+		self.mFields['notedBy'] = TextFieldBox(self.magicFields,label="Noted By",height=3,toolTip="Format:\nName\nPosition\nStudent Council")
+		self.mFields['notedBy'].pack(side=TOP,fill=X,expand=1)
 		self.notesEditFrame = NotesEditBox(self.fieldsFrame.interior,[],"",self.addNote,self.removeNote)
 		self.notesEditFrame.pack(fill=X,expand=1)
 
@@ -276,6 +279,8 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		self.app.councilName = self.mFields['collegeName'].text
 		self.app.cashInBank = self.mFields['cashInBank'].text
 		self.app.cashOnHand = self.mFields['cashOnHand'].text
+		self.app.preparedBy = self.mFields['preparedBy'].text
+		self.app.notedBy = self.mFields['notedBy'].text
 		self.populateTree()
 
 	def revertMagic(self):
@@ -290,6 +295,8 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		self.mFields['collegeName'].text = self.app.councilName
 		self.mFields['cashInBank'].text=self.app.cashInBank
 		self.mFields['cashOnHand'].text=self.app.cashOnHand
+		self.mFields['preparedBy'].text=self.app.preparedBy
+		self.mFields['notedBy'].text=self.app.notedBy
 		
 	def save(self):
 		pass

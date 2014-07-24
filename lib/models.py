@@ -90,6 +90,14 @@ class CashFlow(DataEntry):
 			source=self.source.content.split(":")
 			return getEntry(source[1],MODELS_DICT[source[0]])
 
+class BalanceInfo(DataEntry):
+	originalBalanceTimestamp=IntegerField()
+	revisedBalanceTimestamp=IntegerField()
+	chairName=TextField()
+	witnessName=TextField()
+	witnessPosition=TextField()
+	reason=TextField()
+
 if __name__=="__main__":
 	for i in [CashReceipt,CashDisbursment,OAL,OME,COCPNote,OONote,LTINote,ODNote,AppProperty,CashFlow]:
 		a = i()
