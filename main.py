@@ -5,6 +5,7 @@ from ttk import *
 from interface import windows2, windows
 from interface import cashflowswindow
 from interface.statementwindow import StatementWindow
+from interface.newBalanceInfo import *
 import os
 import datetime
 def resource_path(relative_path):
@@ -41,7 +42,7 @@ class MainProgram(Frame,object):
 		preferencesMenu.add_command(label="Export This Page to Excel",command=self.exportSelectedNote)
 		preferencesMenu.add_command(label="Export All Pages to Excel", command=self.exportEverything)
 		preferencesMenu.add_checkbutton(label="Show History",variable=self.showDeleted,onvalue=1,offvalue=0)
-		preferencesMenu.add_command(label="Settings")
+		preferencesMenu.add_command(label="Change Initial Balance",command=self.newBalanceWindow)
 		menubar.add_cascade(label="User",menu=usersMenu)
 		menubar.add_cascade(label="Options",menu=preferencesMenu)
 		menubar.add_command(label="About",command=self.about)
@@ -90,6 +91,12 @@ class MainProgram(Frame,object):
 		self.pack_forget()
 		self.event_generate("<<Logout>>")
 
+	def newBalanceWindow(self):
+		tp = Toplevel()
+		tp.title("Update Starting Balance")
+		nbb = NewBalanceBox(tp,self.app)
+		nbb.pack(fill=BOTH,expand=1)
+
 	def about(self):
 		pass
 
@@ -107,6 +114,14 @@ class MainProgram(Frame,object):
 		excelBuilder.setFileName(fileName)
 
 		excelBuilder.build()
+
+def center(win):
+    win.update_idletasks()
+    width = win.winfo_width()
+    height = win.winfo_height()
+    x = (win.winfo_screenwidth() // 2) - (width // 2)
+    y = (win.winfo_screenheight() // 2) - (height // 2)
+    win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
 
 if __name__=="__main__":
 	root = Tk()

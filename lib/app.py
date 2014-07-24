@@ -308,7 +308,7 @@ class App(object):
 		return relevantNotes
 
 	def getBalanceInfo(self):
-		bi = getEntry(BalanceInfo,1)
+		bi = getEntry(1,BalanceInfo)
 		if bi:
 			return bi
 		return None
@@ -442,7 +442,7 @@ class App(object):
 		if balance==1:
 			return (0,0)
 		else:
-			return (int(balance.value.content.split(":")[0]),int(balance.value.content.split(":")[1]))
+			return (int(balance.value.content.split(":")[0]),float(balance.value.content.split(":")[1]))
 
 	@balance.setter
 	def balance(self, value):
