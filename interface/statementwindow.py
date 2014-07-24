@@ -7,6 +7,7 @@ from ScrolledFrame import VerticalScrolledFrame
 from lib.timeFuncs import *
 from cashflowswindow import filterDOT
 from lib.getStartingBalance import *
+from lib.getOAL import *
 
 MONTHS=["","January","February","March","April","May","June","July","August","September","October","November","December"]
 def tab(n=1):
@@ -33,7 +34,7 @@ class StatementWindow(Frame,object):
 		self.mainFrame.pack(fill=BOTH,expand=1,side=TOP)
 		self.headerField = Text(self.mainFrame.interior,bd=0,width=0,state='disabled',height=3)
 		self.headerField.tag_configure("center",justify="center")
-		f = Font(self.headerField,self.headerField.cget('font'))
+		self.boldFont = f = Font(self.headerField,self.headerField.cget('font'))
 		f.configure(weight='bold')
 		self.headerField.configure(font=f)
 		self.headerField.pack(fill=X,expand=0,side=TOP)
@@ -43,6 +44,10 @@ class StatementWindow(Frame,object):
 			weights=[4,4,1,1,1,1],
 			width=500)
 		self.cashFlowsText.pack(expand=1,fill=BOTH,side=TOP)
+
+		self.oalText = Text(self.mainFrame.interior,bd=0,width=0,state='disabled',height=0)
+		self.oalText.tag_configure("bold",font=f)
+		self.oalText.pack(fill=X,expand=0,side=TOP)
 
 	def populateTree(self):
 		tStart = secsToDay(self.app.timeFrame[0]).split("-")
@@ -117,6 +122,8 @@ class StatementWindow(Frame,object):
 		self.lines.append([['Cash Balance, '+month+' '+day+', '+year,'','','','',totalBalance],[0,0,0,0,0,1],[1,0,0,0,0,0]])
 
 		self.commitLines(self.lines)
+
+		self.popOAL()
 	
 	def getInflows(self,flowList):
 		partialTotals={}
@@ -177,6 +184,16 @@ class StatementWindow(Frame,object):
 			if lines[i][0][0]==tab(3)+"Total Inflows" or lines[i][0][0]==tab(3)+"Total Outflows":
 				lines[i-1][1]=[0,0,0,0,0,1]
 		return lines
+
+	def popOAL(self):
+		oalInfo = getOAL(self.app)
+		self.oalText['state']='normal'
+		if oalInfo!="":
+			self.oalText.insert(self.oalText.index("end"),"\nOTHER ASSETS AND LIABILITIES\n")
+			self.oalText.tag_add("bold",'1.0','end -1 line lineend')
+			self.oalText.insert(self.oalText.index("end"),oalInfo)
+			self.oalText.configure(height=int(self.oalText.index('end-1c').split('.')[0]))
+		self.oalText['state']='disabled'
 
 	def exportCallback(self):
 		pass
