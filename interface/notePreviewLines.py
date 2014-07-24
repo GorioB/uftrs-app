@@ -67,8 +67,8 @@ def generateBlockInfo(block):
 
 
 	else:
+		lines=''
 		if block[0].identifier=="LTINote":
-			lines=''
 			for i in block:
 				lines+=i.notes.content+'\n'
 
@@ -80,7 +80,7 @@ def generateBlockInfo(block):
 			return NoteBlock("text",[block[0].noteNumber.content+'. '+"Other Outflow",lines])
 		if block[0].identifier=="ODNote":
 			for i in block:
-				lines+=i.notes.description+'\n'
+				lines+=i.description.content+'\n'
 			return NoteBlock("text",[block[0].noteNumber.content+". "+"Other Descritive Note",lines])
 
 def segregateBlocks(block):
