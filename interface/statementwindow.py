@@ -135,6 +135,7 @@ class StatementWindow(Frame,object):
 
 		self.noteChunk.update()
 		self.noteBlocks = self.noteChunk.noteBlocks
+		print self.noteBlocks
 
 	def getInflows(self,flowList):
 		partialTotals={}
