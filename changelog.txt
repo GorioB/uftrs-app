@@ -1,3 +1,7 @@
+July 24, 2014
+
+	- added log out button (in menu User -> Log Out)
+
 June 28, 2014
 
 	- Fixed cashflows breaking when several entries have the same nature
