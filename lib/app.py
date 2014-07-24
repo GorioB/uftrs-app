@@ -53,7 +53,7 @@ class App(object):
 	#DB API FUNCTIONS
 	#initTables
 	def _initTables(self):
-		for i in [CashReceipt,CashDisbursment,OAL,OME,COCPNote,OONote,LTINote,ODNote,AppProperty,CashFlow]:
+		for i in [BalanceInfo,CashReceipt,CashDisbursment,OAL,OME,COCPNote,OONote,LTINote,ODNote,AppProperty,CashFlow]:
 			a = i()
 			a.createTable()	
 	#NEW
@@ -426,7 +426,7 @@ class App(object):
 			return ""
 		return cib.value.content
 
-	@cashInBank.setter
+	@notedBy.setter
 	def notedBy(self, value):
 		cib = self.getProperty("notedBy")
 		if cib!=1:
