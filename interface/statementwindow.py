@@ -248,7 +248,14 @@ class StatementWindow(Frame,object):
 			elif noteBlock.blockType == "table":
 				self._export_CreateTable(noteBlock.payload, docBuilder, 5)
 
-		# TODO: signatures / statement of accountability
+		# Line break
+		docBuilder.document.add_paragraph()
+
+		# Write the statement of accountability
+		docBuilder.document.add_paragraph().add_run("STATEMENT OF FINANCE COUNCILOR'S ACCOUNTABILITY").bold = True
+		docBuilder.document.add_paragraph(""""I am hereunto affirming that to the best of my intentions, the Statement of Cash Flows and all its pertinent information fairly represent all the financial transactions that have transpired within the council, its constituents, and all relevant stakeholders for the semester ending (date), and in conformity with the standard accounting procedures as set forth and duly upheld by the University Student Council of UP Diliman." """)
+
+		# TODO: signature
 
 		# Save the document
 		fileName = 'StatementOfCashFlows_' + datetime.datetime.now().strftime("%I%M%p_%B%d_%Y") + '.docx'
