@@ -45,7 +45,7 @@ class CalendarBox(Frame,object):
 		self._calButton=calButton = Button(fLower,text="...",command=self.createCalendar,width=2)
 		calButton.pack(side=RIGHT,fill=X,expand=0)
 
-		years = range(1990,2030)
+		years = range(1979,2100)
 		self._yearField = SuperComboBox(fLower,values=years,justify=CENTER,state='readonly')
 		self._yearField.pack(side=LEFT,fill=X,expand=1)
 
