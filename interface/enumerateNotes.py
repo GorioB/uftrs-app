@@ -21,7 +21,7 @@ class NoteChunk(Frame,object):
 			i.pack_forget()
 			i.destroy()
 		self.blocks=[]
-		noteBlocks = getNotePreviewLines(self.app.getStatementNotes())
+		self.noteBlocks = noteBlocks = getNotePreviewLines(self.app.getStatementNotes())
 		if noteBlocks:
 			headBlock = Text(self.mainFrame,bd=0,width=0,height=2)
 			f = Font(headBlock,headBlock.cget("font"))

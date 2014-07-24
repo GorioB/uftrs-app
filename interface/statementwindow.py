@@ -55,6 +55,7 @@ class StatementWindow(Frame,object):
 
 		self.noteChunk=NoteChunk(self.mainFrame.interior,self.app)
 		self.noteChunk.pack(fill=BOTH,expand=1,side=TOP)
+		self.noteBlocks = self.noteChunk.blocks
 
 	def populateTree(self):
 		tStart = secsToDay(self.app.timeFrame[0]).split("-")
