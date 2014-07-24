@@ -65,7 +65,7 @@ class NoteChunk(Frame,object):
 			elif lines[i][0][0]=="Net Cash Flow":
 				lines[i-1][1]=[0,0,0,0,1]
 			elif lines[i][0][0]=="Outflows":
-				lines[i-1][1]=[0,0,1,0,0]
+				lines[i-1][1]=[0,0,0,0,1]
 			if not hasp and lines[i][0][0].startswith(tab(1)) and not lines[i][0][0].startswith(tab(2)):
 				hasp=1
 				lines[i][0][1]="P"

@@ -24,8 +24,6 @@ def checkFields(fields):
 		keys.remove('remarks')
 	if 'timestamp' in keys:
 		keys.remove('timestamp')
-	if 'noteNumber' in keys:
-		keys.remove('noteNumber')
 	for i in keys:
 		if fields[i].text=="":
 			createHelpBox("Please fill all fields (Notes and Remarks optional).")
