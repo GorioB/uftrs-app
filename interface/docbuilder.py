@@ -4,11 +4,21 @@ from docx.enum.text import WD_UNDERLINE
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 import os
 import shutil
+import sys
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
 
+    return os.path.join(base_path, relative_path)
 class DocBuilder(object):
 	"""docstring for DocBuilder"""
 	def __init__(self):
 		self.document = Document(resource_path(os.path.join("assets","default.docx")))
+		print resource_path(os.path.join("assets","default.docx"))
 		self.EXPORT_DIRECTORY = 'StatementExports'
 
 		# Create export directory if it doesn't exist
@@ -77,15 +87,7 @@ class CellData(object):
 		self.text = text
 
 
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
 
-    return os.path.join(base_path, relative_path)
 # for testing with pyinstaller
 def createDummyDocument():
 	document = Document(resource_path(os.path.join("assets","default.docx")))
