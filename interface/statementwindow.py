@@ -297,8 +297,10 @@ class StatementWindow(Frame,object):
 		# iterate through the rows to construct tableData
 		for line in lines:
 			lineText = line[0]
-			if line[1]==[]: line[1] = [0 for x in xrange(numberOfColumns)]
-			if line[2]==[]: line[2] = [0 for x in xrange(numberOfColumns)]
+			if not line[1]:
+				line[1] = [0] * numberOfColumns
+			if not line[2]:
+				line[2] = [0] * numberOfColumns
 			isUnderlined = line[1]
 			isBold = line[2]
 
