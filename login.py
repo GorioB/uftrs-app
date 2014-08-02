@@ -290,8 +290,12 @@ class LogIn(Frame,object):
 			self.create_notifier.config(text="Passwords don't match", foreground='red')
 			return
 
+		# Create the new user
 		newUser.saveUser(newUserSecretQ, newUserSecretA)
 		self.create_notifier.config(text="New user created.", foreground='darkgreen')
+
+		# Refresh the Reset Password tab's user drop down menu choices
+		self.reset_userSelector.comboBox.config(values=User.listUsernames())
 
 	def submitChangePass(self,*a):
 		user = User(self.change_user.get(), self.change_oldPass.get())
