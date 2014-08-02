@@ -30,6 +30,11 @@ class LogIn(Frame,object):
 		menubar = Menu(self.parent)
 		self.parent.config(menu=menubar)
 
+		self.logInEntries = []
+		self.createEntries = []
+		self.changePasswordEntries = []
+		self.resetPasswordEntries = []
+
 		if User.listUsers()==[]:
 			print "NO USERS YET"
 			self.initUI_FirstRun()
@@ -135,6 +140,9 @@ class LogIn(Frame,object):
 		self.logIn_notifier = Label(logInFrame)
 		self.logIn_notifier.pack()
 
+		self.logInEntries.append(self.logIn_username)
+		self.logInEntries.append(self.logIn_password)
+
 		#press enter to submit
 		self.logIn_username.focus()
 		self.logIn_password.bind("<Return>",self.submitLogIn)
@@ -170,6 +178,14 @@ class LogIn(Frame,object):
 		self.create_secretA = Entry(createFrame)
 		self.create_secretA.pack()
 
+		self.createEntries.append(self.create_adminUser)
+		self.createEntries.append(self.create_adminPass)
+		self.createEntries.append(self.create_newUser)
+		self.createEntries.append(self.create_newPass)
+		self.createEntries.append(self.create_newPass2)
+		self.createEntries.append(self.create_secretQ)
+		self.createEntries.append(self.create_secretA)
+
 		## Submit button and text notifier
 		self.create_submit = Button(createFrame, text="Register New User", command=self.submitCreateUser)
 		self.create_submit.pack()
@@ -203,6 +219,10 @@ class LogIn(Frame,object):
 		## bind submitChangePass to last entry
 		self.change_newPass2.bind("<Return>",self.submitChangePass)
 
+		self.changePasswordEntries.append(self.change_user)
+		self.changePasswordEntries.append(self.change_oldPass)
+		self.changePasswordEntries.append(self.change_newPass)
+		self.changePasswordEntries.append(self.change_newPass2)
 
 
 		# Reset password widgets
@@ -238,6 +258,10 @@ class LogIn(Frame,object):
 		self.reset_notifier = Label(resetFrame)
 		self.reset_notifier.pack()
 
+		self.resetPasswordEntries.append(self.reset_answer)
+		self.resetPasswordEntries.append(self.reset_newPass)
+		self.resetPasswordEntries.append(self.reset_newPass2)
+
 	# Callbacks
 	def submitLogIn(self,*a):
 		user = User(self.logIn_username.get(), self.logIn_password.get())
@@ -253,6 +277,7 @@ class LogIn(Frame,object):
 			mainProgram.pack(fill=BOTH,expand=1)
 			self.mainProgram.bind("<<Logout>>",self.logoutCB)
 			mainProgram.app._activeUser = user
+			self.clearAllEntries()
 
 	def logoutCB(self,*e):
 		self.mainProgram.destroy()
@@ -293,7 +318,7 @@ class LogIn(Frame,object):
 		# Create the new user
 		newUser.saveUser(newUserSecretQ, newUserSecretA)
 		self.create_notifier.config(text="New user created.", foreground='darkgreen')
-
+		self.clearCreateAccountEntries()
 		# Refresh the Reset Password tab's user drop down menu choices
 		self.reset_userSelector.comboBox.config(values=User.listUsernames())
 
@@ -321,6 +346,7 @@ class LogIn(Frame,object):
 
 		user.changePassword(newPass)
 		self.change_notifier.config(text="Password successfully changed.", foreground='darkgreen')
+		self.clearChangePasswordEntries()
 
 	def submitResetPass(self, *args):
 		username = self.reset_userSelector.text
@@ -347,10 +373,34 @@ class LogIn(Frame,object):
 		user = User(username, "")
 		user.changePassword(newPass)
 		self.reset_notifier.config(text="Password successfully changed.", foreground='darkgreen')
+		self.clearResetPasswordEntries()
 
 	def handleResetUserSelect(self, *args):
 		username = self.reset_userSelector.text
 		self.reset_secretQ.config(text="Question: " + User.getSecretQuestion(username))
+		self.clearResetPasswordEntries()
+
+	def clearLogInEntries(self):
+		for entryWidget in self.logInEntries:
+			entryWidget.delete(0, END)
+
+	def clearCreateAccountEntries(self):
+		for entryWidget in self.createEntries:
+			entryWidget.delete(0, END)
+
+	def clearChangePasswordEntries(self):
+		for entryWidget in self.changePasswordEntries:
+			entryWidget.delete(0, END)
+
+	def clearResetPasswordEntries(self):
+		for entryWidget in self.resetPasswordEntries:
+			entryWidget.delete(0, END)
+
+	def clearAllEntries(self):
+		self.clearLogInEntries()
+		self.clearCreateAccountEntries()
+		self.clearChangePasswordEntries()
+		self.clearResetPasswordEntries()
 
 
 if __name__=="__main__":
