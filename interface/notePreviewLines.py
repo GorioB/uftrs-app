@@ -70,12 +70,12 @@ def generateBlockInfo(block):
 		lines=''
 		if block[0].identifier=="LTINote":
 			for i in block:
-				lines+=i.notes.content+'\n'
+				lines+=i.purpose.content+'\n'
 
 			return NoteBlock("text",[block[0].noteNumber.content+". "+"Long Term Investment",lines])
 		if block[0].identifier=="OONote":
 			for i in block:
-				lines+=i.notes.content+'\n'
+				lines+=i.purpose.content+'\n'
 
 			return NoteBlock("text",[block[0].noteNumber.content+'. '+"Other Outflow",lines])
 		if block[0].identifier=="ODNote":
