@@ -81,13 +81,23 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		self.mFields['cashOnHand'].pack(side=TOP,fill=X,expand=1)
 		self.mFields['cashInBank'] = TextFieldBox(self.magicFields,label='Cash In Bank',height=1)
 		self.mFields['cashInBank'].pack(side=TOP,fill=X,expand=1)
-		self.mFields['preparedBy'] = TextFieldBox(self.magicFields,label="Prepared By",height=3,toolTip="Format:\nName\nPosition\nStudent Council")
-		self.mFields['preparedBy'].pack(side=TOP,fill=X,expand=1)
-		self.mFields['notedBy'] = TextFieldBox(self.magicFields,label="Noted By",height=3,toolTip="Format:\nName\nPosition\nStudent Council")
-		self.mFields['notedBy'].pack(side=TOP,fill=X,expand=1)
+		preparedByBox = LabelFrame(self.magicFields,text="Prepared By")
+		self.mFields['preparedByName'] = TextFieldBox(preparedByBox,label="Name",height=1)
+		self.mFields['preparedByName'].pack(side=TOP,fill=X,expand=1)
+		self.mFields['preparedByPosition'] = TextFieldBox(preparedByBox,label="Position",height=1)
+		self.mFields['preparedByPosition'].pack(side=TOP,fill=X,expand=1)
+		preparedByBox.pack(side=TOP,fill=X,expand=1)
+		notedByBox = LabelFrame(self.magicFields,text="Noted By")
+		self.mFields['notedByName'] = TextFieldBox(notedByBox,label="Name",height=1)
+		self.mFields['notedByName'].pack(side=TOP,fill=X,expand=1)
+		self.mFields['notedByPosition'] = TextFieldBox(notedByBox,label="Position",height=1)
+		self.mFields['notedByPosition'].pack(side=TOP,fill=X,expand=1)
+		notedByBox.pack(side=TOP,fill=X,expand=1)
 		self.notesEditFrame = NotesEditBox(self.fieldsFrame.interior,[],"",self.addNote,self.removeNote)
 		self.notesEditFrame.pack(fill=X,expand=1)
 
+		for field in self.mFields:
+			self.mFields[field].bind("<Return>",self.saveMagic)
 
 	def newButtonCallback(self):
 		pass
@@ -279,8 +289,8 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		self.app.councilName = self.mFields['collegeName'].text
 		self.app.cashInBank = self.mFields['cashInBank'].text
 		self.app.cashOnHand = self.mFields['cashOnHand'].text
-		self.app.preparedBy = self.mFields['preparedBy'].text
-		self.app.notedBy = self.mFields['notedBy'].text
+		self.app.preparedBy = self.mFields['preparedByName'].text+"\n"+self.mFields['preparedByPosition'].text+"\n"+self.mFields['collegeName'].text
+		self.app.notedBy = self.mFields['notedByName'].text+"\n"+self.mFields['notedByPosition'].text+"\n"+self.mFields['collegeName'].text
 		self.populateTree()
 
 	def revertMagic(self):
@@ -295,8 +305,12 @@ class CashFlowsWindow(CashDisbursmentsWindow):
 		self.mFields['collegeName'].text = self.app.councilName
 		self.mFields['cashInBank'].text=self.app.cashInBank
 		self.mFields['cashOnHand'].text=self.app.cashOnHand
-		self.mFields['preparedBy'].text=self.app.preparedBy
-		self.mFields['notedBy'].text=self.app.notedBy
+		while len(self.app.preparedBy.split("\n"))<2:
+			self.app.preparedBy = self.app.preparedBy+"\n"
+		while len(self.app.notedBy.split("\n"))<2:
+			self.app.notedBy=self.app.notedBy+"\n"
+		self.mFields['preparedByName'].text,self.mFields['preparedByPosition'].text=self.app.preparedBy.split("\n")[:2]
+		self.mFields['notedByName'].text,self.mFields['notedByPosition'].text=self.app.notedBy.split("\n")[:2]
 		
 	def save(self):
 		pass

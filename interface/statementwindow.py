@@ -101,8 +101,8 @@ class StatementWindow(Frame,object):
 		totalOutflows=0
 		self.firstOutflow=0
 		self.firstOutflowTotal=0
-		outflowNames ={"COCPNote":"Council and Other College Projects","LTINote":"Long Term Investment","OAL":"Other Assets and Liabilities","OONote":"Other Outflows"}
-		for outflowType in ("COCPNote","LTINote","OAL","OONote"):
+		outflowNames ={"COCPNote":"Council and Other College Projects","LTINote":"Long Term Investment","OME":"Operation and Maintenance Expenses","OONote":"Other Outflows"}
+		for outflowType in ("COCPNote","LTINote","OME","OONote"):
 			partialList = filterDOT(self.app,[i for i in outflowList if i.source.content.split(":")[0]==outflowType])
 			lines,partialTotal = self.getInflows(partialList)
 			if lines!=[]:
