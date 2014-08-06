@@ -6,6 +6,8 @@ def floatToStrParenNeg(n):
 		return "("+floatToStr(n).strip("-")+")"
 	else:
 		return floatToStr(n)
+def blankLine():
+	return [['','','','',''],[0,0,0,0,0],[0,0,0,0,0]]
 
 def getNotePreviewLines(notes):
 	notes = sorted(notes,key=lambda l:int(l.noteNumber.content))
@@ -63,6 +65,7 @@ def generateBlockInfo(block):
 		lines.append([["Net Cash Flow",'','','P',floatToStrParenNeg(totalInflows-totalOutflows)],
 			[0,0,0,0,2],
 			[0,0,0,0,0]])
+		lines.append(blankLine())
 		return NoteBlock("table",lines)
 
 
@@ -81,7 +84,7 @@ def generateBlockInfo(block):
 		if block[0].identifier=="ODNote":
 			for i in block:
 				lines+=i.description.content+'\n'
-			return NoteBlock("text",[block[0].noteNumber.content+". "+"Other Descritive Note",lines])
+			return NoteBlock("text",[block[0].noteNumber.content+". "+"Other Descriptive Note",lines])
 
 def segregateBlocks(block):
 	return [[note for note in block if note.identifier==ident] for ident in set([i.identifier for i in block])]
