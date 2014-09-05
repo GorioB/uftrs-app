@@ -324,7 +324,7 @@ class App(object):
 		if len(tFrame)==2:
 			return (int(tFrame[0].value.content),int(tFrame[1].value.content))
 		else:
-			return (315532800,315532800)
+			return (315532800,timeFuncs.getEpochTime())
 		return 0
 
 	@timeFrame.setter
