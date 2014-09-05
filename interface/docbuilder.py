@@ -78,7 +78,7 @@ class DocBuilder(object):
 		shutil.move(self.fileName, self.EXPORT_DIRECTORY+'/'+self.fileName)
 
 		notificationText = "Data has been exported successfully to the Word file " + self.fileName + " in the " + self.EXPORT_DIRECTORY + " folder."
-		createNotification("Export to Excel", notificationText)
+		createNotification("Export to Word", notificationText)
 
 
 class CellData(object):
