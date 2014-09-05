@@ -5,6 +5,7 @@ from interface.textfield import *
 from interface.datefield import *
 from interface.autocomplete import *
 from interface.helpbox import *
+from interface.popupNotification import createNotification
 from lib.timeFuncs import *
 import sys
 try:
@@ -682,6 +683,8 @@ class ExcelBuilder(object):
 		# Save the excel file
 		self.book.save(self.fileName)
 		shutil.move(self.fileName, self.EXPORT_DIRECTORY+'/'+self.fileName)
+		notificationText = "Data has been exported successfully to the Excel file " + self.fileName + " in the " + self.EXPORT_DIRECTORY + " folder."
+		createNotification("Export to Excel", notificationText)
 
 	def buildSheet(self):
 		"""Adds the sheet to the workbook"""

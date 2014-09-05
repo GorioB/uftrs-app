@@ -2,6 +2,7 @@ from docx import Document
 from docx.shared import Inches
 from docx.enum.text import WD_UNDERLINE
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from interface.popupNotification import createNotification
 import os
 import shutil
 import sys
@@ -75,6 +76,9 @@ class DocBuilder(object):
 		self.fileName = fileName
 		self.document.save(fileName)
 		shutil.move(self.fileName, self.EXPORT_DIRECTORY+'/'+self.fileName)
+
+		notificationText = "Data has been exported successfully to the Word file " + self.fileName + " in the " + self.EXPORT_DIRECTORY + " folder."
+		createNotification("Export to Excel", notificationText)
 
 
 class CellData(object):
