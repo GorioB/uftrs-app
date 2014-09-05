@@ -107,6 +107,7 @@ class CashReceiptsWindow(Frame,object):
 		xscroll.pack(side=TOP,fill=X)
 		tree.pack(side=LEFT,fill=BOTH,expand=1)
 		tree.tag_configure("deleted",foreground="red")
+		tree.tag_configure("edited",foreground="orange")
 
 		#bottombar
 		leftLowestFrame = Frame(leftFrameLower)
@@ -183,7 +184,7 @@ class CashReceiptsWindow(Frame,object):
 				amt = float(i.amount.content)
 			except:
 				amt =0
-			if i.status.content!="DELETED":
+			if i.status.content!="DELETED" and i.status.content!="EDITED":
 				total+=amt
 			for j in self.fieldList:
 				dataFields.append(vars(i)[j].content)
@@ -194,6 +195,8 @@ class CashReceiptsWindow(Frame,object):
 
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
+			elif i.status.content=="EDITED":
+				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("edited",))
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
 		self.totalLabel.config(text="Total Cash Receipts: "+floatToStr(total))
@@ -337,6 +340,7 @@ class CashDisbursmentsWindow(Frame,object):
 		xscroll.pack(side=TOP,fill=X,expand=0)
 		tree.pack(side=LEFT,fill=BOTH,expand=1)
 		tree.tag_configure("deleted",foreground="red")
+		tree.tag_configure("edited",foreground="orange")
 
 	def initTotalTag(self):
 		#portable,optional
@@ -444,6 +448,8 @@ class CashDisbursmentsWindow(Frame,object):
 
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
+			elif i.status.content=="EDITED":
+				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("edited",))
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
 		self.totalLabel.config(text="Total Cash Disbursments: "+floatToStr(total))
@@ -539,6 +545,7 @@ class OperationMaintenanceExpensesWindow(CashDisbursmentsWindow):
 		xscroll.pack(side=TOP,fill=X,expand=0)
 		tree.pack(side=LEFT,fill=BOTH,expand=1)
 		tree.tag_configure("deleted",foreground="red")
+		tree.tag_configure("edited",foreground="orange")
 
 	def initFields(self):
 		self.fields={}

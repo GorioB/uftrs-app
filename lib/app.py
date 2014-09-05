@@ -1,22 +1,3 @@
-# App Class
-# 	User _activeUser
-# 	createUser(username,password,isRoot)
-# 	changePass(username,oldpassword,newpassword)
-# 	login(username,password)
-# 	exportExcel(entryList)
-# 	printStatement()
-
-# 	Either generates a pdf file or directly accesses the printer. See references and design documents for format.
-# 	newCashReceipt(**kwargs)
-# 	editCashReceipt()
-# 	listCashReceipts() 
-
-# 		and so on
-# 	listOptions(identifier)
-# 	searchOption(identifier, option)
-# 	addOption(identifier, option)
-# 	removeOption(identifier, option)
-
 import db2
 from models import *
 from db import *
@@ -150,12 +131,10 @@ class App(object):
 		m = getEntry(pk,model)
 		if not m:
 			return -1,-1
-		m.delete()
+		m.delete(edit=1)
 		oldpk=m.pk.content
 		m.pk.set(0)
 		m.remarks.set("Edited from:"+str(oldpk))
-		#m.addField("TEXT",remarks=(str(m.remarks.content)+";Edited from: "+str(oldpk)).strip(';')+";",status="")
-		#m.addField("INTEGER",timestamp=timeFuncs.getEpochTime())
 		m.status.set("")
 		m.timestamp.set(timeFuncs.getEpochTime())
 		for key,value in kwargs.items():
@@ -234,7 +213,7 @@ class App(object):
 	#LIST
 	def _listGeneral(self,model,showDeleted=False):
 		if not showDeleted:
-			return [i for i in listEntries(model) if i.status.content!="DELETED"]
+			return [i for i in listEntries(model) if i.status.content!="DELETED" and i.status.content!="EDITED"]
 		else:
 			return listEntries(model)
 

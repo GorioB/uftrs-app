@@ -60,6 +60,7 @@ class OALWindow(CashDisbursmentsWindow):
 		xscroll.pack(side=TOP,fill=X,expand=0)
 		tree.pack(side=LEFT,fill=BOTH,expand=1)
 		tree.tag_configure("deleted",foreground="red")
+		tree.tag_configure("edited",foreground="orange")
 
 	def initTotalTag(self):
 		pass
@@ -200,6 +201,8 @@ class OALWindow(CashDisbursmentsWindow):
 
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
+			elif i.status.content=="EDITED":
+				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("edited",))
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
 
@@ -273,6 +276,7 @@ class COCPWindow(CashDisbursmentsWindow):
 		xscroll.pack(side=TOP,fill=X,expand=0)
 		tree.pack(side=LEFT,fill=BOTH,expand=1)
 		tree.tag_configure("deleted",foreground="red")
+		tree.tag_configure("edited",foreground="orange")
 
 	def initTotalTag(self):
 		pass
@@ -344,6 +348,8 @@ class COCPWindow(CashDisbursmentsWindow):
 
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
+			elif i.status.content=="EDITED":
+				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("edited",))
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
 		self.fields['nature'].comboBox.config(values=["Council Budget",]+self.app.listOptions("Nature"))
@@ -420,6 +426,7 @@ class LTIWindow(CashDisbursmentsWindow):
 		xscroll.pack(side=TOP,fill=X,expand=0)
 		tree.pack(side=LEFT,fill=BOTH,expand=1)
 		tree.tag_configure("deleted",foreground="red")
+		tree.tag_configure("edited",foreground="orange")
 
 	def initFields(self):
 		self.fields={}
@@ -472,7 +479,7 @@ class LTIWindow(CashDisbursmentsWindow):
 				amt=float(i.amount.content)
 			except:
 				amt=0
-			if i.status.content!="DELETED":
+			if i.status.content!="DELETED" and i.status.content!="EDITED":
 				total+=amt
 			for j in self.fieldList:
 				dataFields.append(vars(i)[j].content)
@@ -484,6 +491,8 @@ class LTIWindow(CashDisbursmentsWindow):
 
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
+			elif i.status.content=="EDITED":
+				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("edited",))
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
 		self.totalLabel.config(text="Total Long Term Investments: "+floatToStr(total))
@@ -655,6 +664,7 @@ class ODNWindow(CashDisbursmentsWindow):
 		xscroll.pack(side=TOP,fill=X,expand=0)
 		tree.pack(side=LEFT,fill=BOTH,expand=1)
 		tree.tag_configure("deleted",foreground="red")
+		tree.tag_configure("edited",foreground="orange")
 
 	def initTotalTag(self):
 		pass
@@ -705,6 +715,8 @@ class ODNWindow(CashDisbursmentsWindow):
 
 			if i.status.content=="DELETED":
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("deleted",))
+			elif i.status.content=="EDITED":
+				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("edited",))
 			else:
 				self.tree.insert("","end",text=str(pk),values=dataFields,tags=("none",))
 

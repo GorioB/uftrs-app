@@ -120,8 +120,11 @@ class DataEntry:
 		conn.close()
 		return 0
 
-	def delete(self):
-		self.status.set("DELETED")
+	def delete(self,edit=0):
+		if edit:
+			self.status.set("EDITED")
+		else:
+			self.status.set("DELETED")
 		self.save()
 
 def _populateModel(model,fields,values):
