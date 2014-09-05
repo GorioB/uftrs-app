@@ -680,7 +680,8 @@ class ExcelBuilder(object):
 		"""Adds the sheet to the workbook"""
 		self.sheet = sheet = self.book.add_sheet(self.sheetName)
 		headerStyle = easyxf('font: bold 1;')
-		deletedStyle = easyxf('font: color red;')
+		editedStyle = easyxf('font: color orange;')
+		deletedStyle = easyxf('font: color orange;')
 		# starting location of the table
 		startingRow = self.row
 		startingCol = self.column
@@ -708,6 +709,8 @@ class ExcelBuilder(object):
 					sheet.write(rowNumber, colNumber, columnValue)
 				elif "deleted" in i[1]:
 					sheet.write(rowNumber, colNumber, columnValue, deletedStyle)
+				elif "edited" in i[1]:
+					sheet.write(rowNumber, colNumber, columnValue, editedStyle)
 				colNumber += 1
 			colNumber = startingCol
 			rowNumber += 1
