@@ -114,7 +114,7 @@ class LogIn(Frame,object):
 		self.initUI()
 
 	def initUI(self):
-		self.parent.geometry("560x560")
+		self.parent.geometry("570x570")
 
 		# Notebook
 		self.notebook = Notebook(self.parent)
@@ -157,6 +157,9 @@ class LogIn(Frame,object):
 		self.create_adminPass = Entry(createFrame, show="*")
 		self.create_adminPass.pack()
 		## New user account widgets
+		self.create_isAdmin = IntVar()
+		self.create_adminCheckBox = Checkbutton(createFrame, text="Create the new account as an administrator", variable=self.create_isAdmin)
+		self.create_adminCheckBox.pack()
 		Label(createFrame, text="").pack()
 		Label(createFrame, text="Enter new account's username").pack()
 		self.create_newUser = Entry(createFrame)
@@ -316,7 +319,7 @@ class LogIn(Frame,object):
 			return
 
 		# Create the new user
-		newUser.saveUser(newUserSecretQ, newUserSecretA)
+		newUser.saveUser(newUserSecretQ, newUserSecretA, isRoot=self.create_isAdmin.get())
 		self.create_notifier.config(text="New user created.", foreground='darkgreen')
 		self.clearCreateAccountEntries()
 		# Refresh the Reset Password tab's user drop down menu choices
