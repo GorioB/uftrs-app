@@ -681,7 +681,7 @@ class ExcelBuilder(object):
 		self.sheet = sheet = self.book.add_sheet(self.sheetName)
 		headerStyle = easyxf('font: bold 1;')
 		editedStyle = easyxf('font: color orange;')
-		deletedStyle = easyxf('font: color orange;')
+		deletedStyle = easyxf('font: color red;')
 		# starting location of the table
 		startingRow = self.row
 		startingCol = self.column
